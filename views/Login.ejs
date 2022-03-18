@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include ('../views/partials/header.ejs') %>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale= 1.0" />
+        <link rel="stylesheet" type="text/css" href="/CSS/Login.css" charset="utf-8" >
+        <title>SignIn/SignUp</title>
+        <!--Ce code est inspiré par -->
+        <!--https://www.florin-pop.com/blog/2019/03/double-slider-sign-in-up-form/-->
+        <link rel="stylesheet" href="/CSS/style.css">
+        
+</head>
+
+<body>
+    <div class="box panelUsing">
+        <!-- Sign Up -->
+        <div class="formBox signUpBox">
+            <form action="#" method="post" class="form" id="formSignUp">
+                <h2 class="title">Nouveau utilisateur</h2>
+                <input type="hidden" name="option" value="signUp">
+                <input type="email" placeholder="Adresse courriel" class="input" id="signUpEmail"  name="signUpEmail"/>
+                <input type="password" placeholder="Mots de passe" class="input" id="signUpPassword" name="signUpPassword"/>
+                <input type="text" placeholder="Nom" class="input" id="signUpNom" name="signUpNom"/>
+                <input type="text" placeholder="Prenom" class="input" id="signUpPrenom" name="signUpPrenom"/>
+                <input type="tel" placeholder="Telephone" class="input" id="signUpTel" name="signUpTel" maxlength="10"/>
+                <button type="submit" class="btn" id="signUp">Nouveau utilisateur</button>
+            </form>
+        </div>
+
+        <!-- Sign In -->
+        <div class="formBox signInBox">
+            <form action="#" method="post" class="form" id="formSignIn">
+                <h2 class="title">Connecter</h2>
+                <input type="hidden" name="option" value="signIn">
+                <input type="text" placeholder="Email" class="input" id="signInEmail" name="signInEmail"/>
+                <input type="password" placeholder="Mots de passe" class="input" id="signInPassword" name="signInPassword"/>
+                <a href="#" class="link">Mot de passe oublié?</a>
+                <button type="submit" class="btn" id="signIn">Connecter</button>
+            </form>
+        </div>
+
+        <!-- cover -->
+        <div class="coverbox">
+            <div class="cover">
+                <div class="coverPanel coverLeft">
+                    <button class="btn" id="haveAccount">Déja un compte?</button>
+                </div>
+                <div class="coverPanel coverRight">
+                    <button class="btn" id="noAccount">Pas de compte?</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- script -->
+    <script>
+        const signUpBtn = document.getElementById("signUp");
+        const signInBtn = document.getElementById("signIn");
+        const haveAccountBtn = document.getElementById("haveAccount");
+        const noAccountBtn = document.getElementById("noAccount");
+        const signUpForm = document.getElementById("formSignUp");
+        const signInForm = document.getElementById("formSignIn");
+        const box = document.querySelector(".box");
+
+        const reg_email = /^[0-9a-zA-Z_.-]+[@][0-9a-zA-Z_.-]+([.][a-zA-Z]+){1,2}$/;
+        const reg_tel = /^[0-9]{10}$/
+
+        haveAccountBtn.addEventListener("click", () => {
+            box.classList.remove("panelUsing");
+        });
+
+        noAccountBtn.addEventListener("click", () => {
+            box.classList.add("panelUsing");
+        });
+
+        //alert for pop up message signUp
+        signUpBtn.addEventListener("click",()=>{
+            if (!reg_email.test(document.getElementById("signUpEmail").value)){
+                alert("Veillez saisir un email valide !!!")
+            }
+            if (!document.getElementById("signUpPassword").value){
+                alert("Veillez saisir un mot de passe!")
+            }
+            if (!document.getElementById("signUpNom").value){
+                alert("Veillez saisir votre nom!")
+            }
+            if (!document.getElementById("signUpPrenom").value){
+                alert("Veillez saisir votre prenom!")
+            }
+            if (!reg_tel.test(document.getElementById("signUpTel").value)){
+                alert("Veillez saisir un numero de telephone valide!")
+            }
+        })
+
+        //alert for pop up message signIn
+        signInBtn.addEventListener("click",()=>{
+            if (!reg_email.test(document.getElementById("signInEmail").value)){
+                alert("Veillez saisir un email valide !!!")
+            }
+            if (!document.getElementById("signInPassword").value){
+                alert("Veillez saisir votre mot de passe!")
+            }
+        })
+
+    </script>
+
+
+</body>
+</html>
