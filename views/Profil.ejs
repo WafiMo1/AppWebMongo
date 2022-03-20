@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include ('../views/partials/header.ejs') %>
+        <link rel="stylesheet" href="/CSS/style.css">
+    </head>
+
+    <style>
+
+        .droite{
+           padding-left: 200px;
+        }
+        .gauche{
+            position: absolute; 
+            left: 54px;
+        }
+        .wrapper{
+            padding-top: 125px;
+        }
+        .bouttonMettreAJour{
+            padding-left: 100px;
+        }
+        
+    </style>
+
+    <body class="body">
+        <form action="infosModifiables" method="post">
+       <div class="wrapper">
+            <div class="gauche">
+                <img class="photoProfil" src="<%= Profil.Photo %>" alt="utilisateur" width="100">
+            </div>
+            <div class="droite">
+                <div class="infos">
+                    <h3>Informations</h3>
+                    
+                    <div class="infos_data">
+                        <label for="nom">Nom:</label>
+                        <!-- TRÈS IMPORTANT, IL FAUT FAIRE APPEL AU PROFIL (DÉCLARÉ DANS LE SERVEUR NODE JS) CAR ON VA UTILISER LES ATTRIBUTS qu'ils contient pour les afficher  -->
+                        <label for="nomSaisi"><%= Profil.Nom %></label>
+                        <br>
+                        <br>
+                        <label for="prenom">Prénom:</label>
+                        <label for="prenomSaisi"><%= Profil.Prenom %></label>
+                        <br>
+                        <br>
+                        <label for="telephone">Téléphone:</label>
+                        <label for="telephoneSaisi"><%= Profil.Telephone %></label>
+                        <br>
+                        <br>
+                        <label for="email">Courriel:</label>
+                        <label for="emailSaisi"><%= Profil.Email %></label>                                        
+                        </div>
+                        <br>
+                        <br>
+                        <div class="bouttonMettreAJour">
+                            <button type="submit">Mettre à jour</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+       </div>
+       
+            
+            
+
+
+        </form>
+
+    </body>
+    <footer class="f">
+        <p>Author: Mebarkia Mohamed / Mohamed Wafi / Zhi Bo / Omar Khoudair</p>
+        <img src="/Images/logo.png" class="logo">
+    </footer>
+</html>

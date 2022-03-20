@@ -128,43 +128,27 @@ app.post('/', async (req, res) => {
 
 //profil fait Mohamed Wafi
 app.get('/profils/:profil', (req, res) => {
-
-    /***************************
-     * Il faut changer cette partie en mongoDB
-     * 
-     */
-    /*
-    //Tout d'abord il faut déclarer la variable idProfil extraite de l'URL saisi
-
-    var idProfil=req.params.profil;
-    
-    //Déclaration de la requête SQL dans le format suivant (très important) pour chercher les infos du profil relié à l'ID saisi
-    let requeteSQL='SELECT * FROM utilisateurs WHERE id=' + "'" + idProfil + "'"; 
-    //ON FAIT LA REQUÊTE !!         
-    db.query(requeteSQL,(err, result) => {
-        //Au cas ou la réponse de la requête SQL est vide, cela signifie que l'élément saisi est inexistant, par conséquent, cet utilisateur n'existe pas
-        try{
-        if(result.length<1){
-            //Si l'utilisateur est inexistant, on retourne à la page d'accueil
-            res.render('404')
-
-        }
-    }catch(err){
-        console.log("Erreur");
-    } 
-        //La réponse est la page profil.ejs
-        //On déclare 'profil' ci-bas, car on va le reprendre dans la page profil.ejs
-        res.render('profil.ejs', {profil: result});
-
-
+    //D'abord, on déclare idUser qui va être l'élément saisi par l'utilisateur (donc les paramètres de la requête)
+    var idUser=req.params.profil;
+    //On utilise le schéma Utilisateurs qui va chercher le profil en fonction de l'idUser (saisi par l'utilisateur)
+     Utilisateurs.findById(idUser).then((result)=>{
+     console.log(result)
+     //Par la suite, on retourne la page Profil.ejs "Profil" comme résultat de la BD
+     //Avec cela, il va être possible d'afficher des utilisateurs sur EJS en faisant Profil."AttributQuelconque"
+     res.render('Profil.ejs', {Profil: result})
+     
     });
-    */
 
-    res.render('profil.ejs');
-    
+//res.render('profil.ejs', {profil: result});
+
 });
 
-
+app.get('/roro', (req, res) => {
+    
+     res.render('Profil.ejs')
+  
+    
+});
 
 
 app.get('/recherche', (req, res) => {  
