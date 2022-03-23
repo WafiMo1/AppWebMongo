@@ -8,9 +8,11 @@
         <!-- Début du menu déroulant -->
         <li class="logoP"><img src="/Images/profile.png" alt="Profil" class="logo">
         <ul>
-
-        <li id="deconnection"><a href="/">Déconnection</a></li>
-        <li id="login"><a href="/login">Login</a> </li>
+        <li id="login"><a href="/login">Login</a> </li> 
+        <li id="modifierProfil"><a href="/">Modifier profil</a></li>   
+        <li id="deconnection"><a href="/">Déconnexion</a></li>
+        
+        
         </ul> 
 
         </li></ul>
@@ -21,11 +23,13 @@
                 //profil
                 console.log(window.location.href);
                 document.getElementById("deconnection").hidden = true; 
-                document.getElementById("login").hidden = false;                  
+                document.getElementById("login").hidden = false;
+                document.getElementById("modifierProfil").hidden = true;                 
             }else{
                 //not in profil
                 document.getElementById("deconnection").hidden = false;
                 document.getElementById("login").hidden = true;  
+                document.getElementById("modifierProfil").hidden = false;  
             }
         </script>
 </header>
