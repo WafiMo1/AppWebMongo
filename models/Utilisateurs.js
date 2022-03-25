@@ -10,11 +10,11 @@ const utilisateurSchema =  new mongoose.Schema({
         type: String, set(val) {
             return require('bcrypt').hashSync(val, 10)
         }
-    },
+    },    
     Photo: String,
     MaxPret: Number,
     NbPret: Number,
-    Droit_id: mongoose.Schema.ObjectId   
+    Droit_id: Number   
 })
 
 module.exports = mongoose.model('Utilisateur', utilisateurSchema, 'Utilisateurs');
