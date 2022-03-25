@@ -125,7 +125,7 @@ app.post('/login', async (req, res) => {
                 res.redirect("/admin")
                 break;
             case 0: 
-                res.redirect("/profil/" + userLogin.Telephone)
+                res.redirect("/profils/" + userLogin.Telephone)
                 break;
             case 1:
                 res.redirect("/staff")
