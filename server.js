@@ -170,13 +170,11 @@ app.get('/recherche', (req, res) => {
             }catch(err){
                 console.log(err);
             }
-        });
-
-        
+        });        
 });
 
 app.post('/recherche', async (req, res) => {
-    Livres.find({$text:{$search:req.body.SearchInput}}, function(err,livres){
+    Livres.find({Titre:{$regex:req.body.SearchInput}}, function(err,livres){
         try{
             console.log(livres)
             res.render("Recherche", {livresTab:livres})
