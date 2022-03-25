@@ -111,13 +111,13 @@ app.post('/login', async (req, res) => {
             return res.status(422).send('user not exist')
         }
         //compaire password
-        const isPasswordValid = (dataReceived.signInPassword === userLogin.Password)
-        /*
+        //const isPasswordValid = (dataReceived.signInPassword === userLogin.Password)
+        
         const isPasswordValid = require('bcrypt').compareSync(
-            dataReceived.password,
-            userLogin.password
+            dataReceived.signInPassword,
+            userLogin.Password
         )
-        */
+        
         if (!isPasswordValid) {
             return res.status(422).send('wrong password')
         }
