@@ -24,7 +24,7 @@
                 <input type="text" placeholder="Nom" class="input" id="signUpNom" name="signUpNom"/>
                 <input type="text" placeholder="Prenom" class="input" id="signUpPrenom" name="signUpPrenom"/>
                 <input type="tel" placeholder="Telephone" class="input" id="signUpTel" name="signUpTel" maxlength="10"/>
-                <button type="submit" class="btn" id="signUp">Nouveau utilisateur</button>
+                <button type="button" class="btn" id="signUp">Nouveau utilisateur</button>
             </form>
         </div>
 
@@ -36,7 +36,7 @@
                 <input type="text" placeholder="Email" class="input" id="signInEmail" name="signInEmail"/>
                 <input type="password" placeholder="Mots de passe" class="input" id="signInPassword" name="signInPassword"/>
                 <a href="#" class="link">Mot de passe oublié?</a>
-                <button type="submit" class="btn" id="signIn">Connecter</button>
+                <button type="button" class="btn" id="signIn">Connecter</button>
             </form>
         </div>
 
@@ -78,29 +78,41 @@
         //alert for pop up message signUp
         signUpBtn.addEventListener("click",()=>{
             if (!reg_email.test(document.getElementById("signUpEmail").value)){
-                alert("Veillez saisir un email valide !!!")
+                alert("Veillez saisir un email valide !!!");
+                return false;
             }
-            if (!document.getElementById("signUpPassword").value){
+            else if (!document.getElementById("signUpPassword").value){
                 alert("Veillez saisir un mot de passe!")
+                return false;
             }
-            if (!document.getElementById("signUpNom").value){
+            else if (!document.getElementById("signUpNom").value){
                 alert("Veillez saisir votre nom!")
+                return false;
             }
-            if (!document.getElementById("signUpPrenom").value){
+            else if (!document.getElementById("signUpPrenom").value){
                 alert("Veillez saisir votre prenom!")
+                return false;
             }
-            if (!reg_tel.test(document.getElementById("signUpTel").value)){
+            else if (!reg_tel.test(document.getElementById("signUpTel").value)){
                 alert("Veillez saisir un numero de telephone valide!")
-            }
+                return false;
+            }else{
+                signUpForm.submit(); 
+            }           
         })
 
         //alert for pop up message signIn
         signInBtn.addEventListener("click",()=>{
             if (!reg_email.test(document.getElementById("signInEmail").value)){
                 alert("Veillez saisir un email valide !!!")
+                return false
             }
-            if (!document.getElementById("signInPassword").value){
+            else if (!document.getElementById("signInPassword").value){
                 alert("Veillez saisir votre mot de passe!")
+                return false
+            }
+            else{
+                signInForm.submit();
             }
         })
 
