@@ -6,7 +6,12 @@ const Livres = require ('./models/Livres');
 const Reservations = require ('./models/Reservations');
 const Utilisateurs = require ('./models/Utilisateurs');
 const path = require('path');
+
+
+const { check, validationResult }= require ('express-validator');
+
 const bodyParser = require('body-parser');
+var urlencodeParser= bodyParser.urlencoded({extended: true});
 
 //use express
 const app = express();
@@ -137,34 +142,49 @@ app.post('/login', async (req, res) => {
 //profil fait Mohamed Wafi
 app.get('/profils/:profil', (req, res) => {
     //D'abord, on déclare idUser qui va être l'élément saisi par l'utilisateur (donc les paramètres de la requête)
-    var idUser=req.params.profil;
+    var telUser=req.params.profil;
     //On utilise le schéma Utilisateurs qui va chercher le profil en fonction de l'idUser (saisi par l'utilisateur)
-     Utilisateurs.findById(idUser).then((result)=>{
-     console.log(result)
-     //Par la suite, on retourne la page Profil.ejs "Profil" comme résultat de la BD
-     //Avec cela, il va être possible d'afficher des utilisateurs sur EJS en faisant Profil."AttributQuelconque"
-     res.render('Profil.ejs', {Profil: result})
-     
+    //La recherche dans la base de données Mongo se fait à partir du numero de téléphone qui est unique
+     Utilisateurs.find({ Telephone: telUser}, function (err, result) {
+         //En cas d'erreur
+        if (err) Console.Log(err);
+        res.render('Profil.ejs', {profil: result})
+         console.log(result[0]._id);
+       
+       });
+
+
     });
 
-//res.render('profil.ejs', {profil: result});
 
-});
+app.get('/Modifier', (req, res) => {
 
-app.get('/roro', (req, res) => {
-    
-     res.render('Profil.ejs')
-    
+     res.render('ModifierProfil');
+
     
 });
 
+app.post('/Modifier', urlencodeParser, (req, res)=> {
+    userActuel= conservationInfosUser();
+    var idUser=userActuel._id;
+    console.log(req.body);
+    Utilisateurs.findByIdAndUpdate({_id:idUser},{
+        Nom: req.body.nomModifie,
+        Prenom: req.body.prenomModifie,
+        Telephone: req.body.telephoneModifie,
+        Email: req.body.emailModifie,
+        Photo: req.body.photoModifie,  
+    }) 
+});
+
+function conservationInfosUser(){
+
+}
+   
+ 
 
 app.get('/recherche', (req, res) => {  
-    /* try{ */
-        /* let query = "SELECT ISBN, Titre, Photo FROM LIVRES"
-        db.query(query, function (err, result) {
-            res.render('recherche', {livresTab: result})
-        }); */
+
         Livres.find({}, function(err,livres){
             try{
                 console.log("Livre:", livres);
@@ -173,12 +193,7 @@ app.get('/recherche', (req, res) => {
                 console.log(err);
             }
         });
-        
-    /* }catch(err){
-        console.log(err);
-    } */
-    
-    /* res.render('recherche') */
+  
 });
 
 //livre

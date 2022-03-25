@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include ('../views/partials/header.ejs') %>
+        <link rel="stylesheet" href="/CSS/style.css">
+    </head>
+
+<style>
+    .bouttonMettreAJour{
+            padding-left: 100px;
+            padding-top: 50px;
+        }
+</style>
+<body>
+    <br>
+    <br>
+    <br>
+    <br>
+    
+    <br>
+    <br>
+
+
+    <form id="MiseAJourInfos" method="post" action="/Modifier">
+    <label for="nom">Nom: </label>
+    <input type="text" name="nomModifie" id="nomModifie">
+    <br>
+    <br>
+    <label for="prenom">Prénom: </label>
+    <input type="text" name="prenomModifie" id="prenomModifie">
+    <br>
+    <br>
+    <label for="telephone">Téléphone: </label>
+    <input type="text" name="telephoneModifie" id="telephoneModifie">
+    <br>
+    <br>
+    <label for="email">Email: </label>
+    <input type="text" name="emailModifie" id="emailModifie">
+    <br>
+    <br>
+    <label for="photo">Photo: </label>
+    <input type="file" name="photoModifie" id="photoModifie">
+
+    <input type="submit">
+    
+</form>
+</body>
+<footer class="f">
+    <p>Author: Mebarkia Mohamed / Mohamed Wafi / Zhi Bo / Omar Khoudair</p>
+    <img src="/Images/logo.png" class="logo">
+</footer>
+</html>
