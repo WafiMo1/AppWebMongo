@@ -1,9 +1,9 @@
 const mongoose = require('./db.js');
 
 const empruntSchema = mongoose.Schema({
-    DatePret: Date,
-    DateRetourPrevu: Date,
-    DateRetour: Date,
+    DatePret: String,
+    DateRetourPrevu: String,
+    DateRetour: String,
     Livre_id: mongoose.Schema.ObjectId,
     Utilisateur_id: mongoose.Schema.ObjectId
 });

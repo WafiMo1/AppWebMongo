@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include ('../views/partials/header.ejs') %>
+    <link rel="stylesheet" href="/CSS/style.css">
+    </head>
+
+
+    <body>
+        <div>
+           <h2>Emprents du livres</h2> 
+            <div>
+                <h4>Livres</h4>
+                <table>
+                    <th>ISBN</th>
+                    <th>Auteur</th>
+                    <th>Titre</th>
+                    <th>MaisonEdition</th>
+                    <th>DateParution</th>                 
+                    <th>NbCopies</th>
+                    <th>NbDisponible</th>
+                    <th>Cout</th>
+                    <% livres.forEach(livre => { %>
+                        <tr>
+                            <td><%=livre.ISBN %></td>
+                            <td><%=livre.Auteur %></td>
+                            <td><%=livre.Titre %></td>
+                            <td><%=livre.MaisonEdition %></td>
+                            <td><%=livre.DateParution %></td>
+                            <td><%=livre.NbCopies %></td>
+                            <td><%=livre.NbDisponible %></td>
+                            <td><%=livre.Cout %></td>
+                        </tr>
+                    <% }) %>
+
+                </table> 
+            </div>
+           
+        </div>
+        
+
+
+
+
+
+
+        <div>
+           <h3>Retour du livres</h3> 
+           <table>
+                <th>Utilisateur</th>
+                <th>ISBN</th>
+                <th>DatePret</th>
+                <th>DateRetourPrevu</th>
+
+                <% emprunts.forEach(emprunt => { %>
+                    <%     if (emprunt.DateRetour == null ){%>
+                        <tr>
+                        <td><%=emprunt.Utilisateur_id %></td>
+                        <td><%=emprunt.Livre_id %></td>
+                        <td><%=emprunt.DatePret %></td>
+                        <td><%=emprunt.DateRetourPrevu %></td> 
+                   
+                    </tr>
+                    <%     } %>
+                    
+                <% }) %>
+           </table>
+
+        </div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </body>
+    <footer class="f">
+        <%- include ('../views/partials/footer.ejs') %>
+    </footer>
+</html>

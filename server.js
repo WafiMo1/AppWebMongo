@@ -6,7 +6,6 @@ const Livres = require ('./models/Livres');
 const Reservations = require ('./models/Reservations');
 const Utilisateurs = require ('./models/Utilisateurs');
 const path = require('path');
-
 const bodyParser = require('body-parser');
 
 //use express
@@ -14,8 +13,6 @@ const app = express();
 const port = 4000
 const { is } = require("express/lib/request");
 const { Console } = require("console");
-
-
 
 app.use(express.json())
 app.use(express.urlencoded())
@@ -157,7 +154,7 @@ app.get('/profils/:profil', (req, res) => {
 app.get('/roro', (req, res) => {
     
      res.render('Profil.ejs')
-  
+    
     
 });
 
@@ -200,6 +197,37 @@ app.get('/livres/:isbn', (req, res) => {
 
     res.render('livres.ejs');
 });
+
+//page gestion
+app.get('/gestion', async (req, res) => {
+    Utilisateurs.find({},function(err,utilisateurs){
+        try{
+            Livres.find({},function(err,livres){
+                try{
+                    Emprunts.find({},function(err,emprunts){
+                        try{
+                            //console.log(emprunts)
+                            res.render('Gestion',{utilisateurs: utilisateurs, livres: livres, emprunts: emprunts});
+                        }catch(err){
+                            console.log(err)
+                            res.status(450).end(err)
+                        }
+                    })
+                }catch(err){
+                    console.log(err)
+                    res.status(450).end(err)
+                }
+            })
+        }catch(err){
+            console.log(err)
+            res.status(450).end(err)
+        }
+    })
+  
+
+    
+});
+
 
 
 app.listen(port, function(err){
