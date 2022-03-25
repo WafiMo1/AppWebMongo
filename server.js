@@ -149,7 +149,6 @@ app.get('/profils/:profil', (req, res) => {
          //En cas d'erreur
         if (err) Console.Log(err);
         res.render('Profil.ejs', {profil: result})
-         console.log(result[0]._id);
        
        });
 
@@ -167,7 +166,6 @@ app.get('/Modifier', (req, res) => {
 app.post('/Modifier', urlencodeParser, (req, res)=> {
     userActuel= conservationInfosUser();
     var idUser=userActuel._id;
-    console.log(req.body);
     Utilisateurs.findByIdAndUpdate({_id:idUser},{
         Nom: req.body.nomModifie,
         Prenom: req.body.prenomModifie,
@@ -187,7 +185,6 @@ app.get('/recherche', (req, res) => {
 
         Livres.find({}, function(err,livres){
             try{
-                console.log("Livre:", livres);
                 res.render("Recherche", {livresTab:livres})
             }catch(err){
                 console.log(err);
@@ -215,22 +212,16 @@ app.get('/gestion', async (req, res) => {
                 try{
                     Emprunts.find({},function(err,emprunts){
                         try{
-                            //console.log(emprunts)
-                            
-
                             res.render('Gestion',{utilisateurs: utilisateurs, livres: livres, emprunts: emprunts});
                         }catch(err){
-                            console.log(err)
                             res.status(450).end(err)
                         }
                     })
                 }catch(err){
-                    console.log(err)
                     res.status(450).end(err)
                 }
             })
         }catch(err){
-            console.log(err)
             res.status(450).end(err)
         }
     })
