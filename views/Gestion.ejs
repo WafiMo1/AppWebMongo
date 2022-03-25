@@ -59,11 +59,17 @@
                             <%  utilisateurs.forEach( utilisateur=>{%>
                                 <%  if (utilisateur._id.toString() == emprunt.Utilisateur_id.toString()){%>
                                     <%=utilisateur.Email %>
-                                    <% console.log("equal") %> 
                                 <%  } %>
                             <%  })%>                       
                         </td>
-                        <td><%=emprunt.Livre_id %></td>
+                        <td>
+                            <%  livres.forEach( livre=>{%>
+                                <%  if (livre._id.toString() == emprunt.Livre_id.toString()){%>
+                                    <%=livre.ISBN %>
+                                <%  } %>
+                            <%  })%>
+
+                        </td>
                         <td><%=emprunt.DatePret %></td>
                         <td><%=emprunt.DateRetourPrevu %></td> 
                    
