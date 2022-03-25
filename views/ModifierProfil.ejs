@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include ('../views/partials/header.ejs') %>
+        <link rel="stylesheet" href="/CSS/style.css">
+    </head>
+
+<style>
+    .bouttonMettreAJour{
+            padding-left: 100px;
+            padding-top: 50px;
+        }
+</style>
+<body>
+    <br>
+    <br>
+    <br>
+    <br>
+    
+    <br>
+    <br>
+
+
+    <form id="MiseAJourInfos" method="post" action="/profils/<%= Profil[0].Telephone %>">
+    <label for="nom">Nom: </label>
+    <input type="text" name="nomModifie" value="<%= Profil[0].Nom %>">
+    <br>
+    <br>
+    <label for="prenom">Prénom: </label>
+    <input type="text" name="prenomModifie" value="<%= Profil[0].Prenom %>">
+    <br>
+    <br>
+    <label for="telephone">Téléphone: </label>
+    <input type="text" name="telephoneModifie" value="<%= Profil[0].Telephone %>">
+    <br>
+    <br>
+    <label for="email">Email: </label>
+    <input type="text" name="emailModifie" value="<%= Profil[0].Email %>">
+    <br>
+    <br>
+    <label for="photo">Photo: </label>
+    <input type="file" name="photoModifie" value="<%= Profil[0].Photo %>">
+
+    <input type="submit">
+    
+</form>
+</body>
+<footer class="f">
+    <p>Author: Mebarkia Mohamed / Mohamed Wafi / Zhi Bo / Omar Khoudair</p>
+    <img src="/Images/logo.png" class="logo">
+</footer>
+</html>

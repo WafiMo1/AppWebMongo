@@ -24,10 +24,10 @@
     </style>
 
     <body class="body">
-        <form action="infosModifiables" method="post">
+        <form action="profilUser" method="post">
        <div class="wrapper">
             <div class="gauche">
-                <img class="photoProfil" src="<%= Profil.Photo %>" alt="utilisateur" width="100">
+                <img class="photoProfil" src="<%= profil[0].Photo %>" alt="utilisateur" width="100">
             </div>
             <div class="droite">
                 <div class="infos">
@@ -36,25 +36,23 @@
                     <div class="infos_data">
                         <label for="nom">Nom:</label>
                         <!-- TRÈS IMPORTANT, IL FAUT FAIRE APPEL AU PROFIL (DÉCLARÉ DANS LE SERVEUR NODE JS) CAR ON VA UTILISER LES ATTRIBUTS qu'ils contient pour les afficher  -->
-                        <label for="nomSaisi"><%= Profil.Nom %></label>
+                        <label for="nomSaisi"><%= profil[0].Nom %></label>
                         <br>
                         <br>
                         <label for="prenom">Prénom:</label>
-                        <label for="prenomSaisi"><%= Profil.Prenom %></label>
+                        <label for="prenomSaisi"><%= profil[0].Prenom %></label>
                         <br>
                         <br>
                         <label for="telephone">Téléphone:</label>
-                        <label for="telephoneSaisi"><%= Profil.Telephone %></label>
+                        <label for="telephoneSaisi"><%= profil[0].Telephone %></label>
                         <br>
                         <br>
                         <label for="email">Courriel:</label>
-                        <label for="emailSaisi"><%= Profil.Email %></label>                                        
+                        <label for="emailSaisi"><%= profil[0].Email %></label>                                        
                         </div>
                         <br>
                         <br>
-                        <div class="bouttonMettreAJour">
-                            <button type="submit">Mettre à jour</button>
-                        </div>
+                        
                     </div>
                 </div>
             </div>

@@ -9,7 +9,8 @@
         <li class="logoP"><img src="/Images/profile.png" alt="Profil" class="logo">
         <ul>
         <li id="login"><a href="/login">Login</a> </li> 
-        <li id="modifierProfil"><a href="/">Modifier profil</a></li>   
+        <!--Lorsque Modifier Profil est sélectionné-->
+        <li  id="modifierProfil"><a href="/ModifierProfil">Modifier</a></li>   
         <li id="deconnection"><a href="/">Déconnexion</a></li>
         
         
@@ -19,7 +20,9 @@
         </nav>
 
         <script>
-            if (!window.location.href.includes("/profils/")){
+            //Lorsque le URL contient /Profils/, cela signifie que l'utilisateur a réussi à se connecter, donc il peut se déconnecter
+            //Et le contraire est aussi valable
+            if (!window.location.href.includes("/Profils/")){
                 //profil
                 console.log(window.location.href);
                 document.getElementById("deconnection").hidden = true; 

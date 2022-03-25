@@ -8,6 +8,7 @@ const Utilisateurs = require ('./models/Utilisateurs');
 const path = require('path');
 
 const bodyParser = require('body-parser');
+var urlencodeParser= bodyParser.urlencoded({extended: true});
 
 //use express
 const app = express();
@@ -131,25 +132,30 @@ app.get('/profils/:profil', (req, res) => {
     //D'abord, on déclare idUser qui va être l'élément saisi par l'utilisateur (donc les paramètres de la requête)
     var idUser=req.params.profil;
     //On utilise le schéma Utilisateurs qui va chercher le profil en fonction de l'idUser (saisi par l'utilisateur)
-     Utilisateurs.findById(idUser).then((result)=>{
-     console.log(result)
-     //Par la suite, on retourne la page Profil.ejs "Profil" comme résultat de la BD
-     //Avec cela, il va être possible d'afficher des utilisateurs sur EJS en faisant Profil."AttributQuelconque"
-     res.render('Profil.ejs', {Profil: result})
-     
+    //La recherche dans la base de données Mongo se fait à partir du numero de téléphone qui est unique
+     Utilisateurs.find({ Telephone: idUser}, function (err, result) {
+         //En cas d'erreur
+        if (err) Console.Log(err);
+        res.render('Profil.ejs', {profil: result})
+       });
+
+
     });
 
-//res.render('profil.ejs', {profil: result});
 
-});
+app.get('/Modifier', (req, res) => {
 
-app.get('/roro', (req, res) => {
-    
-     res.render('Profil.ejs')
-  
+     res.render('ModifierProfil.ejs',{Profil: req.body});
     
 });
 
+app.post('/Modifier', urlencodeParser, function(req, res) {
+    console.log(req.body)
+    const utilisateurInfos= req.body;
+    res.render('Profil.ejs',{Profil: utilisateurInfos})
+    
+});
+ 
 
 app.get('/recherche', (req, res) => {  
     /**
