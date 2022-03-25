@@ -159,27 +159,35 @@ app.get('/roro', (req, res) => {
 });
 
 
-app.get('/recherche', (req, res) => {  
-    /* try{ */
-        /* let query = "SELECT ISBN, Titre, Photo FROM LIVRES"
-        db.query(query, function (err, result) {
-            res.render('recherche', {livresTab: result})
-        }); */
+app.get('/recherche', (req, res) => {
+
+  
+
         Livres.find({}, function(err,livres){
             try{
-                console.log("Livre:", livres);
+                //console.log("Livre:", livres);
                 res.render("Recherche", {livresTab:livres})
             }catch(err){
                 console.log(err);
             }
         });
+
         
-    /* }catch(err){
-        console.log(err);
-    } */
-    
-    /* res.render('recherche') */
 });
+
+app.post('/recherche', async (req, res) => {
+    Livres.find({$text:{$search:req.body.SearchInput}}, function(err,livres){
+        try{
+            console.log(livres)
+            res.render("Recherche", {livresTab:livres})
+        }catch(err){
+            console.log(err);
+        }
+    });
+   
+   
+});//end of post
+
 
 //livre
 app.get('/livres/:isbn', (req, res) => {
