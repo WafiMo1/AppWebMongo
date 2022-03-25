@@ -207,6 +207,8 @@ app.get('/gestion', async (req, res) => {
                     Emprunts.find({},function(err,emprunts){
                         try{
                             //console.log(emprunts)
+                            
+
                             res.render('Gestion',{utilisateurs: utilisateurs, livres: livres, emprunts: emprunts});
                         }catch(err){
                             console.log(err)

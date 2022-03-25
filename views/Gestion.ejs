@@ -8,7 +8,7 @@
 
     <body>
         <div>
-           <h2>Emprents du livres</h2> 
+           <h2>Emprunts du livres</h2> 
             <div>
                 <h4>Livres</h4>
                 <table>
@@ -54,8 +54,15 @@
 
                 <% emprunts.forEach(emprunt => { %>
                     <%     if (emprunt.DateRetour == null ){%>
-                        <tr>
-                        <td><%=emprunt.Utilisateur_id %></td>
+                    <tr>
+                        <td>
+                            <%  utilisateurs.forEach( utilisateur=>{%>
+                                <%  if (utilisateur._id.toString() == emprunt.Utilisateur_id.toString()){%>
+                                    <%=utilisateur.Email %>
+                                    <% console.log("equal") %> 
+                                <%  } %>
+                            <%  })%>                       
+                        </td>
                         <td><%=emprunt.Livre_id %></td>
                         <td><%=emprunt.DatePret %></td>
                         <td><%=emprunt.DateRetourPrevu %></td> 
