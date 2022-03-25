@@ -44,86 +44,100 @@ app.get('/login', async (req, res) => {
     res.render('login');
 });
 
-/*
-//register and login
-app.post('/', async (req, res) => {
+app.post('/login', async (req, res) => {
     const dataReceived = req.body
     //console.log(dataReceived);
 
     //register
     if (dataReceived.option == "signUp"){
-        //check valide
-        if (!dataReceived.username){
-            return res.status(422).end('username is required')
-        }
-
-        if (!dataReceived.password){
-            return res.status(422).end('password is required')
-        }
-
-        if (!dataReceived.email){
+        
+    //double check valide backend
+        if (!dataReceived.signUpEmail){
             return res.status(422).end('email is required')
         }
-        //res.send('post checked')
-        
-        //put new user data to mongodb
-        try{
-            const user = await User.create({
-            username: dataReceived.username,
-            password: dataReceived.password,
-            email: dataReceived.email  
-        })
-        console.log('Utilisateur cree')    
-        res.redirect("/Liste")
+        if (!dataReceived.signUpPassword){
+            return res.status(422).end('password is required')
+        }
+        if (!dataReceived.signUpNom){
+            return res.status(422).end('name is required')
+        }
+        if (!dataReceived.signUpPrenom){
+            return res.status(422).end('Firstname is required')
+        }
+        if (!dataReceived.signUpTel){
+            return res.status(422).end('tel is required')
+        }
 
+        //prepare all data need to create a new user                         
+        const rand = Math.floor(Math.random() * 12) + 1;//random un image de profil
+        //put new user data to mongodb  
+        try{
+            Utilisateurs.create({
+                Nom: dataReceived.signUpNom,
+                Prenom: dataReceived.signUpPrenom,
+                Telephone: dataReceived.signUpTel,
+                Email: dataReceived.signUpEmail,
+                Password: dataReceived.signUpPassword,
+                Photo: "\/Images\/Profil\/"+ rand +".png",
+                MaxPret: 5,
+                NbPret: 0,
+                Droit_id: 0                            
+            })                   
         }catch(err){
             console.log(err)
             return res.status(422).end('user exist')
-        }         
+        }
+        console.log('Utilisateur cree')    
+        res.redirect("/")                 
+             
     }//End of register  
 
     //login
     if (dataReceived.option == "signIn"){
         //check data received valide
         const dataReceived = req.body       
-        if (!dataReceived.username){
+        if (!dataReceived.signInEmail){
             return res.status(422).end('username is required')
         }
 
-        if (!dataReceived.password){
+        if (!dataReceived.signInPassword){
             return res.status(422).end('password is required')
         }
-        //console.log("login post checked")
-
         //find user with same name
-        const userLogin = await User.findOne({
-            username: dataReceived.username
+        const userLogin = await Utilisateurs.findOne({
+            Email: dataReceived.signInEmail
         })
         if (!userLogin) { 
-            return res.status(422).send({ message: 'user not exist'})
+            return res.status(422).send('user not exist')
         }
         //compaire password
+        const isPasswordValid = (dataReceived.signInPassword === userLogin.Password)
+        /*
         const isPasswordValid = require('bcrypt').compareSync(
             dataReceived.password,
             userLogin.password
         )
+        */
         if (!isPasswordValid) {
-            return res.status(422).send({ message: 'wrong password' })
+            return res.status(422).send('wrong password')
         }
-
-        res.redirect("/Liste")
+        switch (userLogin.Droit_id){
+            case 99: 
+                res.redirect("/admin")
+                break;
+            case 0: 
+                res.redirect("/utilisateur")
+                break;
+            case 1:
+                res.redirect("/staff")
+                break;
+            default:
+                res.status(423).end("Droit n'existe pas")
+        }
         //end of login
     }
-
    
 });//end of post
-
-//register and login sql
-
-
-
-*/
-
 
 
 //profil fait Mohamed Wafi

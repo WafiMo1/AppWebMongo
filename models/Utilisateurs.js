@@ -6,15 +6,18 @@ const utilisateurSchema =  new mongoose.Schema({
     Prenom: String,
     Telephone: {type: String, unique: true},
     Email: {type: String, unique: true},
+    Password: String,
+    /*
     Password: {
         type: String, set(val) {
             return require('bcrypt').hashSync(val, 10)
         }
     },
+    */
     Photo: String,
     MaxPret: Number,
     NbPret: Number,
-    Droit_id: mongoose.Schema.ObjectId   
+    Droit_id: Number   
 })
 
 module.exports = mongoose.model('Utilisateur', utilisateurSchema, 'Utilisateurs');
