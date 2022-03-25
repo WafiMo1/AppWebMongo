@@ -7,6 +7,7 @@ const Reservations = require ('./models/Reservations');
 const Utilisateurs = require ('./models/Utilisateurs');
 const path = require('path');
 
+const { check, validationResult }= require ('express-validator');
 const bodyParser = require('body-parser');
 var urlencodeParser= bodyParser.urlencoded({extended: true});
 
@@ -130,13 +131,15 @@ app.post('/', async (req, res) => {
 //profil fait Mohamed Wafi
 app.get('/profils/:profil', (req, res) => {
     //D'abord, on déclare idUser qui va être l'élément saisi par l'utilisateur (donc les paramètres de la requête)
-    var idUser=req.params.profil;
+    var telUser=req.params.profil;
     //On utilise le schéma Utilisateurs qui va chercher le profil en fonction de l'idUser (saisi par l'utilisateur)
     //La recherche dans la base de données Mongo se fait à partir du numero de téléphone qui est unique
-     Utilisateurs.find({ Telephone: idUser}, function (err, result) {
+     Utilisateurs.find({ Telephone: telUser}, function (err, result) {
          //En cas d'erreur
         if (err) Console.Log(err);
         res.render('Profil.ejs', {profil: result})
+         console.log(result[0]._id);
+       
        });
 
 
@@ -145,21 +148,32 @@ app.get('/profils/:profil', (req, res) => {
 
 app.get('/Modifier', (req, res) => {
 
-     res.render('ModifierProfil.ejs',{Profil: req.body});
+     res.render('ModifierProfil');
     
 });
 
-app.post('/Modifier', urlencodeParser, function(req, res) {
-    console.log(req.body)
-    const utilisateurInfos= req.body;
-    res.render('Profil.ejs',{Profil: utilisateurInfos})
-    
+app.post('/Modifier', urlencodeParser, (req, res)=> {
+    userActuel= conservationInfosUser();
+    var idUser=userActuel._id;
+    console.log(req.body);
+    Utilisateurs.findByIdAndUpdate({_id:idUser},{
+        Nom: req.body.nomModifie,
+        Prenom: req.body.prenomModifie,
+        Telephone: req.body.telephoneModifie,
+        Email: req.body.emailModifie,
+        Photo: req.body.photoModifie,  
+    }) 
 });
+
+function conservationInfosUser(){
+
+}
+   
  
 
 app.get('/recherche', (req, res) => {  
     /**
-     * Il faut  change cette parite en MongoDB
+     * Il faut  change cette partie en MongoDB
      */
     /*
     try{

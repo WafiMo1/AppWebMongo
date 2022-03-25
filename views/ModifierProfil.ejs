@@ -21,25 +21,25 @@
     <br>
 
 
-    <form id="MiseAJourInfos" method="post" action="/profils/<%= Profil[0].Telephone %>">
+    <form id="MiseAJourInfos" method="post" action="/Modifier">
     <label for="nom">Nom: </label>
-    <input type="text" name="nomModifie" value="<%= Profil[0].Nom %>">
+    <input type="text" name="nomModifie" id="nomModifie">
     <br>
     <br>
     <label for="prenom">Prénom: </label>
-    <input type="text" name="prenomModifie" value="<%= Profil[0].Prenom %>">
+    <input type="text" name="prenomModifie" id="prenomModifie">
     <br>
     <br>
     <label for="telephone">Téléphone: </label>
-    <input type="text" name="telephoneModifie" value="<%= Profil[0].Telephone %>">
+    <input type="text" name="telephoneModifie" id="telephoneModifie">
     <br>
     <br>
     <label for="email">Email: </label>
-    <input type="text" name="emailModifie" value="<%= Profil[0].Email %>">
+    <input type="text" name="emailModifie" id="emailModifie">
     <br>
     <br>
     <label for="photo">Photo: </label>
-    <input type="file" name="photoModifie" value="<%= Profil[0].Photo %>">
+    <input type="file" name="photoModifie" id="photoModifie">
 
     <input type="submit">
     
