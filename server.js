@@ -160,22 +160,26 @@ app.get('/roro', (req, res) => {
 
 
 app.get('/recherche', (req, res) => {  
-    /**
-     * Il faut  change cette parite en MongoDB
-     */
-    /*
-    try{
-        let query = "SELECT ISBN, Titre, Photo FROM LIVRES"
+    /* try{ */
+        /* let query = "SELECT ISBN, Titre, Photo FROM LIVRES"
         db.query(query, function (err, result) {
             res.render('recherche', {livresTab: result})
+        }); */
+        Livres.find({}, function(err,livres){
+            try{
+                console.log("Livre:", livres);
+                res.render("Recherche", {livresTab:livres})
+            }catch(err){
+                console.log(err);
+            }
         });
         
-    }catch(err){
+    /* }catch(err){
         console.log(err);
-    }
-    */  
-    res.render('recherche')
-})
+    } */
+    
+    /* res.render('recherche') */
+});
 
 //livre
 app.get('/livres/:isbn', (req, res) => {
