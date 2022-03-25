@@ -125,7 +125,7 @@ app.post('/login', async (req, res) => {
                 res.redirect("/admin")
                 break;
             case 0: 
-                res.redirect("/utilisateur")
+                res.redirect("/profil/" + userLogin.Telephone)
                 break;
             case 1:
                 res.redirect("/staff")
@@ -198,23 +198,13 @@ app.get('/recherche', (req, res) => {
 
 //livre
 app.get('/livres/:isbn', (req, res) => {
-
-       /**
-     * Il faut  change cette parite en MongoDB
-     */
-    /*
-    var isbn = req.params.isbn;
-    var sql =  "select * from livres where isbn =" +"'" +isbn+"'" +";";
-    db.query(sql, function (err, result) {
-        if (err) {
-            result.render("404.ejs");
-        } else {
-            res.render('livres.ejs', { livre: result });
+    Livres.find({ISBN: req.params.isbn}, function(err,donneesLivre){
+        try{
+            res.render("Livres", {livre:donneesLivre})
+        }catch(err){
+            console.log(err);
         }
     });
-    */
-
-    res.render('livres.ejs');
 });
 
 //page gestion
