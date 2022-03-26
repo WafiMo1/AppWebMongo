@@ -8,6 +8,7 @@ const Utilisateurs = require ('./models/Utilisateurs');
 const path = require('path');
 
 
+
 const { check, validationResult }= require ('express-validator');
 
 const bodyParser = require('body-parser');
@@ -35,15 +36,21 @@ app.use(bodyParser.urlencoded({
  }));
 app.use(bodyParser.json());
 
+var loginedUser = null;
+
 //page Acceuil
 app.get('/',(req,res) => {
-    res.render('Acceuil');
+    res.render('Acceuil', {loginedUser: loginedUser});
 });
 
 
 //Page register and login
 app.get('/login', async (req, res) => {
-    res.render('login');
+    if (loginedUser != null){
+        res.redirect("/logout")
+    }else{
+        res.render('login' , {loginedUser: loginedUser});
+    }  
 });
 
 app.post('/login', async (req, res) => {
@@ -90,7 +97,7 @@ app.post('/login', async (req, res) => {
             return res.status(422).end('user exist')
         }
         console.log('Utilisateur cree')    
-        res.redirect("/")                 
+        res.render('Acceuil', {loginedUser: loginedUser});                
              
     }//End of register  
 
@@ -120,9 +127,10 @@ app.post('/login', async (req, res) => {
         if (!isPasswordValid) {
             return res.status(422).send('wrong password')
         }
+        loginedUser = userLogin;
         switch (userLogin.Droit_id){
             case 99: 
-                res.redirect("/admin")
+                res.redirect("/gestion")
                 break;
             case 0: 
                 res.redirect("/profils/" + userLogin.Telephone)
@@ -138,6 +146,11 @@ app.post('/login', async (req, res) => {
    
 });//end of post
 
+app.get('/logout', (req,res)=>{
+    loginedUser = null;
+    res.redirect("/") 
+})
+
 
 //profil fait Mohamed Wafi
 app.get('/profils/:profil', (req, res) => {
@@ -148,7 +161,7 @@ app.get('/profils/:profil', (req, res) => {
      Utilisateurs.find({ Telephone: telUser}, function (err, result) {
          //En cas d'erreur
         if (err) Console.Log(err);
-        res.render('Profil.ejs', {profil: result})
+        res.render('Profil.ejs', {profil: result, loginedUser: loginedUser})
        
        });
 
@@ -158,7 +171,7 @@ app.get('/profils/:profil', (req, res) => {
 
 app.get('/Modifier', (req, res) => {
 
-     res.render('ModifierProfil');
+     res.render('ModifierProfil',{loginedUser: loginedUser});
 
     
 });
@@ -185,7 +198,7 @@ app.get('/recherche', (req, res) => {
 
         Livres.find({}, function(err,livres){
             try{
-                res.render("Recherche", {livresTab:livres})
+                res.render("Recherche", {livresTab:livres, loginedUser: loginedUser})
             }catch(err){
                 console.log(err);
             }
@@ -197,7 +210,7 @@ app.get('/recherche', (req, res) => {
 app.get('/livres/:isbn', (req, res) => {
     Livres.find({ISBN: req.params.isbn}, function(err,donneesLivre){
         try{
-            res.render("Livres", {livre:donneesLivre})
+            res.render("Livres", {livre:donneesLivre, loginedUser: loginedUser})
         }catch(err){
             console.log(err);
         }
@@ -212,7 +225,7 @@ app.get('/gestion', async (req, res) => {
                 try{
                     Emprunts.find({},function(err,emprunts){
                         try{
-                            res.render('Gestion',{utilisateurs: utilisateurs, livres: livres, emprunts: emprunts});
+                            res.render('Gestion',{utilisateurs: utilisateurs, livres: livres, emprunts: emprunts, loginedUser: loginedUser});
                         }catch(err){
                             res.status(450).end(err)
                         }
