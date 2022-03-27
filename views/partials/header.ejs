@@ -10,7 +10,8 @@
         <ul>
         <li id="login"><a href="/login">Login</a> </li> 
         <!--Lorsque Modifier Profil est sélectionné-->
-        <li  id="modifierProfil"><a href="/Modifier">Modifier</a></li>   
+        <li  id="modifierProfil"><a href="/Modifier">Modifier les informations</a></li>   
+        <li  id="modifierMotDePasse"><a href="/ModifierMotDePasse">Modifier le mot de passe</a></li>  
         <li id="deconnection"><a href="/">Déconnexion</a></li>
         
         
@@ -27,12 +28,14 @@
                 console.log(window.location.href);
                 document.getElementById("deconnection").hidden = true; 
                 document.getElementById("login").hidden = false;
-                document.getElementById("modifierProfil").hidden = true;                 
+                document.getElementById("modifierProfil").hidden = true;         
+                document.getElementById("modifierMotDePasse").hidden = true;          
             }else{
                 //not in profil
                 document.getElementById("deconnection").hidden = false;
                 document.getElementById("login").hidden = true;  
                 document.getElementById("modifierProfil").hidden = false;  
+                document.getElementById("modifierMotDePasse").hidden = false;  
             }
         </script>
 </header>

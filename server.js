@@ -183,6 +183,7 @@ app.post('/Modifier', urlencodeParser, (req, res)=> {
             console.log(err)
         }
         console.log("Utilisateur mis à jour")
+        res.json('Votre profil a été mis à jour')
     })     
 });
     
