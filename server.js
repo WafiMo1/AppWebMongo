@@ -128,8 +128,9 @@ app.post('/', async (req, res) => {
 */
 
 
+// DÉBUT DE LA PARTIE DE MOHAMED WAFI
 
-//profil fait Mohamed Wafi
+//TROUVER LE PROFIL D'UN USER- MOHAMED WAFI
 app.get('/profils/:profil', (req, res) => {
     //D'abord, on déclare idUser qui va être l'élément saisi par l'utilisateur (donc les paramètres de la requête)
     var telUser=req.params.profil;
@@ -146,7 +147,7 @@ app.get('/profils/:profil', (req, res) => {
 
     });
 
-
+//MISE À JOUR DES INFORMATIONS- MOHAMED WAFI
 app.get('/Modifier', (req, res) => {
     // On effectue une recherche dans la BD de l'utilisateur ayant le ID connecté pour remplir les champs vides de la page ModifierProfil
     Utilisateurs.findById(idUserActuel, function (err, result) {
@@ -167,10 +168,10 @@ app.get('/Modifier', (req, res) => {
 });
 
 app.post('/Modifier', urlencodeParser, (req, res)=> {
-    // IL VA TE RESTER À AFFICHER LE USER DANS LA PAGE MODIFIER PROFIL EN PRENANT LE ID DE L'USER
+    
     console.log(idUserActuel);
-
-    //console.log(req.body);
+    //Lorsque le client finit de remplir le formulaire, il fait un post. Ce post va prendre les informations que le client a saisi
+    //puis faire la mise à jour du compte utilisateur dans la BD mongo
     Utilisateurs.findOneAndUpdate({_id:idUserActuel},{
         Nom: req.body.nomModifie, 
         Prenom: req.body.prenomModifie, 
@@ -185,7 +186,16 @@ app.post('/Modifier', urlencodeParser, (req, res)=> {
     })     
 });
     
+//MISE À JOUR DU MOT DE PASSE- MOHAMED WAFI
+app.get('/ModifierMotDePasse',(req, res) => {
 
+});
+
+app.post('/ModifierMotDePasse',urlencodeParser,(req, res) => {
+
+});
+
+// FIN DE LA PARTIE DE MOHAMED WAFI
 app.get('/recherche', (req, res) => {  
     /**
      * Il faut  change cette partie en MongoDB
