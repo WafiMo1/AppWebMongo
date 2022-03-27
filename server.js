@@ -16,7 +16,8 @@ const app = express();
 const port = 4000
 const { is } = require("express/lib/request");
 const { Console } = require("console");
-
+//Ceci est une variable globale qui va stocket le id de l'utilisateur connecté afin de permettre la modification de ses informations
+var idUserActuel;
 
 
 app.use(express.json())
@@ -138,8 +139,8 @@ app.get('/profils/:profil', (req, res) => {
          //En cas d'erreur
         if (err) Console.Log(err);
         res.render('Profil.ejs', {profil: result})
-         console.log(result[0]._id);
-       
+        //Lorsque l'utilisateur est connecté, on stocke son ID pour pouvoir le réutiliser dans la modification des informations
+        idUserActuel=result[0]._id;
        });
 
 
@@ -147,29 +148,43 @@ app.get('/profils/:profil', (req, res) => {
 
 
 app.get('/Modifier', (req, res) => {
-
-     res.render('ModifierProfil');
+    // On effectue une recherche dans la BD de l'utilisateur ayant le ID connecté pour remplir les champs vides de la page ModifierProfil
+    Utilisateurs.findById(idUserActuel, function (err, result) {
+    // On déclare le user recherché avec ses attributs  
+        var user = {
+            email: result.Email,
+            name: result.Nom,
+            prenom: result.Prenom,
+            telephone: result.Telephone,
+            photo: result.Photo
+        }
+       console.log(user);
+       //On passe le user cherché à la page ejs pour remplir les champs vides avec les informations de ce dernier
+       res.render('ModifierProfil.ejs', {user: user})
+    });
+  
     
 });
 
 app.post('/Modifier', urlencodeParser, (req, res)=> {
-    userActuel= conservationInfosUser();
-    var idUser=userActuel._id;
-    console.log(req.body);
-    Utilisateurs.findByIdAndUpdate({_id:idUser},{
-        Nom: req.body.nomModifie,
-        Prenom: req.body.prenomModifie,
-        Telephone: req.body.telephoneModifie,
-        Email: req.body.emailModifie,
-        Photo: req.body.photoModifie,  
-    }) 
+    // IL VA TE RESTER À AFFICHER LE USER DANS LA PAGE MODIFIER PROFIL EN PRENANT LE ID DE L'USER
+    console.log(idUserActuel);
+
+    //console.log(req.body);
+    Utilisateurs.findOneAndUpdate({_id:idUserActuel},{
+        Nom: req.body.nomModifie, 
+        Prenom: req.body.prenomModifie, 
+        Telephone: req.body.telephoneModifie, 
+        Email: req.body.emailModifie, 
+        Photo: req.body.photoModifie,}, 
+        (err)=>{
+        if (err){
+            console.log(err)
+        }
+        console.log("Utilisateur mis à jour")
+    })     
 });
-
-function conservationInfosUser(){
-
-}
-   
- 
+    
 
 app.get('/recherche', (req, res) => {  
     /**
