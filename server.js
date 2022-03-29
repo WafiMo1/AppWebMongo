@@ -12,6 +12,7 @@ const path = require('path');
 // const mutler= require('mutler');à
 // const chargerImage=mutler({dest:'/uploads/'})
 
+
 const { check, validationResult }= require ('express-validator');
 
 const bodyParser = require('body-parser');
@@ -42,15 +43,21 @@ app.use(bodyParser.urlencoded({
  }));
 app.use(bodyParser.json());
 
+var loginedUser = null;
+
 //page Acceuil
 app.get('/',(req,res) => {
-    res.render('Acceuil');
+    res.render('Acceuil', {loginedUser: loginedUser});
 });
 
 
 //Page register and login
 app.get('/login', async (req, res) => {
-    res.render('login');
+    if (loginedUser != null){
+        res.redirect("/logout")
+    }else{
+        res.render('login' , {loginedUser: loginedUser});
+    }  
 });
 
 app.post('/login', async (req, res) => {
@@ -97,7 +104,7 @@ app.post('/login', async (req, res) => {
             return res.status(422).end('user exist')
         }
         console.log('Utilisateur cree')    
-        res.redirect("/")                 
+        res.render('Acceuil', {loginedUser: loginedUser});                
              
     }//End of register  
 
@@ -127,12 +134,13 @@ app.post('/login', async (req, res) => {
         if (!isPasswordValid) {
             return res.status(422).send('wrong password')
         }
+        loginedUser = userLogin;
         switch (userLogin.Droit_id){
             case 99: 
-                res.redirect("/admin")
+                res.redirect("/gestion")
                 break;
             case 0: 
-                res.redirect("/utilisateur")
+                res.redirect("/profils/" + userLogin.Telephone)
                 break;
             case 1:
                 res.redirect("/staff")
@@ -145,7 +153,14 @@ app.post('/login', async (req, res) => {
    
 });//end of post
 
-//register and login sql
+
+app.get('/logout', (req,res)=>{
+    loginedUser = null;
+    res.redirect("/") 
+})
+
+
+
 
 
 
@@ -162,9 +177,14 @@ app.get('/profils/:profil', (req, res) => {
      Utilisateurs.find({ Telephone: telUser}, function (err, result) {
          //En cas d'erreur
         if (err) Console.Log(err);
+
+        //res.render('Profil.ejs', {profil: result, loginedUser: loginedUser})
+       
+
         res.render('Profil.ejs', {profil: result})
         //Lorsque l'utilisateur est connecté, on stocke son ID pour pouvoir le réutiliser dans la modification des informations
         idUserActuel=result[0]._id;
+
        });
 
 
@@ -188,12 +208,25 @@ app.get('/Modifier', (req, res) => {
     });
   
 
-    
+
+     //res.render('ModifierProfil',{loginedUser: loginedUser});
+
+
 
     
 });
 
 app.post('/Modifier', urlencodeParser, (req, res)=> {
+
+    userActuel= conservationInfosUser();
+    var idUser=userActuel._id;
+    Utilisateurs.findByIdAndUpdate({_id:idUser},{
+        Nom: req.body.nomModifie,
+        Prenom: req.body.prenomModifie,
+        Telephone: req.body.telephoneModifie,
+        Email: req.body.emailModifie,
+        Photo: req.body.photoModifie,  
+    }) 
     
     console.log(idUserActuel);
     //Lorsque le client finit de remplir le formulaire, il fait un post. Ce post va prendre les informations que le client a saisi
@@ -212,6 +245,7 @@ app.post('/Modifier', urlencodeParser, (req, res)=> {
         console.log("Utilisateur mis à jour")
         res.json('Votre profil a été mis à jour')
     })     
+
 });
     
 //MISE À JOUR DU MOT DE PASSE- MOHAMED WAFI
@@ -228,8 +262,7 @@ app.get('/recherche', (req, res) => {
 
         Livres.find({}, function(err,livres){
             try{
-                console.log("Livre:", livres);
-                res.render("Recherche", {livresTab:livres})
+                res.render("Recherche", {livresTab:livres, loginedUser: loginedUser})
             }catch(err){
                 console.log(err);
             }
@@ -239,23 +272,13 @@ app.get('/recherche', (req, res) => {
 
 //livre
 app.get('/livres/:isbn', (req, res) => {
-
-       /**
-     * Il faut  change cette parite en MongoDB
-     */
-    /*
-    var isbn = req.params.isbn;
-    var sql =  "select * from livres where isbn =" +"'" +isbn+"'" +";";
-    db.query(sql, function (err, result) {
-        if (err) {
-            result.render("404.ejs");
-        } else {
-            res.render('livres.ejs', { livre: result });
+    Livres.find({ISBN: req.params.isbn}, function(err,donneesLivre){
+        try{
+            res.render("Livres", {livre:donneesLivre, loginedUser: loginedUser})
+        }catch(err){
+            console.log(err);
         }
     });
-    */
-
-    res.render('livres.ejs');
 });
 
 //page gestion
@@ -266,22 +289,16 @@ app.get('/gestion', async (req, res) => {
                 try{
                     Emprunts.find({},function(err,emprunts){
                         try{
-                            //console.log(emprunts)
-                            
-
-                            res.render('Gestion',{utilisateurs: utilisateurs, livres: livres, emprunts: emprunts});
+                            res.render('Gestion',{utilisateurs: utilisateurs, livres: livres, emprunts: emprunts, loginedUser: loginedUser});
                         }catch(err){
-                            console.log(err)
                             res.status(450).end(err)
                         }
                     })
                 }catch(err){
-                    console.log(err)
                     res.status(450).end(err)
                 }
             })
         }catch(err){
-            console.log(err)
             res.status(450).end(err)
         }
     })

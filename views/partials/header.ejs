@@ -6,13 +6,24 @@
         <li><a href="/recherche">Recherche</a></li>
         
         <!-- Début du menu déroulant -->
-        <li class="logoP"><img src="/Images/profile.png" alt="Profil" class="logo">
+        <li class="logoP">
+            <% if (loginedUser == null){ %>
+                <input type="hidden" id="isLogin" value="false">
+                <img src="/Images/profile.png" alt="Profil" class="logo">
+            <% } else{ %>
+                <input type="hidden" id="isLogin" value="true">
+                <img src=<%=loginedUser.Photo%>  alt="Profil" class="logo">
+            <%} %>
+             
         <ul>
         <li id="login"><a href="/login">Login</a> </li> 
         <!--Lorsque Modifier Profil est sélectionné-->
+
+
         <li  id="modifierProfil"><a href="/Modifier">Modifier les informations</a></li>   
         <li  id="modifierMotDePasse"><a href="/ModifierMotDePasse">Modifier le mot de passe</a></li>  
         <li id="deconnection"><a href="/">Déconnexion</a></li>
+
         
         
         </ul> 
@@ -21,11 +32,11 @@
         </nav>
 
         <script>
+            
             //Lorsque le URL contient /Profils/, cela signifie que l'utilisateur a réussi à se connecter, donc il peut se déconnecter
             //Et le contraire est aussi valable
-            if (!window.location.href.includes("/Profils/")){
+             if (document.getElementById("isLogin").value == "false"){
                 //profil
-                console.log(window.location.href);
                 document.getElementById("deconnection").hidden = true; 
                 document.getElementById("login").hidden = false;
                 document.getElementById("modifierProfil").hidden = true;         
