@@ -5,9 +5,15 @@ const Emprunts = require ('./models/Emprunts');
 const Livres = require ('./models/Livres');
 const Reservations = require ('./models/Reservations');
 const Utilisateurs = require ('./models/Utilisateurs');
+
 const path = require('path');
 
+//Va servir à upload l'image
+// const mutler= require('mutler');à
+// const chargerImage=mutler({dest:'/uploads/'})
+
 const { check, validationResult }= require ('express-validator');
+
 const bodyParser = require('body-parser');
 var urlencodeParser= bodyParser.urlencoded({extended: true});
 
@@ -47,77 +53,95 @@ app.get('/login', async (req, res) => {
     res.render('login');
 });
 
-/*
-//register and login
-app.post('/', async (req, res) => {
+app.post('/login', async (req, res) => {
     const dataReceived = req.body
     //console.log(dataReceived);
 
     //register
     if (dataReceived.option == "signUp"){
-        //check valide
-        if (!dataReceived.username){
-            return res.status(422).end('username is required')
-        }
-
-        if (!dataReceived.password){
-            return res.status(422).end('password is required')
-        }
-
-        if (!dataReceived.email){
+        
+    //double check valide backend
+        if (!dataReceived.signUpEmail){
             return res.status(422).end('email is required')
         }
-        //res.send('post checked')
-        
-        //put new user data to mongodb
-        try{
-            const user = await User.create({
-            username: dataReceived.username,
-            password: dataReceived.password,
-            email: dataReceived.email  
-        })
-        console.log('Utilisateur cree')    
-        res.redirect("/Liste")
+        if (!dataReceived.signUpPassword){
+            return res.status(422).end('password is required')
+        }
+        if (!dataReceived.signUpNom){
+            return res.status(422).end('name is required')
+        }
+        if (!dataReceived.signUpPrenom){
+            return res.status(422).end('Firstname is required')
+        }
+        if (!dataReceived.signUpTel){
+            return res.status(422).end('tel is required')
+        }
 
+        //prepare all data need to create a new user                         
+        const rand = Math.floor(Math.random() * 12) + 1;//random un image de profil
+        //put new user data to mongodb  
+        try{
+            Utilisateurs.create({
+                Nom: dataReceived.signUpNom,
+                Prenom: dataReceived.signUpPrenom,
+                Telephone: dataReceived.signUpTel,
+                Email: dataReceived.signUpEmail,
+                Password: dataReceived.signUpPassword,
+                Photo: "\/Images\/Profil\/"+ rand +".png",
+                MaxPret: 5,
+                NbPret: 0,
+                Droit_id: 0                            
+            })                   
         }catch(err){
             console.log(err)
             return res.status(422).end('user exist')
-        }         
+        }
+        console.log('Utilisateur cree')    
+        res.redirect("/")                 
+             
     }//End of register  
 
     //login
     if (dataReceived.option == "signIn"){
         //check data received valide
         const dataReceived = req.body       
-        if (!dataReceived.username){
+        if (!dataReceived.signInEmail){
             return res.status(422).end('username is required')
         }
 
-        if (!dataReceived.password){
+        if (!dataReceived.signInPassword){
             return res.status(422).end('password is required')
         }
-        //console.log("login post checked")
-
         //find user with same name
-        const userLogin = await User.findOne({
-            username: dataReceived.username
+        const userLogin = await Utilisateurs.findOne({
+            Email: dataReceived.signInEmail
         })
         if (!userLogin) { 
-            return res.status(422).send({ message: 'user not exist'})
+            return res.status(422).send('user not exist')
         }
-        //compaire password
         const isPasswordValid = require('bcrypt').compareSync(
-            dataReceived.password,
-            userLogin.password
+            dataReceived.signInPassword,
+            userLogin.Password
         )
+        
         if (!isPasswordValid) {
-            return res.status(422).send({ message: 'wrong password' })
+            return res.status(422).send('wrong password')
         }
-
-        res.redirect("/Liste")
+        switch (userLogin.Droit_id){
+            case 99: 
+                res.redirect("/admin")
+                break;
+            case 0: 
+                res.redirect("/utilisateur")
+                break;
+            case 1:
+                res.redirect("/staff")
+                break;
+            default:
+                res.status(423).end("Droit n'existe pas")
+        }
         //end of login
     }
-
    
 });//end of post
 
@@ -125,7 +149,6 @@ app.post('/', async (req, res) => {
 
 
 
-*/
 
 
 // DÉBUT DE LA PARTIE DE MOHAMED WAFI
@@ -164,6 +187,9 @@ app.get('/Modifier', (req, res) => {
        res.render('ModifierProfil.ejs', {user: user})
     });
   
+
+    
+
     
 });
 
@@ -177,6 +203,7 @@ app.post('/Modifier', urlencodeParser, (req, res)=> {
         Prenom: req.body.prenomModifie, 
         Telephone: req.body.telephoneModifie, 
         Email: req.body.emailModifie, 
+        //Modifier photo à revoir, (il faut prendre le chemin d'accès de l'image au complet)
         Photo: req.body.photoModifie,}, 
         (err)=>{
         if (err){
@@ -198,22 +225,17 @@ app.post('/ModifierMotDePasse',urlencodeParser,(req, res) => {
 
 // FIN DE LA PARTIE DE MOHAMED WAFI
 app.get('/recherche', (req, res) => {  
-    /**
-     * Il faut  change cette partie en MongoDB
-     */
-    /*
-    try{
-        let query = "SELECT ISBN, Titre, Photo FROM LIVRES"
-        db.query(query, function (err, result) {
-            res.render('recherche', {livresTab: result})
+
+        Livres.find({}, function(err,livres){
+            try{
+                console.log("Livre:", livres);
+                res.render("Recherche", {livresTab:livres})
+            }catch(err){
+                console.log(err);
+            }
         });
-        
-    }catch(err){
-        console.log(err);
-    }
-    */  
-    res.render('recherche')
-})
+  
+});
 
 //livre
 app.get('/livres/:isbn', (req, res) => {
@@ -235,6 +257,39 @@ app.get('/livres/:isbn', (req, res) => {
 
     res.render('livres.ejs');
 });
+
+//page gestion
+app.get('/gestion', async (req, res) => {
+    Utilisateurs.find({},function(err,utilisateurs){
+        try{
+            Livres.find({},function(err,livres){
+                try{
+                    Emprunts.find({},function(err,emprunts){
+                        try{
+                            //console.log(emprunts)
+                            
+
+                            res.render('Gestion',{utilisateurs: utilisateurs, livres: livres, emprunts: emprunts});
+                        }catch(err){
+                            console.log(err)
+                            res.status(450).end(err)
+                        }
+                    })
+                }catch(err){
+                    console.log(err)
+                    res.status(450).end(err)
+                }
+            })
+        }catch(err){
+            console.log(err)
+            res.status(450).end(err)
+        }
+    })
+  
+
+    
+});
+
 
 
 app.listen(port, function(err){
