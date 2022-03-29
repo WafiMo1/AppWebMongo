@@ -229,8 +229,12 @@ app.post('/livres/:isbn', (req, res) => {
     livreReservee.save(function (err) {
         if (err) console.log(err);
     });
-    //return res.status(422).end('username is required')
+    //return res.status(422).end('username is required') reserved once
     //res.render("Reservations", livreReservee)
+    // if user is not logged in, redirect him to the login page 
+    // if the book is reserved with the id, it can only be reserved once (alert, bool, redirect)
+    // subtract the available number for the reserved book (if 0 blha blha blah, bool)
+    // -from the book page if the available amount is zero in the desc then disable the button or send a message
 });
 
 //page gestion
