@@ -49,7 +49,12 @@
 
         </tr>
         <tr>
-          <td><Button>Reserver le livre</Button></td>
+          <form action="#" method="post">
+            <td>
+              <input type="submit" value="Réserver le livre">
+              <input type="hidden" value="<%= livre[0]._id %>" name="livre_id" id="livre_id">
+            </td>
+          </form>
         </tr>
       </table>
     </div>    

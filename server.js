@@ -217,6 +217,22 @@ app.get('/livres/:isbn', (req, res) => {
     });
 });
 
+app.post('/livres/:isbn', (req, res) => {
+    const date = Date.now()
+    const livreReservee = new Reservations(
+        
+        { DateReservation: date,
+          Livre_id: req.body.livre_id,
+          Utilisateur_id: loginedUser._id
+        }
+    );
+    livreReservee.save(function (err) {
+        if (err) console.log(err);
+    });
+    //return res.status(422).end('username is required')
+    //res.render("Reservations", livreReservee)
+});
+
 //page gestion
 app.get('/gestion', async (req, res) => {
     Utilisateurs.find({},function(err,utilisateurs){
