@@ -23,23 +23,23 @@
 
     <form id="MiseAJourInfos" method="post" action="/Modifier">
     <label for="nom">Nom: </label>
-    <input type="text" name="nomModifie" id="nomModifie">
+    <input type="text" name="nomModifie" id="nomModifie" value="<%= user.name %>">
     <br>
     <br>
     <label for="prenom">Prénom: </label>
-    <input type="text" name="prenomModifie" id="prenomModifie">
+    <input type="text" name="prenomModifie" id="prenomModifie" value="<%= user.prenom %>">
     <br>
     <br>
     <label for="telephone">Téléphone: </label>
-    <input type="text" name="telephoneModifie" id="telephoneModifie">
+    <input type="text" name="telephoneModifie" id="telephoneModifie" value="<%= user.telephone %>">
     <br>
     <br>
     <label for="email">Email: </label>
-    <input type="text" name="emailModifie" id="emailModifie">
+    <input type="text" name="emailModifie" id="emailModifie" value="<%= user.email %>">
     <br>
     <br>
-    <label for="photo">Photo: </label>
-    <input type="file" name="photoModifie" id="photoModifie">
+   <label for="photo">Photo: </label>
+    <input type="file" name="photoModifie" id="photoModifie" value="<%= user.photo %>">
 
     <input type="submit">
     
