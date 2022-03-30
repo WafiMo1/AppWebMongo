@@ -13,6 +13,7 @@ const app = express();
 const port = 4000
 const { is } = require("express/lib/request");
 const { Console } = require("console");
+const { title } = require('process');
 
 app.use(express.json())
 app.use(express.urlencoded())
@@ -174,10 +175,18 @@ app.get('/recherche', (req, res) => {
 });
 
 app.post('/recherche', async (req, res) => {
-    Livres.find({Titre:{$regex:req.body.SearchInput}}, function(err,livres){
+    var recherche =  {$regex:req.body.SearchInput};
+    /* Titre.toLowerCase(); */
+    //Titre = Titre.toLowerCase();
+    //recherche = recherche.toLowerCase();
+//Livres.find({'Titre': {'$regex' : {$regex:req.body.SearchInput} }, $options: 'i'}, function(err,livres){
+    Livres.find({Titre: {$regex:recherche, '$options': 'i'}}, function(err,livres){
         try{
+            /* if(Livres.Titre.localeCompare(recherche, { sensitivity: 'accent' }))
+            { */
             console.log(livres)
             res.render("Recherche", {livresTab:livres})
+            /* } */
         }catch(err){
             console.log(err);
         }
