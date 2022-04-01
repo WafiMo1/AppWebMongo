@@ -136,14 +136,12 @@ app.post('/login', async (req, res) => {
         }
         loginedUser = userLogin;
         switch (userLogin.Droit_id){
-            case 99: 
-                res.redirect("/gestion")
-                break;
             case 0: 
-                res.redirect("/profils/" + userLogin.Telephone)
+                res.redirect("/profil")
                 break;
             case 1:
-                res.redirect("/staff")
+            case 99:
+                res.redirect("/gestion")
                 break;
             default:
                 res.status(423).end("Droit n'existe pas")
