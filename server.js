@@ -44,10 +44,8 @@ app.get('/login', async (req, res) => {
 app.post('/login', async (req, res) => {
     const dataReceived = req.body
     //console.log(dataReceived);
-
     //register
-    if (dataReceived.option == "signUp"){
-        
+       if (dataReceived.option == "signUp"){
     //double check valide backend
         if (!dataReceived.signUpEmail){
             return res.status(422).end('email is required')
@@ -67,7 +65,7 @@ app.post('/login', async (req, res) => {
 
         //prepare all data need to create a new user                         
         const rand = Math.floor(Math.random() * 12) + 1;//random un image de profil
-        //put new user data to mongodb  
+        //put new user data to mongodb 
         try{
             Utilisateurs.create({
                 Nom: dataReceived.signUpNom,
@@ -79,15 +77,30 @@ app.post('/login', async (req, res) => {
                 MaxPret: 5,
                 NbPret: 0,
                 Droit_id: 0                            
-            })                   
-        }catch(err){
-            console.log(err)
-            return res.status(422).end('user exist')
+            })
+
+            console.log('Utilisateur cree')    
+            loginedUser = await Utilisateurs.findOne({
+                Email: dataReceived.signUpEmail
+            })       
+            res.render('Acceuil', {loginedUser: loginedUser});        
+
+        } catch(err){
+            
         }
+<<<<<<< Updated upstream
         console.log('Utilisateur cree')    
         res.redirect("/")                 
              
     }//End of register  
+=======
+            
+                     
+
+        
+    }//End of register
+
+>>>>>>> Stashed changes
 
     //login
     if (dataReceived.option == "signIn"){
@@ -116,21 +129,24 @@ app.post('/login', async (req, res) => {
             return res.status(422).send('wrong password')
         }
         switch (userLogin.Droit_id){
+<<<<<<< Updated upstream
             case 99: 
                 res.redirect("/admin")
                 break;
+=======
+>>>>>>> Stashed changes
             case 0: 
                 res.redirect("/utilisateur")
                 break;
             case 1:
-                res.redirect("/staff")
+            case 99:     
+                res.redirect("/gestion")
                 break;
             default:
                 res.status(423).end("Droit n'existe pas")
         }
         //end of login
     }
-   
 });//end of post
 
 
@@ -149,6 +165,11 @@ app.get('/profils/:profil', (req, res) => {
 
 //res.render('profil.ejs', {profil: result});
 
+<<<<<<< Updated upstream
+=======
+app.get('/Modifier', (req, res) => {
+     res.render('ModifierProfil',{loginedUser: loginedUser}); 
+>>>>>>> Stashed changes
 });
 
 app.get('/roro', (req, res) => {
@@ -204,16 +225,26 @@ app.get('/livres/:isbn', (req, res) => {
 
 //page gestion
 app.get('/gestion', async (req, res) => {
-    Utilisateurs.find({},function(err,utilisateurs){
-        try{
-            Livres.find({},function(err,livres){
+    if (loginedUser != null){
+        if (loginedUser.Droit_id == 99 || loginedUser.Droit_id == 1){//only for admin or staff
+            Utilisateurs.find({},function(err,utilisateurs){
                 try{
-                    Emprunts.find({},function(err,emprunts){
+                    Livres.find({},function(err,livres){
                         try{
+<<<<<<< Updated upstream
                             //console.log(emprunts)
                             
 
                             res.render('Gestion',{utilisateurs: utilisateurs, livres: livres, emprunts: emprunts});
+=======
+                            Emprunts.find({},function(err,emprunts){
+                                try{
+                                    res.render('Gestion',{utilisateurs: utilisateurs, livres: livres, emprunts: emprunts, loginedUser: loginedUser});
+                                }catch(err){
+                                    res.status(450).end(err)
+                                }
+                            })
+>>>>>>> Stashed changes
                         }catch(err){
                             console.log(err)
                             res.status(450).end(err)
@@ -224,14 +255,19 @@ app.get('/gestion', async (req, res) => {
                     res.status(450).end(err)
                 }
             })
+<<<<<<< Updated upstream
         }catch(err){
             console.log(err)
             res.status(450).end(err)
+=======
+        }else{
+            res.status(403).end("vous n'avez pas le droit")
+>>>>>>> Stashed changes
         }
-    })
-  
-
-    
+   
+    }else{
+        res.status(403).end("vous n'avez pas le droit")
+    }
 });
 
 

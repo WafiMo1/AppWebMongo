@@ -3,12 +3,17 @@
     <head>
         <%- include ('../views/partials/header.ejs') %>
     <link rel="stylesheet" href="/CSS/style.css">
+    <title>Gestion</title>
     </head>
 
 
     <body>
+<<<<<<< Updated upstream
         <br><br><br><br><br><br><br><br><br>
         <div>
+=======
+        <!-- <div>
+>>>>>>> Stashed changes
            <h2>Emprunts du livres</h2> 
             <div>
                 <!-- <h4>Livres</h4>
@@ -106,22 +111,48 @@
            </table>
 
         </div>
+ -->
+
+        <h2>Bonjour <%=loginedUser.Prenom%> <%=loginedUser.Nom%></h2>
+        <br>
+        <div>
+            <h3>Choisir un option</h3>
+        </div>
+        <div>
+            <button>Modifier les informations du client</button>
+        </div>
+        <div>
+            <button>Réserver les livres</button>
+        </div>
+        <div>
+            <button>Annuler les réservations du livre</button>
+        </div>
+        <div>
+            <button>Prêter les livres </button>
+        </div>
+        <div>
+            <button>Retourner les livres </button>
+        </div>
+        <div>
+            <button>Gestion du livre </button>
+        </div>
+        <div>
+            <button>Facturation des clients</button>
+        </div>
+        <div>
+            <% if (loginedUser.Droit_id == 99 ){ %>
+                <button id="gestionEmployee">Gestion des employées</button>
+            <% } %>
+        </div>
 
 
 
 
-        
+        <script>
 
 
-
-
-
-
-
-
-
-
-
+            
+        </script>
 
 
     </body>
