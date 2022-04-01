@@ -210,7 +210,10 @@ app.post('/Modifier', urlencodeParser, (req, res) => {
         //Modifier photo à revoir, (il faut prendre le chemin d'accès de l'image au complet)
         Photo: req.body.photoModifie
         
+    }, function(err,result){
+        if(err){console (err)}
     });
+
 
     console.log("Utilisateur mis à jour")
     res.redirect('/')
