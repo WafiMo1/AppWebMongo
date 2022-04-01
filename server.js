@@ -206,7 +206,7 @@ app.post('/Modifier', urlencodeParser, (req, res) => {
         Telephone: req.body.telephoneModifie,
         Email: req.body.emailModifie,
         //Modifier photo à revoir, (il faut prendre le chemin d'accès de l'image au complet)
-        Photo: req.body.photoModifie
+        //Photo: req.body.photoModifie
         
     }, function(err,result){
         if(err){console (err)}
