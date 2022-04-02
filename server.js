@@ -173,27 +173,38 @@ app.get('/recherche', (req, res) => {
             }
         });        
 });
-
 app.post('/recherche', async (req, res) => {
-    var recherche =  {$regex:req.body.SearchInput};
-    /* Titre.toLowerCase(); */
-    //Titre = Titre.toLowerCase();
-    //recherche = recherche.toLowerCase();
-//Livres.find({'Titre': {'$regex' : {$regex:req.body.SearchInput} }, $options: 'i'}, function(err,livres){
-    Livres.find({Titre: {$regex:recherche, '$options': 'i'}}, function(err,livres){
+    //Livres.find({Titre: {$regex: recherche}}, function(err,livres){
+    Livres.find({ Titre: new RegExp(req.body.SearchInput, "i") }, function(err,livres){
         try{
-            /* if(Livres.Titre.localeCompare(recherche, { sensitivity: 'accent' }))
-            { */
             console.log(livres)
             res.render("Recherche", {livresTab:livres})
-            /* } */
+        }catch(err){
+            console.log(err);
+        }
+    });
+});//end of post
+
+/* app.post('/recherche', async (req, res) => {
+    var recherche =  {$regex:req.body.SearchInput};
+     Titre.toLowerCase(); 
+    //Titre = Titre.toLowerCase();
+    //recherche = recherche.toLowerCase();
+//Livres.find({Titre: {$regex : {$regex:req.body.SearchInput} }}, function(err,livres){
+    Livres.find({Titre: {$regex:recherche}}, function(err,livres){
+        try{
+             if(Livres.Titre.localeCompare(recherche, { sensitivity: 'accent' }))
+            { 
+            console.log(livres)
+            res.render("Recherche", {livresTab:livres})
+             } 
         }catch(err){
             console.log(err);
         }
     });
    
    
-});//end of post
+});//end of post */
 
 
 //livre
