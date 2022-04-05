@@ -173,7 +173,7 @@ app.get('/recherche', (req, res) => {
             }
         });        
 });
-app.post('/recherche', async (req, res) => {
+app.post('/recherche', async (req, res) => { 
     //Livres.find({Titre: {$regex: recherche}}, function(err,livres){
     Livres.find({ Titre: new RegExp(req.body.SearchInput, "i") }, function(err,livres){
         try{
