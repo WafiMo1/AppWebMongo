@@ -87,10 +87,20 @@ app.post('/login', async (req, res) => {
             return res.status(422).end('tel is required')
         }
 
+        //verify if user exist
+        const userSignUpEmail = await Utilisateurs.findOne({
+            Email: dataReceived.signUpEmail
+        })
+        const userSignUpTel = await Utilisateurs.findOne({
+            Telephone: dataReceived.signUpTel
+        })
+        if (userSignUpEmail || userSignUpTel){
+            return res.status(422).end('Utilisateur existe')
+        }
+
         //prepare all data need to create a new user                         
         const rand = Math.floor(Math.random() * 12) + 1;//random un image de profil
         //put new user data to mongodb  
-        try {
             Utilisateurs.create({
                 Nom: dataReceived.signUpNom,
                 Prenom: dataReceived.signUpPrenom,
@@ -101,14 +111,12 @@ app.post('/login', async (req, res) => {
                 MaxPret: 5,
                 NbPret: 0,
                 Droit_id: 0
+            }, function(err, newUser){
+                if (err) throw err;
+                console.log('Utilisateur cree')
+                loginedUser = newUser;
+                res.redirect('/');
             })
-        } catch (err) {
-            console.log(err)
-            return res.status(422).end('user exist')
-        }
-        console.log('Utilisateur cree')
-        res.render('Acceuil', { loginedUser: loginedUser });
-
     }//End of register  
 
     //login
