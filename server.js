@@ -240,7 +240,9 @@ app.post('/ModifierMotDePasse', urlencodeParser, (req, res) => {
             //On dirait que ce code ne s'exécute pas, le mot de passe ne se met pas à jour
             Utilisateurs.findOneAndUpdate({ _id: loginedUser._id }, {
                 Password:req.body.nvxMdp  
-            });
+            }, function(err,result){
+                if(err){console (err)}
+            })
             console.log("le mot de passe a été mis à jour")
             console.log("Nouveau mot de passe : "+loginedUser.Password);
             
