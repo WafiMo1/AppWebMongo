@@ -20,7 +20,12 @@
         .bouttonMettreAJour{
             padding-left: 100px;
         }
-        
+        .listeLivresEmpruntes{
+            padding-left: 1000px;
+            padding-bottom: 200px;
+            position: absolute;
+            top: 90px;
+        }
     </style>
 
     <body class="body">
@@ -61,11 +66,46 @@
 
        </div>
        
-            
-            
-
-
         </form>
+
+        <div class="listeLivresEmpruntes">
+
+            <table>
+                <th>ISBN</th>
+                <th>Titre</th>
+                <th>Auteur</th>
+                <th>Date de prêt</th>
+                <th>Date de retour prévue</th>
+                <%for(var i=0; i<livresEmpruntes.length; i++) {%>
+                       <!-- UN LIVRE -->
+                    <tr>
+                        <!-- CHAQUE ATTRIBUT DU LIVRE -->
+                        <td><%=livresEmpruntes[i].isbn%></td>
+                        <td><%=livresEmpruntes[i].titre%></td>
+                        <td><%=livresEmpruntes[i].auteur%></td>
+                        <td><%=livresEmpruntes[i].datePret%></td>
+                        <td> <%=livresEmpruntes[i].dateRetour%></td>
+    
+                    </tr>
+
+                    <%}%>
+
+            </table>
+          
+           
+                
+              
+              
+               
+
+
+                
+            
+
+
+
+                    
+        </div>
 
     </body>
     <footer class="f">

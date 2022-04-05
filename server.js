@@ -138,8 +138,8 @@ app.post('/login', async (req, res) => {
             return res.status(422).send('wrong password')
         }
         loginedUser = userLogin;
-        switch (userLogin.Droit_id){
-            case 0: 
+        switch (userLogin.Droit_id) {
+            case 0:
                 res.redirect("/profil")
                 break;
             case 1:
@@ -164,9 +164,58 @@ app.get('/logout', (req, res) => {
 
 
 
-//TROUVER LE PROFIL D'UN USER- MOHAMED WAFI
+//TROUVER LE PROFIL D'UN USER ET AFFICHER LES EMPRUNTS- MOHAMED WAFI
 app.get('/profil', (req, res) => {
-    res.render('Profil.ejs', { loginedUser: loginedUser })
+    var listeLivresRetournes = new Array();
+    if (loginedUser != null) {
+
+        Emprunts.find({ Utilisateur_id: loginedUser._id }, function (err, livresEmpruntes) {
+            //DÉBUT remplissage liste de livres empruntés à retourner
+
+            //On parcoure les livres empruntés
+            for (var z = 0; z < livresEmpruntes.length; z++) {
+                console.log("Les ID des livres empruntés par le user: " + livresEmpruntes[z].Livre_id)
+                //On prend ces id et on va chercher le livre au complet dans la table Livres
+                Livres.find({ _id: livresEmpruntes[z].Livre_id }, function (err, ElementListeLivres) {
+
+                    //On parcoure les livres avec les attributs au complet
+                    for (var j = 0; j < ElementListeLivres.length; j++) {
+                        console.log("Les attributs au complet des livres empruntés: " + ElementListeLivres[j])
+
+                        //Déclaration des éléments à afficher sur la page
+                        var Titre = ElementListeLivres[j].Titre;
+                        var ISBN = ElementListeLivres[j].ISBN;
+                        var DateDeRetour = livresEmpruntes[z].DateRetourPrevu
+                        var DateDePret = livresEmpruntes[z].DatePret
+                        var Auteur = ElementListeLivres[j].Auteur;
+
+                        //Déclaration de l'objet livre à afficher sur la page profil
+                        let livreAfficher = {
+                            titre: Titre,
+                            isbn: ISBN,
+                            dateRetour: DateDeRetour,
+                            datePret: DateDePret,
+                            auteur: Auteur
+                        }
+                        //On ajoute ce livre dans la liste des livres à afficher
+                        listeLivresRetournes.push(livreAfficher);
+                    }
+                })
+            }
+            //FIN remplissage liste de livres empruntés à retourner
+
+            try {
+                res.render('Profil.ejs', { loginedUser: loginedUser, livresEmpruntes: listeLivresRetournes })
+            } catch (err) {
+                console.log(err);
+            }
+        });
+    } else {
+        res.redirect('/login');
+    }
+
+
+
 });
 
 
@@ -180,19 +229,19 @@ app.get('/Modifier', (req, res) => {
 });
 
 //DÉCLARATION MULTER
-        /* const multer = require("multer");
-        app.use(express.static(__dirname + "./public"))
+/* const multer = require("multer");
+app.use(express.static(__dirname + "./public"))
 
-        var Storage = multer.diskStorage({  
-            destination: "./public/uploads/",
-            filename: (req, file, cb) => {
-                cb(null, file.fieldname + "_" + Date.now() + path.extname(file.originalname))
-            }
-        });
+var Storage = multer.diskStorage({  
+    destination: "./public/uploads/",
+    filename: (req, file, cb) => {
+        cb(null, file.fieldname + "_" + Date.now() + path.extname(file.originalname))
+    }
+});
 
-        var upload = multer({
-            storage: Storage
-            }).single('photoModifie') */
+var upload = multer({
+    storage: Storage
+    }).single('photoModifie') */
 
 app.post('/Modifier', urlencodeParser, (req, res) => {
 
@@ -207,9 +256,9 @@ app.post('/Modifier', urlencodeParser, (req, res) => {
         Email: req.body.emailModifie,
         //Modifier photo à revoir, (il faut prendre le chemin d'accès de l'image au complet)
         //Photo: req.body.photoModifie
-        
-    }, function(err,result){
-        if(err){console (err)}
+
+    }, function (err, result) {
+        if (err) { console(err) }
     });
 
 
@@ -232,22 +281,22 @@ app.post('/ModifierMotDePasse', urlencodeParser, (req, res) => {
         req.body.ancienMdp,
         loginedUser.Password
     )
-    console.log("Voici l'ancien mot de passe du user"+ loginedUser.Password);
+    console.log("Voici l'ancien mot de passe du user" + loginedUser.Password);
     if (ancienMotDepasseSaisi) {
         console.log("Le mdp saisi est bel et bien l'ancien")
         if (req.body.nvxMdp == req.body.nvxMdpDeuxiemeFois) {
             console.log("les deux nouveaux mots de passe concordent ");
-            
+
             //On dirait que ce code ne s'exécute pas, le mot de passe ne se met pas à jour
             Utilisateurs.findOneAndUpdate({ _id: loginedUser._id }, {
-                Password:req.body.nvxMdp   
-            }, function(err,result){
-                if(err){console (err)}
+                Password: req.body.nvxMdp
+            }, function (err, result) {
+                if (err) { console(err) }
             });
-            
+
             console.log("le mot de passe a été mis à jour")
-            console.log("Nouveau mot de passe : "+loginedUser.Password);
-            
+            console.log("Nouveau mot de passe : " + loginedUser.Password);
+
             res.json("Le mot de passe a été mis à jour")
         } else if (req.body.nvxMdp != req.body.nvxMdpDeuxiemeFois) {
             console.log("les deux nouveaux mots de passe ne sont pas les mêmes ");
@@ -261,10 +310,7 @@ app.post('/ModifierMotDePasse', urlencodeParser, (req, res) => {
 
 });
 
-app.get('/HistoriqueDesEmprunts',(req,res)=>{
 
-    res.render('HistoriqueEmprunts');
-});
 
 // FIN DE LA PARTIE DE MOHAMED WAFI
 app.get('/recherche', (req, res) => {
@@ -293,34 +339,34 @@ app.get('/livres/:isbn', (req, res) => {
 //page gestion
 //page gestion
 app.get('/gestion', async (req, res) => {
-    if (loginedUser != null){
-        if (loginedUser.Droit_id == 99 || loginedUser.Droit_id == 1){//only for admin or staff
-            Utilisateurs.find({},function(err,utilisateurs){
-                try{
-                    Livres.find({},function(err,livres){
-                        try{
-                            Emprunts.find({},function(err,emprunts){
-                                try{
-                                    res.render('Gestion',{utilisateurs: utilisateurs, livres: livres, emprunts: emprunts, loginedUser: loginedUser});
-                                }catch(err){
+    if (loginedUser != null) {
+        if (loginedUser.Droit_id == 99 || loginedUser.Droit_id == 1) {//only for admin or staff
+            Utilisateurs.find({}, function (err, utilisateurs) {
+                try {
+                    Livres.find({}, function (err, livres) {
+                        try {
+                            Emprunts.find({}, function (err, emprunts) {
+                                try {
+                                    res.render('Gestion', { utilisateurs: utilisateurs, livres: livres, emprunts: emprunts, loginedUser: loginedUser });
+                                } catch (err) {
                                     res.status(450).end(err)
                                 }
                             })
-                        }catch(err){
+                        } catch (err) {
                             console.log(err)
                             res.status(450).end(err)
                         }
                     })
-                }catch(err){
+                } catch (err) {
                     console.log(err)
                     res.status(450).end(err)
                 }
             })
-        }else{
+        } else {
             res.status(403).end("vous n'avez pas le droit")
         }
-   
-    }else{
+
+    } else {
         res.status(403).end("vous n'avez pas le droit")
     }
 });
