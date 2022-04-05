@@ -138,15 +138,13 @@ app.post('/login', async (req, res) => {
             return res.status(422).send('wrong password')
         }
         loginedUser = userLogin;
-        switch (userLogin.Droit_id) {
-            case 99:
-                res.redirect("/gestion")
-                break;
-            case 0:
+        switch (userLogin.Droit_id){
+            case 0: 
                 res.redirect("/profil")
                 break;
             case 1:
-                res.redirect("/staff")
+            case 99:
+                res.redirect("/gestion")
                 break;
             default:
                 res.status(423).end("Droit n'existe pas")
@@ -293,30 +291,40 @@ app.get('/livres/:isbn', (req, res) => {
 });
 
 //page gestion
+//page gestion
 app.get('/gestion', async (req, res) => {
-    Utilisateurs.find({}, function (err, utilisateurs) {
-        try {
-            Livres.find({}, function (err, livres) {
-                try {
-                    Emprunts.find({}, function (err, emprunts) {
-                        try {
-                            res.render('Gestion', { utilisateurs: utilisateurs, livres: livres, emprunts: emprunts, loginedUser: loginedUser });
-                        } catch (err) {
+    if (loginedUser != null){
+        if (loginedUser.Droit_id == 99 || loginedUser.Droit_id == 1){//only for admin or staff
+            Utilisateurs.find({},function(err,utilisateurs){
+                try{
+                    Livres.find({},function(err,livres){
+                        try{
+                            Emprunts.find({},function(err,emprunts){
+                                try{
+                                    res.render('Gestion',{utilisateurs: utilisateurs, livres: livres, emprunts: emprunts, loginedUser: loginedUser});
+                                }catch(err){
+                                    res.status(450).end(err)
+                                }
+                            })
+                        }catch(err){
+                            console.log(err)
                             res.status(450).end(err)
                         }
                     })
-                } catch (err) {
+                }catch(err){
+                    console.log(err)
                     res.status(450).end(err)
                 }
             })
-        } catch (err) {
-            res.status(450).end(err)
+        }else{
+            res.status(403).end("vous n'avez pas le droit")
         }
-    })
-
-
-
+   
+    }else{
+        res.status(403).end("vous n'avez pas le droit")
+    }
 });
+
 
 
 
