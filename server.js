@@ -240,17 +240,19 @@ app.post('/ModifierMotDePasse', urlencodeParser, (req, res) => {
         req.body.ancienMdp,
         loginedUser.Password
     )
-    console.log(loginedUser.Password);
+    console.log("Voici l'ancien mot de passe du user"+ loginedUser.Password);
     if (ancienMotDepasseSaisi) {
         console.log("Le mdp saisi est bel et bien l'ancien")
         if (req.body.nvxMdp == req.body.nvxMdpDeuxiemeFois) {
             console.log("les deux nouveaux mots de passe concordent ");
-            var mdpNvx= require('bcrypt').hashSync(req.body.nvxMdp, 10)
-            console.log(mdpNvx)
+            
             //On dirait que ce code ne s'exécute pas, le mot de passe ne se met pas à jour
             Utilisateurs.findOneAndUpdate({ _id: loginedUser._id }, {
-                Password:mdpNvx    
+                Password:req.body.nvxMdp   
+            }, function(err,result){
+                if(err){console (err)}
             });
+            
             console.log("le mot de passe a été mis à jour")
             console.log("Nouveau mot de passe : "+loginedUser.Password);
             
