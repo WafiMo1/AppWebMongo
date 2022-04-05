@@ -218,23 +218,48 @@ app.get('/livres/:isbn', (req, res) => {
 });
 
 app.post('/livres/:isbn', (req, res) => {
-    const date = Date.now()
-    const livreReservee = new Reservations(
-        
-        { DateReservation: date,
-          Livre_id: req.body.livre_id,
-          Utilisateur_id: loginedUser._id
-        }
-    );
-    livreReservee.save(function (err) {
-        if (err) console.log(err);
-    });
-    //return res.status(422).end('username is required') reserved once
+    Reservations.findOne({ Livre_id : req.body.livre_id, Utilisateur_id: loginedUser._id }, function (err, livre) {
+        if(livre == null && req.body.livre_NbDisponible > 0){
+            const date = Date.now()
+            const livreReservee = new Reservations(
+                {
+                    DateReservation: date,
+                    Livre_id: req.body.livre_id,
+                    Utilisateur_id: loginedUser._id
+                }
+            );
+            livreReservee.save(function (err) {
+                if (err) console.log(err)
+                console.log("Le livre: " + req.body.livre_Titre + " a ete reserve")
+            });
+            Livres.findByIdAndUpdate(req.body.livre_id, { NbDisponible: req.body.livre_NbDisponible - 1 },
+                function (err, livre) {
+                    if (err) {
+                        console.log(err);
+                    }
+                })
+        }else console.log("Le livre: " + req.body.livre_Titre + " ne peut pas etre reserve")         
+    })
+
     //res.render("Reservations", livreReservee)
     // if user is not logged in, redirect him to the login page 
-    // if the book is reserved with the id, it can only be reserved once (alert, bool, redirect)
-    // subtract the available number for the reserved book (if 0 blha blha blah, bool)
     // -from the book page if the available amount is zero in the desc then disable the button or send a message
+});
+
+app.get('/reservations', (req, res) => {
+    Reservations.find({Utilisateur_id: loginedUser._id}, function(err,resLivres){
+        try{
+            Livres.find({_id: resLivres.Livre_id}, function(err,donneesLivre){
+                try{
+                    res.render("Reservations", {resInfo: resLivres, livres:donneesLivre, loginedUser: loginedUser})
+                }catch(err){
+                    console.log(err);
+                }
+            });
+        }catch(err){
+            console.log(err);
+        }
+    });
 });
 
 //page gestion

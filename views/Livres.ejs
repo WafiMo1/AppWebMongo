@@ -13,6 +13,12 @@
 
   <body>
     <br><br><br><br><br>
+    <!-- if sucess
+    <div class="container">
+      <h2>Alerts</h2>
+      <div class="alert alert-success">
+        <strong>Success!</strong> This alert box could indicate a successful or positive action.
+      </div> -->
     <h1 class="pagetitre"><%= livre[0].Titre %></h1>
     <br><br>
     <div class="livre" align="center">
@@ -45,14 +51,14 @@
               </tr>
             </table>
           </td>
-
-
         </tr>
         <tr>
           <form action="#" method="post">
             <td>
-              <input type="submit" value="Réserver le livre">
+              <input type="submit" value="Réserver le livre" id="btnReserver">
               <input type="hidden" value="<%= livre[0]._id %>" name="livre_id" id="livre_id">
+              <input type="hidden" value="<%= livre[0].Titre %>" name="livre_Titre" id="livre_Titre">
+              <input type="hidden" value="<%= livre[0].NbDisponible %>" name="livre_NbDisponible" id="livre_NbDisponible">
             </td>
           </form>
         </tr>

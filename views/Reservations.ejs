@@ -3,7 +3,9 @@
 // title, auteur, year and isbn, maison edition
 // redirect the user to the book info page when he clicks on the title
 // put a button to cancel his reservation in the table boon info with a post and correct
-//the current amount of available books -->
+// the current amount of available books 
+-- do the reservation time friday --another time
+-->
 <!DOCTYPE html>
 <html>
     <head>
@@ -20,20 +22,12 @@
                     <th>Auteur</th>
                     <th>Titre</th>
                     <th>MaisonEdition</th>
-                    <th>DateParution</th>                 
-                    <th>NbCopies</th>
-                    <th>NbDisponible</th>
-                    <th>Cout</th>
                     <% livres.forEach(livre => { %>
                         <tr>
                             <td><%=livre.ISBN %></td>
                             <td><%=livre.Auteur %></td>
                             <td><%=livre.Titre %></td>
                             <td><%=livre.MaisonEdition %></td>
-                            <td><%=livre.DateParution %></td>
-                            <td><%=livre.NbCopies %></td>
-                            <td><%=livre.NbDisponible %></td>
-                            <td><%=livre.Cout %></td>
                         </tr>
                     <% }) %>
 
