@@ -1,48 +1,118 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <%- include ('../views/partials/header.ejs') %>  
-        <link rel="stylesheet" href="/CSS/style.css">  
-    </head>
 
-    <body class="recherche">
-        <form class="recherche" >
-            <table class="tab">
-                <td style="width:600px"><input type="text" placeholder="Search..." name="search2"> 
-                    <button type="submit" style="width:auto">Search</button></td>
-            </table>
-        </form>
-        <br>
-          <div>
-                <table class="TabDesLivres">
-                            <% for(var i=0; i<livresTab.length; i++) {%>
-                                 <% if (i % 5 == 0){%>
-                                    <td class="recherche"> <% } %> 
-                                        <div id = "Unlivre">
-                                            <table class="Unlivre" >                                                 
-                                                <tr class="recherche" class="caseTabeLivre">
-                                                    <a href='/livres/<%=livresTab[i].ISBN %>'>
-                                                        <image class="imgRecherche" src= "<%=livresTab[i].Photo %>" aligne="middle">
-                                                    </a>    
-                                                </tr>
-                                                <td class="recherche"><a  class="titreLivreRecherche" href='/livres/<%=livresTab[i].ISBN %>'><%= livresTab[i].Titre %></a><br></td>
-                                            </table>
-                                        </div>
-                                      <% if (i % 5 == 4){%>
-                                    </td> <% } %> 
-                            <% } %>
-                </table>
-          </div>
+<head>
+    <%- include ('../views/partials/header.ejs') %>
+        <link rel="stylesheet" href="/CSS/style.css">
+</head>
+<body class="recherche">
+    
+    <form class="recherche" method="post" action="#">
+        <table class="tab">
+            <td style="width:600px">
+                <input type="text" class="SSS" placeholder="Search..." name="SearchInput" id="SearchInput">
+                <input id="SearchBook" type="submit"  style="width:auto" value="Search">
+            </td>
+        </table>
+    </form>
+    <br>
+    <div>
+        <table class="TabDesLivres">
+            <% for(var i=0; i<livresTab.length; i++) {%>
+                <% if (i % 5==0){%>
+                    <td class="recherche">
+                        <% } %>
+                            <div id="Unlivre">
+                                <table class="Unlivre">
+                                    <tr class="recherche" class="caseTabeLivre">
+                                        <a href='/livres/<%=livresTab[i].ISBN %>'>
+                                            <image class="imgRecherche" src="<%=livresTab[i].Photo %>" aligne="middle">
+                                        </a>
+                                    </tr>
+                                    <td class="recherche"><a class="titreLivreRecherche"
+                                            href='/livres/<%=livresTab[i].ISBN %>'>
+                                            <%= livresTab[i].Titre %>
+                                        </a><br></td>
+                                </table>
+                            </div>
+                            <% if (i % 5==4){%>
+                    </td>
+                    <% } %>
+                        <% } %>
+        </table>
+    </div>
 
-          <script>
-       
+    <!-- <script>
+        function good() {
 
-          </script>
+            let searchValue = document.getElementById("SearchInput").value;
+            console.log('aaa')
+
+            if (searchValue.length == 0) {
+                console.log("Riennnnnnnnnnnnnnnn!!!!!!!");
+            }
+            else {
+                for (var i = 0; i < livresTab.length; i++) {
+                    if (livresTab[i].Titre.Contains(searchValue)) {
+                        console.log(livresTab[i].Titre)
+                    }
+                }
+            }
 
 
-    </body>
-    <footer class="f">
-        <p>Author: Mebarkia Mohamed / Mohamed Wafi / Zhi Bo / Omar Khoudair</p>
-        <img src="/Images/logo.png" class="logo">
-    </footer>
+        } -->
+<!-- /*
+                        document.getElementById("SearchBook").addEventListener("click", () =>  {
+                        alert("aaa")
+                        let searchValue = document.getElementById("SearchInput").value;
+                        console.log('aaa')
+        
+                        if(searchValue.length == 0){
+                            console.log("Riennnnnnnnnnnnnnnn!!!!!!!");
+                        }
+                        else{
+                            let livreRecherche = livresTab.filter( function(err, livres){
+                                for(var i=0; i<livresTab.length; i++){
+                                    if(livresTab[i].Titre.Contains(searchValue)) {
+                                    livreRecherche[i] == livresTab[i];
+                                    }
+                                }
+                            
+                            });
+                        livresTab = livreRecherche;  
+                        }
+                        
+                    });
+                    
+                        
+                    
+                   */
+
+
+
+    </script>
+ -->
+
+ <script>
+    function good() {
+    let searchValue = document.getElementById("SearchInput").value;
+
+    if (searchValue.length > 0) {
+        Livres.find({ $text: { $search: searchValue } }, function (err, livres) {
+            try {
+                res.render("Recherche", { livresTab: livres })
+            } catch (err) {
+                console.log(err);
+            }
+        });
+    }
+}
+ </script>
+</body>
+<footer class="f">
+    <p>Author: Mebarkia Mohamed / Mohamed Wafi / Zhi Bo / Omar Khoudair</p>
+    <img src="/Images/logo.png" class="logo">
+</footer>
+
 </html>
+

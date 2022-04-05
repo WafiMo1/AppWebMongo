@@ -21,9 +21,9 @@ const app = express();
 const port = 4000
 const { is } = require("express/lib/request");
 const { Console } = require("console");
+const { title } = require('process');
 //Ceci est une variable globale qui va stocket le id de l'utilisateur connecté afin de permettre la modification de ses informations
 var idUserActuel;
-
 
 app.use(express.json())
 app.use(express.urlencoded())
@@ -191,6 +191,20 @@ app.get('/Modifier', (req, res) => {
         /* const multer = require("multer");
         app.use(express.static(__dirname + "./public"))
 
+
+app.get('/recherche', (req, res) => {
+
+  
+
+        Livres.find({}, function(err,livres){
+            try{
+                //console.log("Livre:", livres);
+                res.render("Recherche", {livresTab:livres})
+            }catch(err){
+                console.log(err);
+            }
+        });        
+
         var Storage = multer.diskStorage({  
             destination: "./public/uploads/",
             filename: (req, file, cb) => {
@@ -225,7 +239,41 @@ app.post('/Modifier', urlencodeParser, (req, res) => {
     res.redirect('/')
 
 
+
 });
+app.post('/recherche', async (req, res) => { 
+    //Livres.find({Titre: {$regex: recherche}}, function(err,livres){
+    Livres.find({ Titre: new RegExp(req.body.SearchInput, "i") }, function(err,livres){
+        try{
+            console.log(livres)
+            res.render("Recherche", {livresTab:livres})
+        }catch(err){
+            console.log(err);
+        }
+    });
+});//end of post
+
+/* app.post('/recherche', async (req, res) => {
+    var recherche =  {$regex:req.body.SearchInput};
+     Titre.toLowerCase(); 
+    //Titre = Titre.toLowerCase();
+    //recherche = recherche.toLowerCase();
+//Livres.find({Titre: {$regex : {$regex:req.body.SearchInput} }}, function(err,livres){
+    Livres.find({Titre: {$regex:recherche}}, function(err,livres){
+        try{
+             if(Livres.Titre.localeCompare(recherche, { sensitivity: 'accent' }))
+            { 
+            console.log(livres)
+            res.render("Recherche", {livresTab:livres})
+             } 
+        }catch(err){
+            console.log(err);
+        }
+    });
+   
+   
+});//end of post */
+
 
 //MISE À JOUR DU MOT DE PASSE- MOHAMED WAFI
 app.get('/ModifierMotDePasse', (req, res) => {
