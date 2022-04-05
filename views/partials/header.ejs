@@ -1,35 +1,56 @@
 <header>
-        <nav>
-        <ul>
-            <li> <img src="/Images/logo.png"></li>
+    <nav>
+    <ul>
+        <li> <img src="/Images/logo.png"></li>
         <li><a href="/">Home</a> </li>
         <li><a href="/recherche">Recherche</a></li>
-        
-        <!-- Début du menu déroulant -->
-        <li class="logoP"><img src="/Images/profile.png" alt="Profil" class="logo">
-        <ul>
-        <li id="login"><a href="/login">Login</a> </li> 
-        <li id="modifierProfil"><a href="/">Modifier profil</a></li>   
-        <li id="deconnection"><a href="/">Déconnexion</a></li>
-        
-        
-        </ul> 
+    </ul>
+    <!-- Début du menu déroulant -->
+    <li class="logoP">
+        <% if (loginedUser == null){ %>
+            <img src="/Images/profile.png" alt="Profil" class="logo">
+        <% } else{ %>
+            <img src=<%=loginedUser.Photo%>  alt="Profil" class="logo">
+        <%} %>
+         
+    <ul>
+        <% if (loginedUser == null){ %>    
+            <li id="login"><a href="/login">Login</a> </li> 
+        <% } else{ %>
+    <!--Lorsque Modifier Profil est sélectionné-->
 
-        </li></ul>
-        </nav>
+            <li  id="profil"><a href="/profil">Profil</a></li>   
+            <li  id="modifierProfil"><a href="/Modifier">Modifier les informations</a></li>   
+            <li  id="modifierMotDePasse"><a href="/ModifierMotDePasse">Modifier le mot de passe</a></li>  
+            <li  id="historiqueEmprunts"><a href="/HistoriqueDesEmprunts">Modifier les informations</a></li>  
 
-        <script>
-            if (!window.location.href.includes("/profils/")){
-                //profil
-                console.log(window.location.href);
-                document.getElementById("deconnection").hidden = true; 
-                document.getElementById("login").hidden = false;
-                document.getElementById("modifierProfil").hidden = true;                 
-            }else{
-                //not in profil
-                document.getElementById("deconnection").hidden = false;
-                document.getElementById("login").hidden = true;  
-                document.getElementById("modifierProfil").hidden = false;  
-            }
-        </script>
+            <li id="deconnection"><a href="/logout">Déconnexion</a></li>
+        <%} %>
+    
+    
+    </ul> 
+
+    </li></ul>
+    </nav>
+
+    <script>
+        
+        //Lorsque le URL contient /Profils/, cela signifie que l'utilisateur a réussi à se connecter, donc il peut se déconnecter
+        // //Et le contraire est aussi valable
+        //  if (document.getElementById("isLogin").value == "false"){
+        //     //profil
+        //     document.getElementById("deconnection").hidden = true; 
+        //     document.getElementById("login").hidden = false;
+        //     document.getElementById("modifierProfil").hidden = true;         
+        //     document.getElementById("modifierMotDePasse").hidden = true; 
+        //     document.getElementById('historiqueEmprunts').hidden=true;         
+        // }else{
+        //     //not in profil
+        //     document.getElementById("deconnection").hidden = false;
+        //     document.getElementById("login").hidden = true;  
+        //     document.getElementById("modifierProfil").hidden = false;  
+        //     document.getElementById("modifierMotDePasse").hidden = false;  
+        //     document.getElementById('historiqueEmprunts').hidden=false;    
+        // }
+    </script>
 </header>
