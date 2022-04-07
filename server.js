@@ -94,29 +94,29 @@ app.post('/login', async (req, res) => {
         const userSignUpTel = await Utilisateurs.findOne({
             Telephone: dataReceived.signUpTel
         })
-        if (userSignUpEmail || userSignUpTel){
+        if (userSignUpEmail || userSignUpTel) {
             return res.status(422).end('Utilisateur existe')
         }
 
         //prepare all data need to create a new user                         
         const rand = Math.floor(Math.random() * 12) + 1;//random un image de profil
         //put new user data to mongodb  
-            Utilisateurs.create({
-                Nom: dataReceived.signUpNom,
-                Prenom: dataReceived.signUpPrenom,
-                Telephone: dataReceived.signUpTel,
-                Email: dataReceived.signUpEmail,
-                Password: dataReceived.signUpPassword,
-                Photo: "\/Images\/Profil\/" + rand + ".png",
-                MaxPret: 5,
-                NbPret: 0,
-                Droit_id: 0
-            }, function(err, newUser){
-                if (err) throw err;
-                console.log('Utilisateur cree')
-                loginedUser = newUser;
-                res.redirect('/');
-            })
+        Utilisateurs.create({
+            Nom: dataReceived.signUpNom,
+            Prenom: dataReceived.signUpPrenom,
+            Telephone: dataReceived.signUpTel,
+            Email: dataReceived.signUpEmail,
+            Password: dataReceived.signUpPassword,
+            Photo: "\/Images\/Profil\/" + rand + ".png",
+            MaxPret: 5,
+            NbPret: 0,
+            Droit_id: 0
+        }, function (err, newUser) {
+            if (err) throw err;
+            console.log('Utilisateur cree')
+            loginedUser = newUser;
+            res.redirect('/');
+        })
     }//End of register  
 
     //login
@@ -146,8 +146,8 @@ app.post('/login', async (req, res) => {
             return res.status(422).send('wrong password')
         }
         loginedUser = userLogin;
-        switch (userLogin.Droit_id){
-            case 0: 
+        switch (userLogin.Droit_id) {
+            case 0:
                 res.redirect("/profil")
                 break;
             case 1:
@@ -188,33 +188,33 @@ app.get('/Modifier', (req, res) => {
 });
 
 //DÉCLARATION MULTER
-        /* const multer = require("multer");
-        app.use(express.static(__dirname + "./public"))
+/* const multer = require("multer");
+app.use(express.static(__dirname + "./public"))
 
 
 app.get('/recherche', (req, res) => {
 
-  
+ 
 
-        Livres.find({}, function(err,livres){
-            try{
-                //console.log("Livre:", livres);
-                res.render("Recherche", {livresTab:livres})
-            }catch(err){
-                console.log(err);
-            }
-        });        
+Livres.find({}, function(err,livres){
+    try{
+        //console.log("Livre:", livres);
+        res.render("Recherche", {livresTab:livres})
+    }catch(err){
+        console.log(err);
+    }
+});        
 
-        var Storage = multer.diskStorage({  
-            destination: "./public/uploads/",
-            filename: (req, file, cb) => {
-                cb(null, file.fieldname + "_" + Date.now() + path.extname(file.originalname))
-            }
-        });
+var Storage = multer.diskStorage({  
+    destination: "./public/uploads/",
+    filename: (req, file, cb) => {
+        cb(null, file.fieldname + "_" + Date.now() + path.extname(file.originalname))
+    }
+});
 
-        var upload = multer({
-            storage: Storage
-            }).single('photoModifie') */
+var upload = multer({
+    storage: Storage
+    }).single('photoModifie') */
 
 app.post('/Modifier', urlencodeParser, (req, res) => {
 
@@ -229,9 +229,9 @@ app.post('/Modifier', urlencodeParser, (req, res) => {
         Email: req.body.emailModifie,
         //Modifier photo à revoir, (il faut prendre le chemin d'accès de l'image au complet)
         //Photo: req.body.photoModifie
-        
-    }, function(err,result){
-        if(err){console (err)}
+
+    }, function (err, result) {
+        if (err) { console(err) }
     });
 
 
@@ -241,13 +241,13 @@ app.post('/Modifier', urlencodeParser, (req, res) => {
 
 
 });
-app.post('/recherche', async (req, res) => { 
+app.post('/recherche', async (req, res) => {
     //Livres.find({Titre: {$regex: recherche}}, function(err,livres){
-    Livres.find({ Titre: new RegExp(req.body.SearchInput, "i") }, function(err,livres){
-        try{
+    Livres.find({ Titre: new RegExp(req.body.SearchInput, "i") }, function (err, livres) {
+        try {
             console.log(livres)
-            res.render("Recherche", {livresTab:livres})
-        }catch(err){
+            res.render("Recherche", { livresTab: livres })
+        } catch (err) {
             console.log(err);
         }
     });
@@ -288,22 +288,22 @@ app.post('/ModifierMotDePasse', urlencodeParser, (req, res) => {
         req.body.ancienMdp,
         loginedUser.Password
     )
-    console.log("Voici l'ancien mot de passe du user"+ loginedUser.Password);
+    console.log("Voici l'ancien mot de passe du user" + loginedUser.Password);
     if (ancienMotDepasseSaisi) {
         console.log("Le mdp saisi est bel et bien l'ancien")
         if (req.body.nvxMdp == req.body.nvxMdpDeuxiemeFois) {
             console.log("les deux nouveaux mots de passe concordent ");
-            
+
             //On dirait que ce code ne s'exécute pas, le mot de passe ne se met pas à jour
             Utilisateurs.findOneAndUpdate({ _id: loginedUser._id }, {
-                Password:req.body.nvxMdp   
-            }, function(err,result){
-                if(err){console (err)}
+                Password: req.body.nvxMdp
+            }, function (err, result) {
+                if (err) { console(err) }
             });
-            
+
             console.log("le mot de passe a été mis à jour")
-            console.log("Nouveau mot de passe : "+loginedUser.Password);
-            
+            console.log("Nouveau mot de passe : " + loginedUser.Password);
+
             res.json("Le mot de passe a été mis à jour")
         } else if (req.body.nvxMdp != req.body.nvxMdpDeuxiemeFois) {
             console.log("les deux nouveaux mots de passe ne sont pas les mêmes ");
@@ -317,7 +317,7 @@ app.post('/ModifierMotDePasse', urlencodeParser, (req, res) => {
 
 });
 
-app.get('/HistoriqueDesEmprunts',(req,res)=>{
+app.get('/HistoriqueDesEmprunts', (req, res) => {
 
     res.render('HistoriqueEmprunts');
 });
@@ -346,40 +346,74 @@ app.get('/livres/:isbn', (req, res) => {
     });
 });
 
-//page gestion
+
 //page gestion
 app.get('/gestion', async (req, res) => {
-    if (loginedUser != null){
-        if (loginedUser.Droit_id == 99 || loginedUser.Droit_id == 1){//only for admin or staff
-            Utilisateurs.find({},function(err,utilisateurs){
-                try{
-                    Livres.find({},function(err,livres){
-                        try{
-                            Emprunts.find({},function(err,emprunts){
-                                try{
-                                    res.render('Gestion',{utilisateurs: utilisateurs, livres: livres, emprunts: emprunts, loginedUser: loginedUser});
-                                }catch(err){
+    if (loginedUser != null) {
+        if (loginedUser.Droit_id == 99 || loginedUser.Droit_id == 1) {//only for admin or staff
+            Utilisateurs.find({}, function (err, utilisateurs) {
+                try {
+                    Livres.find({}, function (err, livres) {
+                        try {
+                            Emprunts.find({}, function (err, emprunts) {
+                                try {
+                                    res.render('Gestion', { utilisateurs: utilisateurs, livres: livres, emprunts: emprunts, loginedUser: loginedUser });
+                                } catch (err) {
                                     res.status(450).end(err)
                                 }
                             })
-                        }catch(err){
+                        } catch (err) {
                             console.log(err)
                             res.status(450).end(err)
                         }
                     })
-                }catch(err){
+                } catch (err) {
                     console.log(err)
                     res.status(450).end(err)
                 }
             })
-        }else{
+        } else {
             res.status(403).end("vous n'avez pas le droit")
         }
-   
-    }else{
-        res.status(403).end("vous n'avez pas le droit")
+
+    } else {
+        res.redirect("/login")
     }
 });
+
+app.get('/gestion/emprunt', (req, res) => {
+    if (loginedUser != null) {
+        if (loginedUser.Droit_id == 99 || loginedUser.Droit_id == 1) {//only for admin or staff
+            let client = null;
+            res.render('EmpruntDuLivre', { loginedUser: loginedUser, client: client})
+        } else {
+            res.status(403).end("vous n'avez pas le droit")
+        }
+    } else {
+        res.redirect("/login")
+    }
+})
+
+app.post('/gestion/emprunt', async (req, res) => {
+    if (loginedUser != null) {
+        if (loginedUser.Droit_id == 99 || loginedUser.Droit_id == 1) {//only for admin or staff
+            
+            Utilisateurs.find({Telephone: req.body.telClient}, function (err, client) {
+                if (err) throw err;
+                console.log(client);
+                res.render('EmpruntDuLivre', { loginedUser: loginedUser, client: client})
+            });
+        } else {
+            res.status(403).end("vous n'avez pas le droit")
+        }
+    } else {
+        res.redirect("/login")
+    }
+})
+
+
+    
+
 
 
 

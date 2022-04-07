@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="/CSS/style.css">
+    </head>
+    <header>
+        <%- include ('../views/partials/header.ejs') %>
+    </header>
+
+    <body>
+        <h1>Emprunt du livre</h1>
+        <form id="formRechercheClient" action="#" method="post"> 
+            <label>Telephone du client : </label>
+            <input type="tel" id="telClient" name="telClient" placeholder="Telephone du client" maxlength="10">
+            <button type="button" id="btnRechercheClient">Recherche</button>
+        </form>
+        <% if (client != null){ %>
+            <% if (client.length != 0){ %>
+                <div>
+                    <p>Utilisateur trouvé : <%=client[0].Prenom%> <%=client[0].Nom %></p>
+                    <p>Telephone : <%=client[0].Telephone%></p>
+                    <p>Email : <%=client[0].Email%></p>
+                    <p>Nombre de pret : <%=client[0].NbPret%></p>
+                </div>
+                
+            <%  } else { %>
+                <p>Utilisateur non trouvé</p>
+            <%  } }%>  
+
+    </body>
+    <script>
+        document.getElementById('btnRechercheClient').addEventListener("click",()=>{
+            if (document.getElementById("telClient").value.trim() != ""){
+                document.getElementById('formRechercheClient').submit();
+            }  
+        })
+    </script>
+
+    <footer class="f">
+        
+    </footer>
+</html>
