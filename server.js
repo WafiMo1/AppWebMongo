@@ -341,16 +341,7 @@ app.get('/livres/:isbn', (req, res) => {
 app.get('/gestion', async (req, res) => {
     if (loginedUser != null) {
         if (loginedUser.Droit_id == 99 || loginedUser.Droit_id == 1) {//only for admin or staff
-            Utilisateurs.find({}, function (err, utilisateurs) {
-                if (err) throw err;
-                Livres.find({}, function (err, livres) {
-                    if (err) throw err;
-                    Emprunts.find({}, function (err, emprunts) {
-                        if (err) throw err;
-                        res.render('Gestion', { utilisateurs: utilisateurs, livres: livres, emprunts: emprunts, loginedUser: loginedUser });
-                    })
-                })
-            })
+                res.render('Gestion', {loginedUser: loginedUser });
         } else {
             res.status(403).end("vous n'avez pas le droit")
         }
@@ -379,7 +370,15 @@ app.post('/gestion/empruntretour', async (req, res) => {
             if (req.body.option == "RechercheClient") {//button clicked = RechercheClient
                 Utilisateurs.find({ Telephone: req.body.telClient }, function (err, client) {
                     if (err) throw err;
-                    res.render('EmpruntRetour', { loginedUser: loginedUser, client: client })
+                    Emprunts.find({ Utilisateur_id: client[0]._id }, function (err, historique) {
+                        if (err) throw err;
+                        Livres.find({}, function (err, livres) {
+                            if (err) throw err;
+                            res.render('EmpruntRetour', { loginedUser: loginedUser, client: client, emprunts: historique, livres: livres })
+                        })
+                    })
+
+                    
                 });
             }
             if (req.body.option == "EmpruntRetour") {//button clicked = EmpruntLivre

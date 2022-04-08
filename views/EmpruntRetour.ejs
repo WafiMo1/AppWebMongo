@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+        
         <link rel="stylesheet" href="/CSS/style.css">
     </head>
     <header>
@@ -46,6 +47,80 @@
             </form>
             <p id="noteEmprunt"></p>
 
+            
+            <hr>
+            <button id="btnAfficher">Afficher tous les historique du pret</button>
+
+            <div id="divHistorique" hidden="true">
+                <h3>Historique du pret</h3>
+                
+                <table>
+                    <tr>
+                        <th>ISBN</th>
+                        <th>Titre</th>
+                        <th>Auteur</th>
+                        <th>Date du pret</th>
+                        <th>Date de retour prevu</th>
+                        <th>Date de retour </th>
+                    </tr>
+                        
+                    <% emprunts.forEach(emprunt => { %>
+                        <tr>                    
+                            <% livres.forEach(livre => { %>
+                                <% if (emprunt.Livre_id.toString() == livre._id.toString()){ %>
+                                    <td><%= livre.ISBN %> </td>
+                                    <td><%= livre.Titre %> </td>
+                                    <td><%= livre.Auteur %> </td>
+                                    <% } %>
+                                <% }) %>
+                            <td><%= emprunt.DatePret.getDate()%>-<%= emprunt.DatePret.getMonth()+1 %>-<%= emprunt.DatePret.getFullYear()%></td>
+                            <td><%= emprunt.DateRetourPrevu.getDate()%>-<%= emprunt.DateRetourPrevu.getMonth()+1 %>-<%= emprunt.DateRetourPrevu.getFullYear()%></td>
+                            <% if (emprunt.DateRetour != null){  %>
+                                <td><%= emprunt.DateRetour.getDate()%>-<%= emprunt.DateRetour.getMonth()+1 %>-<%= emprunt.DateRetour.getFullYear()%></td>
+                            <% } else{  %>
+                                <td>Non retourné</td>
+                            <% }  %>                        
+                        </tr>
+                    <% }) %>
+                </table>
+
+            </div>
+
+            <div id="divNonRetourne">
+                <h3>Livres non retourné</h3>
+                
+                <table>
+                    <tr>
+                        <th>ISBN</th>
+                        <th>Titre</th>
+                        <th>Auteur</th>
+                        <th>Date du pret</th>
+                        <th>Date de retour prevu</th>
+                        <th>Date de retour </th>
+                    </tr>
+                        
+                    <% emprunts.forEach(emprunt => { %>
+                        <% if (emprunt.DateRetour == null){  %>
+                        <tr>                                                     
+                            <% livres.forEach(livre => { %>                               
+                                <% if (emprunt.Livre_id.toString() == livre._id.toString()){ %>
+                                    <td><%= livre.ISBN %> </td>
+                                    <td><%= livre.Titre %> </td>
+                                    <td><%= livre.Auteur %> </td>
+                                    <% } %>
+                                <% }) %>
+                            <td><%= emprunt.DatePret.getDate()%>-<%= emprunt.DatePret.getMonth()+1 %>-<%= emprunt.DatePret.getFullYear()%></td>
+                            <td><%= emprunt.DateRetourPrevu.getDate()%>-<%= emprunt.DateRetourPrevu.getMonth()+1 %>-<%= emprunt.DateRetourPrevu.getFullYear()%></td>
+                            <td>Non retourné</td>                   
+                        </tr>
+                        <% } %>
+                    <% }) %>
+                </table>
+
+            </div>
+
+
+
             <%  } else { %>
                 <p>Utilisateur non trouvé</p>
             <%  } %>             
@@ -88,6 +163,22 @@
             } else{
                 document.getElementById('formEmpruntLivre').submit();
             }
+
+        })
+
+        document.getElementById('btnAfficher').addEventListener("click",()=>{
+            if (document.getElementById('btnAfficher').innerHTML == "Afficher les livres non retourné"){
+                document.getElementById('divHistorique').hidden = true;
+                document.getElementById('divNonRetourne').hidden = false;                
+                document.getElementById('btnAfficher').innerHTML = "Afficher tous les historique du pret";
+ 
+            } else{
+                document.getElementById('btnAfficher').innerHTML = "Afficher les livres non retourné";
+                document.getElementById('divHistorique').hidden = false;
+                document.getElementById('divNonRetourne').hidden = true;  
+            }
+
+            
 
         })
 
