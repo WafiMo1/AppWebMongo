@@ -1,0 +1,45 @@
+<!-- 
+// reservation info
+// title, auteur, year and isbn, maison edition
+// redirect the user to the book info page when he clicks on the title
+// put a button to cancel his reservation in the table boon info with a post and correct
+// the current amount of available books 
+-- do the reservation time friday --another time
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include ('../views/partials/header.ejs') %>
+    <link rel="stylesheet" href="/CSS/style.css">
+    </head>
+    <body>
+        <div>
+           <h2>Réservation de livre(s)</h2> 
+            <div>
+                <h4>Livres</h4>
+                <table>
+                    <th>ISBN</th>
+                    <th>Auteur</th>
+                    <th>Titre</th>
+                    <th>MaisonEdition</th>
+                    <% livres.forEach(leLivre => { %>
+                        <% resInfo.forEach(leResInfo => { %>
+                            <% if(leLivre._id.toString() == leResInfo.Livre_id.toString()) { %>
+                                <tr>
+                                    <td><%=leLivre.ISBN %></td>
+                                    <td><%=leLivre.Auteur %></td>
+                                    <td><%=leLivre.Titre %></td>
+                                    <td><%=leLivre.MaisonEdition %></td>
+                                </tr>
+                            <% } %>
+                        <% }) %>
+                    <% }) %>
+
+                </table> 
+            </div>
+        </div>  
+    </body>
+    <footer class="f">
+        <%- include ('../views/partials/footer.ejs') %>
+    </footer>
+</html>

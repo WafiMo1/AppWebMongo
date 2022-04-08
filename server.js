@@ -46,8 +46,6 @@ var loginedUser = null;
 var listeLivresRetournes = new Array();
 
 
-
-
 //page Acceuil
 app.get('/', (req, res) => {
     res.render('Acceuil', { loginedUser: loginedUser });
@@ -381,6 +379,50 @@ app.get('/livres/:isbn', (req, res) => {
     });
 });
 
+
+app.post('/livres/:isbn', (req, res) => {
+    if(loginedUser == null) res.redirect("/login")
+    else {
+        Reservations.findOne({ Livre_id : req.body.livre_id, Utilisateur_id: loginedUser._id }, function (err, livre) {
+            if(livre == null && req.body.livre_NbDisponible > 0){
+                const date = Date.now()
+                const livreReservee = new Reservations(
+                    {
+                        DateReservation: date,
+                        Livre_id: req.body.livre_id,
+                        Utilisateur_id: loginedUser._id
+                    }
+                );
+                livreReservee.save(function (err) {
+                    if (err) console.log(err)
+                    console.log("Le livre: " + req.body.livre_Titre + " a ete reserve")
+                });
+                Livres.findByIdAndUpdate(req.body.livre_id, { NbDisponible: req.body.livre_NbDisponible - 1 },
+                    function (err, livre) {
+                        if (err) {
+                            console.log(err);
+                        }
+                    })
+            }else console.log("Le livre: " + req.body.livre_Titre + " ne peut pas etre reserve")         
+        })
+    }
+    
+
+    //res.render("Reservations", livreReservee)
+    // if user is not logged in, redirect him to the login page 
+    // -from the book page if the available amount is zero in the desc then disable the button or send a message
+});
+
+app.get('/reservations', (req, res) => {
+    if(loginedUser == null) res.redirect("/login")
+    Reservations.find({Utilisateur_id: loginedUser._id}, function(err,lesRes){
+        if (err) console.log(err)
+        Livres.find({}, function (err, donneesLivre) {
+            if (err) console.log(err)
+            res.render("Reservations", {resInfo : lesRes, livres : donneesLivre, loginedUser : loginedUser})
+        });
+    });
+});
 
 //page gestion
 app.get('/gestion', async (req, res) => {
