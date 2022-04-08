@@ -5,7 +5,7 @@ const Emprunts = require('./models/Emprunts');
 const Livres = require('./models/Livres');
 const Reservations = require('./models/Reservations');
 const Utilisateurs = require('./models/Utilisateurs');
-const Transactions = require('./models/Transaction'); 
+const Transactions = require('./models/Transaction');
 const path = require('path');
 
 var CryptoJS = require("crypto-js");
@@ -43,7 +43,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 var loginedUser = null;
-var listeLivresRetournes= new Array();
+var listeLivresRetournes = new Array();
 
 
 
@@ -169,12 +169,8 @@ app.get('/logout', (req, res) => {
 })
 
 // DÉBUT DE LA PARTIE DE MOHAMED WAFI
-
-
-
 //TROUVER LE PROFIL D'UN USER ET AFFICHER LES EMPRUNTS- MOHAMED WAFI
 app.get('/profil', (req, res) => {
-
 
     if (loginedUser != null) {
 
@@ -209,29 +205,19 @@ app.get('/profil', (req, res) => {
                         //On ajoute ce livre dans la liste des livres à afficher
                         listeLivresRetournes.push(livreAfficher);
                     }
+                    //LE TABLEAU EST BEL ET BIEN REMPLI DES LIVRES QUE JE VEUX AFFICHER AVEC LES ATTRIBUTS (VOIR APP.GET MODIFIER) MAIS SA NE S'AFFICHE PAS ICI
 
 
-                //LE TABLEAU EST BEL ET BIEN REMPLI DES LIVRES QUE JE VEUX AFFICHER AVEC LES ATTRIBUTS (VOIR APP.GET MODIFIER) MAIS SA NE S'AFFICHE PAS ICI
-                res.render('Profil.ejs', { loginedUser: loginedUser, listeLivresRetournes: listeLivresRetournes })
-                
                 })
             }
 
             //FIN remplissage liste de livres empruntés à retourner
-
-
-
         });
-
-
+        res.render('Profil.ejs', { loginedUser: loginedUser, listeLivresRetournes: listeLivresRetournes })
     } else {
         res.redirect('/login');
     }
-
 });
-
-
-
 
 //MISE À JOUR DES INFORMATIONS- MOHAMED WAFI
 app.get('/Modifier', (req, res) => {
@@ -245,19 +231,7 @@ app.get('/Modifier', (req, res) => {
 app.use(express.static(__dirname + "./public"))
 
 */
-app.get('/recherche', (req, res) => {
 
-
-
-    Livres.find({}, function (err, livres) {
-        try {
-            //console.log("Livre:", livres);
-            res.render("Recherche", { livresTab: livres, loginedUser: loginedUser })
-        } catch (err) {
-            console.log(err);
-        }
-    });
-});
 // var Storage = multer.diskStorage({  
 //     destination: "./public/uploads/",
 //     filename: (req, file, cb) => {
@@ -294,36 +268,6 @@ app.post('/Modifier', urlencodeParser, (req, res) => {
 
 
 });
-app.post('/recherche', async (req, res) => {
-    //Livres.find({Titre: {$regex: recherche}}, function(err,livres){
-    Livres.find({ Titre: new RegExp(req.body.SearchInput, "i") }, function (err, livres) {
-        if (err) throw err;
-        console.log(livres)
-        res.render("Recherche", { livresTab: livres, loginedUser: loginedUser })
-    });
-});//end of post
-
-/* app.post('/recherche', async (req, res) => {
-    var recherche =  {$regex:req.body.SearchInput};
-     Titre.toLowerCase(); 
-    //Titre = Titre.toLowerCase();
-    //recherche = recherche.toLowerCase();
-//Livres.find({Titre: {$regex : {$regex:req.body.SearchInput} }}, function(err,livres){
-    Livres.find({Titre: {$regex:recherche}}, function(err,livres){
-        try{
-             if(Livres.Titre.localeCompare(recherche, { sensitivity: 'accent' }))
-            { 
-            console.log(livres)
-            res.render("Recherche", {livresTab:livres})
-             } 
-        }catch(err){
-            console.log(err);
-        }
-    });
-   
-   
-});//end of post */
-
 
 //MISE À JOUR DU MOT DE PASSE- MOHAMED WAFI
 app.get('/ModifierMotDePasse', (req, res) => {
@@ -366,13 +310,56 @@ app.post('/ModifierMotDePasse', urlencodeParser, (req, res) => {
 
 
 });
+// FIN DE LA PARTIE DE MOHAMED WAFI
+
+app.get('/recherche', (req, res) => {
+    Livres.find({}, function (err, livres) {
+        try {
+            //console.log("Livre:", livres);
+            res.render("Recherche", { livresTab: livres, loginedUser: loginedUser })
+        } catch (err) {
+            console.log(err);
+        }
+    });
+});
+app.post('/recherche', async (req, res) => {
+    //Livres.find({Titre: {$regex: recherche}}, function(err,livres){
+    Livres.find({ Titre: new RegExp(req.body.SearchInput, "i") }, function (err, livres) {
+        if (err) throw err;
+        console.log(livres)
+        res.render("Recherche", { livresTab: livres, loginedUser: loginedUser })
+    });
+});//end of post
+
+/* app.post('/recherche', async (req, res) => {
+    var recherche =  {$regex:req.body.SearchInput};
+     Titre.toLowerCase(); 
+    //Titre = Titre.toLowerCase();
+    //recherche = recherche.toLowerCase();
+//Livres.find({Titre: {$regex : {$regex:req.body.SearchInput} }}, function(err,livres){
+    Livres.find({Titre: {$regex:recherche}}, function(err,livres){
+        try{
+             if(Livres.Titre.localeCompare(recherche, { sensitivity: 'accent' }))
+            { 
+            console.log(livres)
+            res.render("Recherche", {livresTab:livres})
+             } 
+        }catch(err){
+            console.log(err);
+        }
+    });
+   
+   
+});//end of post */
+
+
 
 app.get('/HistoriqueDesEmprunts', (req, res) => {
 
     res.render('HistoriqueEmprunts');
 });
 
-// FIN DE LA PARTIE DE MOHAMED WAFI
+
 app.get('/recherche', (req, res) => {
 
     Livres.find({}, function (err, livres) {
@@ -563,11 +550,11 @@ app.post('/gestion/empruntretour', async (req, res) => {
 })
 
 app.get('/gestion/transactions', async (req, res) => {
-    if(loginedUser != null){
-        if(loginedUser.Droit_id == 99 || loginedUser.Droit_id == 1){
-            res.render('Transactions',{loginedUser: loginedUser});        
+    if (loginedUser != null) {
+        if (loginedUser.Droit_id == 99 || loginedUser.Droit_id == 1) {
+            res.render('Transactions', { loginedUser: loginedUser });
         }
-    }else{
+    } else {
         res.redirect('/login');
     }
 });
