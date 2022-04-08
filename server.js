@@ -43,7 +43,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 var loginedUser = null;
-
+var listeLivresRetournes= new ArrayList();
 
 
 
@@ -172,9 +172,62 @@ app.get('/logout', (req, res) => {
 
 
 
-//TROUVER LE PROFIL D'UN USER- MOHAMED WAFI
+//TROUVER LE PROFIL D'UN USER ET AFFICHER LES EMPRUNTS- MOHAMED WAFI
 app.get('/profil', (req, res) => {
-    res.render('Profil.ejs', { loginedUser: loginedUser })
+
+
+    if (loginedUser != null) {
+
+        Emprunts.find({ Utilisateur_id: loginedUser._id }, function (err, livresEmpruntes) {
+            //DÉBUT remplissage liste de livres empruntés à retourner
+
+            //On parcoure les livres empruntés
+            for (var z = 0; z < livresEmpruntes.length; z++) {
+                console.log("Les ID des livres empruntés par le user: " + livresEmpruntes[z].Livre_id)
+                var DateDeRetour = livresEmpruntes[z].DateRetourPrevu
+                var DateDePret = livresEmpruntes[z].DatePret
+                //On prend ces id et on va chercher le livre au complet dans la table Livres
+                Livres.find({ _id: livresEmpruntes[z].Livre_id }, function (err, ElementListeLivres) {
+
+                    //On parcoure les livres avec les attributs au complet
+                    for (var j = 0; j < ElementListeLivres.length; j++) {
+                        console.log("Les attributs au complet des livres empruntés: " + ElementListeLivres[j])
+
+                        //Déclaration des éléments à afficher sur la page
+                        var Titre = ElementListeLivres[j].Titre;
+                        var ISBN = ElementListeLivres[j].ISBN;
+                        var Auteur = ElementListeLivres[j].Auteur;
+
+                        //Déclaration de l'objet livre à afficher sur la page profil
+                        let livreAfficher = {
+                            titre: Titre,
+                            isbn: ISBN,
+                            dateRetour: DateDeRetour,
+                            datePret: DateDePret,
+                            auteur: Auteur
+                        }
+                        //On ajoute ce livre dans la liste des livres à afficher
+                        listeLivresRetournes.push(livreAfficher);
+                    }
+
+
+                //LE TABLEAU EST BEL ET BIEN REMPLI DES LIVRES QUE JE VEUX AFFICHER AVEC LES ATTRIBUTS (VOIR APP.GET MODIFIER) MAIS SA NE S'AFFICHE PAS ICI
+                res.render('Profil.ejs', { loginedUser: loginedUser, listeLivresRetournes: listeLivresRetournes })
+                
+                })
+            }
+
+            //FIN remplissage liste de livres empruntés à retourner
+
+
+
+        });
+
+
+    } else {
+        res.redirect('/login');
+    }
+
 });
 
 
