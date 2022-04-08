@@ -5,7 +5,7 @@ const Emprunts = require('./models/Emprunts');
 const Livres = require('./models/Livres');
 const Reservations = require('./models/Reservations');
 const Utilisateurs = require('./models/Utilisateurs');
-
+const Transactions = require('./models/Transaction'); 
 const path = require('path');
 
 var CryptoJS = require("crypto-js");
@@ -244,30 +244,30 @@ app.get('/Modifier', (req, res) => {
 /* const multer = require("multer");
 app.use(express.static(__dirname + "./public"))
 
-
+*/
 app.get('/recherche', (req, res) => {
 
- 
 
-Livres.find({}, function(err,livres){
-    try{
-        //console.log("Livre:", livres);
-        res.render("Recherche", {livresTab:livres})
-    }catch(err){
-        console.log(err);
-    }
-});        
 
-var Storage = multer.diskStorage({  
-    destination: "./public/uploads/",
-    filename: (req, file, cb) => {
-        cb(null, file.fieldname + "_" + Date.now() + path.extname(file.originalname))
-    }
+    Livres.find({}, function (err, livres) {
+        try {
+            //console.log("Livre:", livres);
+            res.render("Recherche", { livresTab: livres, loginedUser: loginedUser })
+        } catch (err) {
+            console.log(err);
+        }
+    });
 });
+// var Storage = multer.diskStorage({  
+//     destination: "./public/uploads/",
+//     filename: (req, file, cb) => {
+//         cb(null, file.fieldname + "_" + Date.now() + path.extname(file.originalname))
+//     }
+// });
 
-var upload = multer({
-    storage: Storage
-    }).single('photoModifie') */
+// var upload = multer({
+//     storage: Storage
+//     }).single('photoModifie') 
 
 app.post('/Modifier', urlencodeParser, (req, res) => {
 
@@ -299,7 +299,7 @@ app.post('/recherche', async (req, res) => {
     Livres.find({ Titre: new RegExp(req.body.SearchInput, "i") }, function (err, livres) {
         if (err) throw err;
         console.log(livres)
-        res.render("Recherche", { livresTab: livres })
+        res.render("Recherche", { livresTab: livres, loginedUser: loginedUser })
     });
 });//end of post
 
@@ -562,6 +562,15 @@ app.post('/gestion/empruntretour', async (req, res) => {
     }
 })
 
+app.get('/gestion/transactions', async (req, res) => {
+    if(loginedUser != null){
+        if(loginedUser.Droit_id == 99 || loginedUser.Droit_id == 1){
+            res.render('Transactions',{loginedUser: loginedUser});        
+        }
+    }else{
+        res.redirect('/login');
+    }
+});
 
 
 
