@@ -5,7 +5,7 @@ const Emprunts = require('./models/Emprunts');
 const Livres = require('./models/Livres');
 const Reservations = require('./models/Reservations');
 const Utilisateurs = require('./models/Utilisateurs');
-
+const Transactions = require('./models/Transaction'); 
 const path = require('path');
 
 var CryptoJS = require("crypto-js");
@@ -509,6 +509,15 @@ app.post('/gestion/empruntretour', async (req, res) => {
     }
 })
 
+app.get('/gestion/transactions', async (req, res) => {
+    if(loginedUser != null){
+        if(loginedUser.Droit_id == 99 || loginedUser.Droit_id == 1){
+            res.render('Transactions',{loginedUser: loginedUser});        
+        }
+    }else{
+        res.redirect('/login');
+    }
+});
 
 
 
