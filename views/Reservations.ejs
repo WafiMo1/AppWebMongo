@@ -22,13 +22,17 @@
                     <th>Auteur</th>
                     <th>Titre</th>
                     <th>MaisonEdition</th>
-                    <% livres.forEach(livre => { %>
-                        <tr>
-                            <td><%=livre.ISBN %></td>
-                            <td><%=livre.Auteur %></td>
-                            <td><%=livre.Titre %></td>
-                            <td><%=livre.MaisonEdition %></td>
-                        </tr>
+                    <% livres.forEach(leLivre => { %>
+                        <% resInfo.forEach(leResInfo => { %>
+                            <% if(leLivre._id.toString() == leResInfo.Livre_id.toString()) { %>
+                                <tr>
+                                    <td><%=leLivre.ISBN %></td>
+                                    <td><%=leLivre.Auteur %></td>
+                                    <td><%=leLivre.Titre %></td>
+                                    <td><%=leLivre.MaisonEdition %></td>
+                                </tr>
+                            <% } %>
+                        <% }) %>
                     <% }) %>
 
                 </table> 
