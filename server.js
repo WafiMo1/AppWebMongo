@@ -43,7 +43,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 var loginedUser = null;
-
+var listeLivresRetournes = new Array();
 
 
 
@@ -166,7 +166,8 @@ app.get('/logout', (req, res) => {
 
 //TROUVER LE PROFIL D'UN USER ET AFFICHER LES EMPRUNTS- MOHAMED WAFI
 app.get('/profil', (req, res) => {
-    var listeLivresRetournes = new Array();
+
+
     if (loginedUser != null) {
 
         Emprunts.find({ Utilisateur_id: loginedUser._id }, function (err, livresEmpruntes) {
@@ -175,6 +176,8 @@ app.get('/profil', (req, res) => {
             //On parcoure les livres empruntés
             for (var z = 0; z < livresEmpruntes.length; z++) {
                 console.log("Les ID des livres empruntés par le user: " + livresEmpruntes[z].Livre_id)
+                var DateDeRetour = livresEmpruntes[z].DateRetourPrevu
+                var DateDePret = livresEmpruntes[z].DatePret
                 //On prend ces id et on va chercher le livre au complet dans la table Livres
                 Livres.find({ _id: livresEmpruntes[z].Livre_id }, function (err, ElementListeLivres) {
 
@@ -185,8 +188,6 @@ app.get('/profil', (req, res) => {
                         //Déclaration des éléments à afficher sur la page
                         var Titre = ElementListeLivres[j].Titre;
                         var ISBN = ElementListeLivres[j].ISBN;
-                        var DateDeRetour = livresEmpruntes[z].DateRetourPrevu
-                        var DateDePret = livresEmpruntes[z].DatePret
                         var Auteur = ElementListeLivres[j].Auteur;
 
                         //Déclaration de l'objet livre à afficher sur la page profil
@@ -200,29 +201,32 @@ app.get('/profil', (req, res) => {
                         //On ajoute ce livre dans la liste des livres à afficher
                         listeLivresRetournes.push(livreAfficher);
                     }
+
+
+                //LE TABLEAU EST BEL ET BIEN REMPLI DES LIVRES QUE JE VEUX AFFICHER AVEC LES ATTRIBUTS (VOIR APP.GET MODIFIER) MAIS SA NE S'AFFICHE PAS ICI
+                res.render('Profil.ejs', { loginedUser: loginedUser, listeLivresRetournes: listeLivresRetournes })
+                
                 })
             }
+
             //FIN remplissage liste de livres empruntés à retourner
 
-            try {
-                res.render('Profil.ejs', { loginedUser: loginedUser, livresEmpruntes: listeLivresRetournes })
-            } catch (err) {
-                console.log(err);
-            }
+
+
         });
+
+
     } else {
         res.redirect('/login');
     }
 
-
-
 });
-
-
-
 
 //MISE À JOUR DES INFORMATIONS- MOHAMED WAFI
 app.get('/Modifier', (req, res) => {
+    for (var i = 0; i < listeLivresRetournes.length; i++) {
+        console.log(listeLivresRetournes[i])
+    }
     //Correspond à l'ID de l'utilisateur connecté
     idUserActuel = loginedUser._id;
     res.render('ModifierProfil.ejs', { loginedUser: loginedUser })

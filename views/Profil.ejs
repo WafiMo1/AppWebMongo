@@ -76,15 +76,15 @@
                 <th>Auteur</th>
                 <th>Date de prêt</th>
                 <th>Date de retour prévue</th>
-                <%for(var i=0; i<livresEmpruntes.length; i++) {%>
+                <%for(var i=0; i<listeLivresRetournes.length; i++) {%>
                        <!-- UN LIVRE -->
                     <tr>
                         <!-- CHAQUE ATTRIBUT DU LIVRE -->
-                        <td><%=livresEmpruntes[i].isbn%></td>
-                        <td><%=livresEmpruntes[i].titre%></td>
-                        <td><%=livresEmpruntes[i].auteur%></td>
-                        <td><%=livresEmpruntes[i].datePret%></td>
-                        <td> <%=livresEmpruntes[i].dateRetour%></td>
+                        <td><%=listeLivresRetournes[i].isbn%></td>
+                        <td><%=listeLivresRetournes[i].titre%></td>
+                        <td><%=listeLivresRetournes[i].auteur%></td>
+                        <td><%=listeLivresRetournes[i].datePret%></td>
+                        <td> <%=listeLivresRetournes[i].dateRetour%></td>
     
                     </tr>
 
