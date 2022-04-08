@@ -4,7 +4,7 @@
         <link rel="stylesheet" href="/CSS/style.css">
     </head>
     <header>
-        <%- include ('../views/partials/header.ejs') %>
+        
     </header>
 
     <body>
@@ -12,6 +12,7 @@
         <form id="formRechercheClient" action="#" method="post"> 
             <label>Telephone du client : </label>
             <input type="tel" id="telClient" name="telClient" placeholder="Telephone du client" maxlength="10">
+            <input type="hidden" id="option" name="option" value="RechercheClient">
             <button type="button" id="btnRechercheClient">Recherche</button>
         </form>
         <% if (client != null){ %>
@@ -27,13 +28,37 @@
                 <p>Utilisateur non trouvé</p>
             <%  } }%>  
 
+            <form id="formEmpruntLivre" action="#" method="post"> 
+                <label>ISBN du livre: </label>
+                <input type="text" id="isbnLivre" name="isbnLivre" placeholder="ISBN du Livre">
+                <% if (client != null){ %>
+                    <% if (client.length != 0){ %>
+                        <input type="hidden" id="clientEmprunt" name="clientEmprunt" value=<%= client[0].id%>>
+                <%  } }%>  
+                <input type="hidden" id="option" name="option" value="EmpruntLivre">    
+                <button type="button" id="btnEmpruntLivre">Emprunt</button>
+            </form>
+
     </body>
     <script>
         document.getElementById('btnRechercheClient').addEventListener("click",()=>{
             if (document.getElementById("telClient").value.trim() != ""){
                 document.getElementById('formRechercheClient').submit();
+            } else{
+                alert("Entrer le numero du telephone pour un recherche du client");
             }  
         })
+        document.getElementById('btnEmpruntLivre').addEventListener("click",()=>{
+            if (document.getElementById("clientEmprunt") == null ){
+                alert("Il faut faire un recherche du client")
+            } else if (document.getElementById("isbnLivre").value.trim() == ""){
+                alert("Entrer ISBN du livre")
+            } else{
+                document.getElementById('formEmpruntLivre').submit();
+            }
+
+        })
+
     </script>
 
     <footer class="f">
