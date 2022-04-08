@@ -5,7 +5,7 @@ const Emprunts = require('./models/Emprunts');
 const Livres = require('./models/Livres');
 const Reservations = require('./models/Reservations');
 const Utilisateurs = require('./models/Utilisateurs');
-const Transactions = require('./models/Transaction');
+const Transactions = require('./models/Transactions'); 
 const path = require('path');
 
 var CryptoJS = require("crypto-js");
@@ -179,7 +179,7 @@ app.get('/profil', (req, res) => {
 
             //On parcoure les livres empruntés
             for (var z = 0; z < livresEmpruntes.length; z++) {
-                console.log("Les ID des livres empruntés par le user: " + livresEmpruntes[z].Livre_id)
+                // console.log("Les ID des livres empruntés par le user: " + livresEmpruntes[z].Livre_id)
                 var DateDeRetour = livresEmpruntes[z].DateRetourPrevu
                 var DateDePret = livresEmpruntes[z].DatePret
                 //On prend ces id et on va chercher le livre au complet dans la table Livres
@@ -187,7 +187,7 @@ app.get('/profil', (req, res) => {
 
                     //On parcoure les livres avec les attributs au complet
                     for (var j = 0; j < ElementListeLivres.length; j++) {
-                        console.log("Les attributs au complet des livres empruntés: " + ElementListeLivres[j])
+                        // console.log("Les attributs au complet des livres empruntés: " + ElementListeLivres[j])
 
                         //Déclaration des éléments à afficher sur la page
                         var Titre = ElementListeLivres[j].Titre;
@@ -208,6 +208,10 @@ app.get('/profil', (req, res) => {
                     //LE TABLEAU EST BEL ET BIEN REMPLI DES LIVRES QUE JE VEUX AFFICHER AVEC LES ATTRIBUTS (VOIR APP.GET MODIFIER) MAIS SA NE S'AFFICHE PAS ICI
 
 
+                //LE TABLEAU EST BEL ET BIEN REMPLI DES LIVRES QUE JE VEUX AFFICHER AVEC LES ATTRIBUTS (VOIR APP.GET MODIFIER) MAIS SA NE S'AFFICHE PAS ICI
+                console.log(listeLivresRetournes);
+                res.render('Profil.ejs', { loginedUser: loginedUser, listeLivresRetournes: listeLivresRetournes })
+                
                 })
             }
 
