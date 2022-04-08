@@ -244,12 +244,9 @@ app.post('/Modifier', urlencodeParser, (req, res) => {
 app.post('/recherche', async (req, res) => {
     //Livres.find({Titre: {$regex: recherche}}, function(err,livres){
     Livres.find({ Titre: new RegExp(req.body.SearchInput, "i") }, function (err, livres) {
-        try {
-            console.log(livres)
-            res.render("Recherche", { livresTab: livres })
-        } catch (err) {
-            console.log(err);
-        }
+        if (err) throw err;
+        console.log(livres)
+        res.render("Recherche", { livresTab: livres })
     });
 });//end of post
 
@@ -326,23 +323,16 @@ app.get('/HistoriqueDesEmprunts', (req, res) => {
 app.get('/recherche', (req, res) => {
 
     Livres.find({}, function (err, livres) {
-        try {
-            res.render("Recherche", { livresTab: livres, loginedUser: loginedUser })
-        } catch (err) {
-            console.log(err);
-        }
+        if (err) throw err;
+        res.render("Recherche", { livresTab: livres, loginedUser: loginedUser })
     });
-
 });
 
 //livre
 app.get('/livres/:isbn', (req, res) => {
     Livres.find({ ISBN: req.params.isbn }, function (err, donneesLivre) {
-        try {
-            res.render("Livres", { livre: donneesLivre, loginedUser: loginedUser })
-        } catch (err) {
-            console.log(err);
-        }
+        if (err) throw err;
+        res.render("Livres", { livre: donneesLivre, loginedUser: loginedUser })
     });
 });
 
@@ -352,40 +342,29 @@ app.get('/gestion', async (req, res) => {
     if (loginedUser != null) {
         if (loginedUser.Droit_id == 99 || loginedUser.Droit_id == 1) {//only for admin or staff
             Utilisateurs.find({}, function (err, utilisateurs) {
-                try {
-                    Livres.find({}, function (err, livres) {
-                        try {
-                            Emprunts.find({}, function (err, emprunts) {
-                                try {
-                                    res.render('Gestion', { utilisateurs: utilisateurs, livres: livres, emprunts: emprunts, loginedUser: loginedUser });
-                                } catch (err) {
-                                    res.status(450).end(err)
-                                }
-                            })
-                        } catch (err) {
-                            console.log(err)
-                            res.status(450).end(err)
-                        }
+                if (err) throw err;
+                Livres.find({}, function (err, livres) {
+                    if (err) throw err;
+                    Emprunts.find({}, function (err, emprunts) {
+                        if (err) throw err;
+                        res.render('Gestion', { utilisateurs: utilisateurs, livres: livres, emprunts: emprunts, loginedUser: loginedUser });
                     })
-                } catch (err) {
-                    console.log(err)
-                    res.status(450).end(err)
-                }
+                })
             })
         } else {
             res.status(403).end("vous n'avez pas le droit")
         }
-
     } else {
         res.redirect("/login")
     }
 });
 
-app.get('/gestion/emprunt', (req, res) => {
+//emprunt du livre
+app.get('/gestion/empruntretour', (req, res) => {
     if (loginedUser != null) {
         if (loginedUser.Droit_id == 99 || loginedUser.Droit_id == 1) {//only for admin or staff
             let client = null;
-            res.render('EmpruntDuLivre', { loginedUser: loginedUser, client: client })
+            res.render('empruntretour', { loginedUser: loginedUser, client: client })
         } else {
             res.status(403).end("vous n'avez pas le droit")
         }
@@ -394,72 +373,76 @@ app.get('/gestion/emprunt', (req, res) => {
     }
 })
 
-app.post('/gestion/emprunt', async (req, res) => {
+app.post('/gestion/empruntretour', async (req, res) => {
     if (loginedUser != null) {
         if (loginedUser.Droit_id == 99 || loginedUser.Droit_id == 1) {//only for admin or staff
             if (req.body.option == "RechercheClient") {//button clicked = RechercheClient
                 Utilisateurs.find({ Telephone: req.body.telClient }, function (err, client) {
                     if (err) throw err;
                     //console.log(client);
-                    res.render('EmpruntDuLivre', { loginedUser: loginedUser, client: client })
+                    res.render('EmpruntRetour', { loginedUser: loginedUser, client: client })
                 });
             }
-            if (req.body.option == "EmpruntLivre") {//button clicked = EmpruntLivre
-
-                Livres.findOne({ ISBN: req.body.isbnLivre }, function (err, livre) {
-                    if (err) throw err;
-                    if (livre.NbDisponible == 0) {
-                        res.status(403).end("livre non disponible")
-                    } else {
-                        var islivreRetour = true;
-                        Emprunts.find({
-                            Livre_id: livre._id,
-                            Utilisateur_id: req.body.clientEmprunt
-                        }, function (err, records) {
-                            if (err) throw err;
-                            //console.log(records)
-                            records.forEach(record => {
-                                if (record.DateRetour == null) {
-                                    islivreRetour = false;
-                                }
-                            })
-                            if (!islivreRetour) {//user already borrowed this book
-                                return res.status(403).end("user already borrowed this book")
-                            } else {
-                                Utilisateurs.findOne({ _id: req.body.clientEmprunt }, function (err, client) {
-                                    if (err) throw err;
-                                    if (client.NbPret >= client.MaxPret) {
-                                        return res.status(403).end("client attend au maximun du pret ")
-                                    } else {
-                                        client.updateOne({ //update nombre de pret du utilisateur
-                                            NbPret: client.NbPret + 1
-                                        }, function (err) {
-                                            if (err) throw err;
-                                        })
-                                        var livreid = livre._id;
-                                        var livreNbDisponible = livre.NbDisponible;
-                                        livre.updateOne({ //update nombre disponible du livre
-                                            NbDisponible: livreNbDisponible - 1
-                                        }, function (err) {
-                                            if (err) throw err;
-                                        })
-                                        //put information into database               
-                                        Emprunts.create({
-                                            DatePret: new Date(Date.now()),
-                                            DateRetourPrevu: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
-                                            DateRetour: null,
-                                            Livre_id: livreid,
-                                            Utilisateur_id: req.body.clientEmprunt
-                                        }, function (err) {
-                                            if (err) throw err;
-                                            return res.status(403).end("reussi")
-                                        })
+            if (req.body.option == "EmpruntRetour") {//button clicked = EmpruntLivre
+                if (req.body.choix == "radioEmprunt") {
+                    Livres.findOne({ ISBN: req.body.isbnLivre }, function (err, livre) {
+                        if (err) throw err;
+                        if (livre.NbDisponible == 0) {
+                            res.status(403).end("livre non disponible")
+                        } else {
+                            var islivreRetour = true;
+                            Emprunts.find({
+                                Livre_id: livre._id,
+                                Utilisateur_id: req.body.clientEmprunt
+                            }, function (err, records) {
+                                if (err) throw err;
+                                //console.log(records)
+                                records.forEach(record => {
+                                    if (record.DateRetour == null) {
+                                        islivreRetour = false;
                                     }
                                 })
-                            }
-                        })
-                    }
-                });
+                                if (!islivreRetour) {//user already borrowed this book
+                                    return res.status(403).end("user already borrowed this book")
+                                } else {
+                                    Utilisateurs.findOne({ _id: req.body.clientEmprunt }, function (err, client) {
+                                        if (err) throw err;
+                                        if (client.NbPret >= client.MaxPret) {
+                                            return res.status(403).end("client attend au maximun du pret ")
+                                        } else {
+                                            client.updateOne({ //update nombre de pret du utilisateur
+                                                NbPret: client.NbPret + 1
+                                            }, function (err) {
+                                                if (err) throw err;
+                                            })
+                                            var livreid = livre._id;
+                                            var livreNbDisponible = livre.NbDisponible;
+                                            livre.updateOne({ //update nombre disponible du livre
+                                                NbDisponible: livreNbDisponible - 1
+                                            }, function (err) {
+                                                if (err) throw err;
+                                            })
+                                            //put information into database               
+                                            Emprunts.create({
+                                                DatePret: new Date(Date.now()),
+                                                DateRetourPrevu: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
+                                                DateRetour: null,
+                                                Livre_id: livreid,
+                                                Utilisateur_id: req.body.clientEmprunt
+                                            }, function (err) {
+                                                if (err) throw err;
+                                                return res.status(403).end("reussi")
+                                            })
+                                        }
+                                    })
+                                }
+                            })
+                        }
+                    });
+                }
+                if (req.body.choix == "radioRetour") {
+                    
+                }
             }
         } else {
             return res.status(403).end("vous n'avez pas le droit")
@@ -468,9 +451,6 @@ app.post('/gestion/emprunt', async (req, res) => {
         return res.redirect("/login")
     }
 })
-
-
-
 
 
 

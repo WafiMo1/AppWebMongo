@@ -8,7 +8,7 @@
     </header>
 
     <body>
-        <h1>Emprunt du livre</h1>
+        <h1 id="title">Emprunt et Retour</h1>
         <form id="formRechercheClient" action="#" method="post"> 
             <label>Telephone du client : </label>
             <input type="tel" id="telClient" name="telClient" placeholder="Telephone du client" maxlength="10">
@@ -24,20 +24,33 @@
                     <p>Nombre de pret : <%=client[0].NbPret%></p>
                 </div>
                 
-            <%  } else { %>
-                <p>Utilisateur non trouvé</p>
-            <%  } }%>  
+
+        
+            
+
+            <br>
 
             <form id="formEmpruntLivre" action="#" method="post"> 
+                <input type="radio" id="radioEmprunt" name="choix" value="radioEmprunt" >
+                <label>Emprunt</label>
+                <input type="radio" id="radioRetour" name="choix" value="radioRetour">
+                <label >Retour</label><br>
                 <label>ISBN du livre: </label>
                 <input type="text" id="isbnLivre" name="isbnLivre" placeholder="ISBN du Livre">
                 <% if (client != null){ %>
                     <% if (client.length != 0){ %>
                         <input type="hidden" id="clientEmprunt" name="clientEmprunt" value=<%= client[0].id%>>
                 <%  } }%>  
-                <input type="hidden" id="option" name="option" value="EmpruntLivre">    
-                <button type="button" id="btnEmpruntLivre">Emprunt</button>
+                <input type="hidden" id="option" name="option" value="EmpruntRetour">    
+                <button type="button" id="btnEmpruntRetour">Emprunt/Retour</button>
             </form>
+            <p id="noteEmprunt"></p>
+
+            <%  } else { %>
+                <p>Utilisateur non trouvé</p>
+            <%  } %>             
+
+            <% } %>  
 
     </body>
     <script>
@@ -48,9 +61,28 @@
                 alert("Entrer le numero du telephone pour un recherche du client");
             }  
         })
-        document.getElementById('btnEmpruntLivre').addEventListener("click",()=>{
-            if (document.getElementById("clientEmprunt") == null ){
-                alert("Il faut faire un recherche du client")
+
+        document.getElementById('radioEmprunt').addEventListener("click",()=>{
+            if(document.getElementById('radioEmprunt').checked){
+                document.getElementById('title').innerHTML = "Emprunt du livre"
+                document.getElementById('btnEmpruntRetour').innerHTML = "Emprunt"
+                document.getElementById('noteEmprunt').innerHTML = "Chaque personne peut emprunter 5 livres maximum. <br>"+
+                                                                   "Un même livre ne peut pas prêter 2 copies à un personne. <br>" + 
+                                                                   "Une durée du prêt est 14 jours."
+            }
+        })
+
+        document.getElementById('radioRetour').addEventListener("click",()=>{
+            if(document.getElementById('radioRetour').checked){
+                document.getElementById('title').innerHTML = "Retour du livre"
+                document.getElementById('btnEmpruntRetour').innerHTML = "Retour"
+                document.getElementById('noteEmprunt').innerHTML = ""
+            }
+        })
+
+        document.getElementById('btnEmpruntRetour').addEventListener("click",()=>{
+            if (!document.getElementById('radioEmprunt').checked && !document.getElementById('radioRetour').checked){
+                alert("Il faut choissir un option")
             } else if (document.getElementById("isbnLivre").value.trim() == ""){
                 alert("Entrer ISBN du livre")
             } else{
