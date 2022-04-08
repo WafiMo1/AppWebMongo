@@ -379,13 +379,13 @@ app.post('/gestion/empruntretour', async (req, res) => {
             if (req.body.option == "RechercheClient") {//button clicked = RechercheClient
                 Utilisateurs.find({ Telephone: req.body.telClient }, function (err, client) {
                     if (err) throw err;
-                    //console.log(client);
                     res.render('EmpruntRetour', { loginedUser: loginedUser, client: client })
                 });
             }
             if (req.body.option == "EmpruntRetour") {//button clicked = EmpruntLivre
-                if (req.body.choix == "radioEmprunt") {
-                    Livres.findOne({ ISBN: req.body.isbnLivre }, function (err, livre) {
+                Livres.findOne({ ISBN: req.body.isbnLivre }, function (err, livre) {
+                    if (req.body.choix == "radioEmprunt") {
+
                         if (err) throw err;
                         if (livre.NbDisponible == 0) {
                             res.status(403).end("livre non disponible")
@@ -396,7 +396,6 @@ app.post('/gestion/empruntretour', async (req, res) => {
                                 Utilisateur_id: req.body.clientEmprunt
                             }, function (err, records) {
                                 if (err) throw err;
-                                //console.log(records)
                                 records.forEach(record => {
                                     if (record.DateRetour == null) {
                                         islivreRetour = false;
@@ -431,18 +430,64 @@ app.post('/gestion/empruntretour', async (req, res) => {
                                                 Utilisateur_id: req.body.clientEmprunt
                                             }, function (err) {
                                                 if (err) throw err;
-                                                return res.status(403).end("reussi")
+                                                // return res.status(403).end("reussi")
+                                                res.redirect("/gestion/empruntretour")
                                             })
                                         }
                                     })
                                 }
                             })
                         }
-                    });
-                }
-                if (req.body.choix == "radioRetour") {
-                    
-                }
+
+
+                    }
+                    if (req.body.choix == "radioRetour") {
+                        Emprunts.find({
+                            Livre_id: livre._id,
+                            Utilisateur_id: req.body.clientEmprunt
+                        }, function (err, records) {
+                            if (err) throw err;
+                            var compte = 0;
+                            records.forEach(record => {
+                                if (record.DateRetour == null) {
+                                    compte++;
+                                    //supose d'avoir un resultat
+                                    record.updateOne({
+                                        DateRetour: new Date(Date.now())
+                                    }, function (err) {
+                                        if (err) throw err;
+                                        //modification nombre disponible
+                                        Livres.findOne({ _id: livre._id }, function (err, resultat) {
+                                            if (err) throw err;
+                                            var livreNbDisponible = resultat.NbDisponible;
+                                            resultat.updateOne({
+                                                NbDisponible: livreNbDisponible + 1
+                                            }, function (err) {
+                                                if (err) throw err;
+                                            })
+                                        })
+                                        //modification nombre pret d'utilisateur
+                                        Utilisateurs.findOne({ _id: req.body.clientEmprunt }, function (err, utilisateur) {
+                                            if (err) throw err;
+                                            var nbpret = utilisateur.NbPret
+                                            utilisateur.updateOne({
+                                                NbPret: nbpret - 1
+                                            }, function (err) {
+                                                if (err) throw err;
+                                            })
+                                        })
+                                        res.redirect("/gestion/empruntretour")
+                                    })
+                                }
+
+                            })//end foreach
+                            if (compte == 0) {
+                                res.status(403).end("Pas de enrigistement")
+                            }
+                        })
+                    }
+                });
+
             }
         } else {
             return res.status(403).end("vous n'avez pas le droit")
