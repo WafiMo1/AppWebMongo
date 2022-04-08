@@ -43,7 +43,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 var loginedUser = null;
-var listeLivresRetournes= new ArrayList();
+var listeLivresRetournes= new Array();
 
 
 
