@@ -207,16 +207,28 @@ app.get('/profil', (req, res) => {
                             auteur: Auteur
                         }
                         //On ajoute ce livre dans la liste des livres à afficher
+                        
                         listeLivresRetournes.push(livreAfficher);
+                        
+                        
+                        if (z == livresEmpruntes.length -1){
+                            if ( j == ElementListeLivres.length-1){
+                                console.log(listeLivresRetournes)
+                            }
+                           
+                        }
+        
                     }
 
-
                 //LE TABLEAU EST BEL ET BIEN REMPLI DES LIVRES QUE JE VEUX AFFICHER AVEC LES ATTRIBUTS (VOIR APP.GET MODIFIER) MAIS SA NE S'AFFICHE PAS ICI
-                console.log(listeLivresRetournes);
-                res.render('Profil.ejs', { loginedUser: loginedUser, listeLivresRetournes: listeLivresRetournes })
-                
+
+
                 })
+
+
             }
+
+            //res.render('Profil.ejs', { loginedUser: loginedUser, listeLivresRetournes: listeLivresRetournes })
 
             //FIN remplissage liste de livres empruntés à retourner
 
