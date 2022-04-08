@@ -226,23 +226,6 @@ app.get('/Modifier', (req, res) => {
     res.render('ModifierProfil.ejs', { loginedUser: loginedUser })
 });
 
-//DÉCLARATION MULTER
-/* const multer = require("multer");
-app.use(express.static(__dirname + "./public"))
-
-*/
-
-// var Storage = multer.diskStorage({  
-//     destination: "./public/uploads/",
-//     filename: (req, file, cb) => {
-//         cb(null, file.fieldname + "_" + Date.now() + path.extname(file.originalname))
-//     }
-// });
-
-// var upload = multer({
-//     storage: Storage
-//     }).single('photoModifie') 
-
 app.post('/Modifier', urlencodeParser, (req, res) => {
 
 
@@ -306,6 +289,12 @@ app.post('/ModifierMotDePasse', urlencodeParser, (req, res) => {
     } else if (!ancienMotDepasseSaisi) {
         console.log("Le mdp saisi n'est pas l'ancien");
     }
+
+
+
+});
+
+app.get('/ajoutLivre', (req, res) => {
 
 
 
