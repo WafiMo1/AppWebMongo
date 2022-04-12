@@ -35,7 +35,10 @@
                 <input type="radio" id="radioEmprunt" name="choix" value="radioEmprunt" >
                 <label>Emprunt</label>
                 <input type="radio" id="radioRetour" name="choix" value="radioRetour">
-                <label >Retour</label><br>
+                <label >Retour</label>
+                <input type="radio" id="radioPerdu" name="choix" value="radioPerdu">
+                <label >Perdu</label>
+                <br>
                 <label>ISBN du livre: </label>
                 <input type="text" id="isbnLivre" name="isbnLivre" placeholder="ISBN du Livre">
                 <% if (client != null){ %>
@@ -144,7 +147,7 @@
                 document.getElementById('noteEmprunt').innerHTML = "Chaque personne peut emprunter 5 livres maximum. <br>"+
                                                                    "Un même livre ne peut pas prêter 2 copies à un personne. <br>" + 
                                                                    "Une durée du prêt est 14 jours. <br>" +
-                                                                   "Le livre sera enlevé automatiquement de liste de réservation de ce client"
+                                                                   "Le livre sera enlevé automatiquement de liste de réservation de ce client."
                                                                 
             }
         })
@@ -153,12 +156,24 @@
             if(document.getElementById('radioRetour').checked){
                 document.getElementById('title').innerHTML = "Retour du livre"
                 document.getElementById('btnEmpruntRetour').innerHTML = "Retour"
-                document.getElementById('noteEmprunt').innerHTML = ""
+                document.getElementById('noteEmprunt').innerHTML = "Lorsque un utilisateur retour un livre, On ajoute un frais automatiquement 0.5$ par jours.<br>"+
+                                                                   "Le maximum du frais en retard est 10$.<br>"+
+                                                                   "Utilisateur doit mentionner le livre perdu au employee.<br>"+
+                                                                   "Utilisateur doit payer le cout et le frais en retard lorsqu'il s'agit un pert."
+            }
+        })
+
+        document.getElementById('radioPerdu').addEventListener("click",()=>{
+            if(document.getElementById('radioPerdu').checked){
+                document.getElementById('title').innerHTML = "Livre Perdu"
+                document.getElementById('btnEmpruntRetour').innerHTML = "Livre Perdu"
+                document.getElementById('noteEmprunt').innerHTML = "Utilisateur doit mentionner le livre perdu au employee.<br>"+
+                                                                   "Utilisateur doit payer le cout et le frais en retard lorsqu'il s'agit un pert."
             }
         })
 
         document.getElementById('btnEmpruntRetour').addEventListener("click",()=>{
-            if (!document.getElementById('radioEmprunt').checked && !document.getElementById('radioRetour').checked){
+            if (!document.getElementById('radioEmprunt').checked && !document.getElementById('radioRetour').checked && !document.getElementById('radioPerdu').checked){
                 alert("Il faut choissir un option")
             } else if (document.getElementById("isbnLivre").value.trim() == ""){
                 alert("Entrer ISBN du livre")
