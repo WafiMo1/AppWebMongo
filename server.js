@@ -310,10 +310,15 @@ app.post('/ModifierMotDePasse', urlencodeParser, (req, res) => {
 });
 
 app.get('/ajoutLivre', (req, res) => {
+//     var nouveauLivre = { Auteur: req. address: "Highway 37" };
+// Livres.insertOne(nouveauLivre ,function(err, res) {
+//     if (err) throw err;
+//     console.log("1 document inserted")
+
+// });
 
 
 
-});
 // FIN DE LA PARTIE DE MOHAMED WAFI
 
 app.get('/recherche', (req, res) => {
