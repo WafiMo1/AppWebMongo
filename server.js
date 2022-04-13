@@ -542,7 +542,7 @@ app.post('/gestion/empruntretour', async (req, res) => {
                                     })
                                 }
                             })
-                        }
+                        }// end of emprunt
                         if (req.body.choix == "radioRetour") {
                             Emprunts.find({
                                 Livre_id: livre._id,
@@ -551,6 +551,7 @@ app.post('/gestion/empruntretour', async (req, res) => {
                                 if (err) throw err;
                                 var compte = 0;
                                 records.forEach(record => {
+                                    
                                     if (record.DateRetour == null) {
                                         compte++;
                                         //supose d'avoir un seule resultat (Un même livre ne peut pas prêter 2 copies à un personne. )
@@ -558,16 +559,12 @@ app.post('/gestion/empruntretour', async (req, res) => {
                                             DateRetour: new Date(Date.now())
                                         }, function (err) {
                                             if (err) throw err;
-                                            //modification nombre disponible
-                                            // Livres.findOne({ _id: livre._id }, function (err, resultat) {
-                                            //     if (err) throw err;
-                                                var livreNbDisponible = livre.NbDisponible;
-                                                livre.updateOne({
-                                                    NbDisponible: livreNbDisponible + 1
-                                                }, function (err) {
-                                                    if (err) throw err;
-                                                })
-                                            // })
+                                            var livreNbDisponible = livre.NbDisponible;
+                                            livre.updateOne({
+                                                NbDisponible: livreNbDisponible + 1
+                                            }, function (err) {
+                                                if (err) throw err;
+                                            })
                                             //modification nombre pret d'utilisateur
                                             Utilisateurs.findOne({ _id: req.body.clientEmprunt }, function (err, utilisateur) {
                                                 if (err) throw err;
@@ -580,19 +577,19 @@ app.post('/gestion/empruntretour', async (req, res) => {
                                             })
                                             //charge le frais du retard
                                             retard = new Date(Date.now()) - record.DateRetourPrevu
-                                            if (retard > 0){
-                                                retard = Math.floor(retard/(1000 * 3600 * 24))
-                                                var cout =  retard*0.5
-                                                if (cout > 10){
-                                                    cout = 10;
+                                            if (retard > 0) {
+                                                retard = Math.floor(retard / (1000 * 3600 * 24))
+                                                var cout = retard * 0.5// 0.5$ par jour
+                                                if (cout > 10) {
+                                                    cout = 10;//maximum 10$ pour le retard
                                                 }
-                                            Transactions.create({
-                                                DateFacturation: new Date(Date.now()),
-                                                Cout: cout,
-                                                Utilisateur_id: req.body.clientEmprunt,
-                                                EmployeeId: loginedUser._id,
-                                                Commentaire: "Frais du retard pour le livre: " + livre.Titre + ", " + livre.Auteur + ", " + livre.ISBN
-                                            }, function (err) {if (err) throw err})
+                                                Transactions.create({
+                                                    DateFacturation: new Date(Date.now()),
+                                                    Cout: cout,
+                                                    Utilisateur_id: req.body.clientEmprunt,
+                                                    EmployeeId: loginedUser._id,
+                                                    Commentaire: "Frais du retard pour le livre: " + livre.Titre + ", " + livre.Auteur + ", " + livre.ISBN
+                                                }, function (err) { if (err) throw err })
                                             }
 
                                             res.redirect("/gestion/empruntretour")
