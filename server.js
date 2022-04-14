@@ -557,10 +557,19 @@ app.get('/ajoutLivre', (req, res) => {
                                         if (emprunt.DateRetour == null) {
                                             compte++;
                                             //supose d'avoir un seule resultat (Un même livre ne peut pas prêter 2 copies à un personne. )
+                                            if (req.body.choix == "radioPerdu"){                                               
+                                                emprunt.updateOne({
+                                                    EstPerdu: true
+                                                }, function (err) {
+                                                    if (err) throw err;
+                                                })
+                                            }
+
                                             emprunt.updateOne({
                                                 DateRetour: new Date(Date.now())
                                             }, function (err) {
                                                 if (err) throw err;
+                                                
                                                 if (req.body.choix == "radioRetour") {
                                                     //modification du livre disponible
                                                     var livreNbDisponible = livre.NbDisponible;
