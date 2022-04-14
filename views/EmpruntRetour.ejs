@@ -23,6 +23,7 @@
                     <p>Telephone : <%=client[0].Telephone%></p>
                     <p>Email : <%=client[0].Email%></p>
                     <p>Nombre de pret : <%=client[0].NbPret%></p>
+                    <p>Solde du client : <%=client[0].Solde%></p>
                 </div>
                 
 
@@ -35,7 +36,10 @@
                 <input type="radio" id="radioEmprunt" name="choix" value="radioEmprunt" >
                 <label>Emprunt</label>
                 <input type="radio" id="radioRetour" name="choix" value="radioRetour">
-                <label >Retour</label><br>
+                <label >Retour</label>
+                <input type="radio" id="radioPerdu" name="choix" value="radioPerdu">
+                <label >Perdu</label>
+                <br>
                 <label>ISBN du livre: </label>
                 <input type="text" id="isbnLivre" name="isbnLivre" placeholder="ISBN du Livre">
                 <% if (client != null){ %>
@@ -49,7 +53,9 @@
 
             
             <hr>
-            <button id="btnAfficher">Afficher tous les historique du pret</button>
+            <button id="btnHistorique">Afficher tous les historique du pret</button>
+            <button id="btnNonRetourne">Afficher tous les livres non retourné</button>
+            <button id="btnPerdu">Afficher tous les livres perdu</button>
 
             <div id="divHistorique" hidden="true">
                 <h3>Historique du pret</h3>
@@ -61,7 +67,8 @@
                         <th>Auteur</th>
                         <th>Date du pret</th>
                         <th>Date de retour prevu</th>
-                        <th>Date de retour </th>
+                        <th>Date de retour ou pert </th>
+                        <th>État</th>
                     </tr>
                         
                     <% emprunts.forEach(emprunt => { %>
@@ -77,7 +84,13 @@
                             <td><%= emprunt.DateRetourPrevu.getDate()%>-<%= emprunt.DateRetourPrevu.getMonth()+1 %>-<%= emprunt.DateRetourPrevu.getFullYear()%></td>
                             <% if (emprunt.DateRetour != null){  %>
                                 <td><%= emprunt.DateRetour.getDate()%>-<%= emprunt.DateRetour.getMonth()+1 %>-<%= emprunt.DateRetour.getFullYear()%></td>
+                                <% if (emprunt.EstPerdu == true){  %>
+                                    <td>Perdu</td>
+                                <% } else {  %>
+                                    <td>Retourné</td>    
+                                <% }  %>     
                             <% } else{  %>
+                                <td> </td>
                                 <td>Non retourné</td>
                             <% }  %>                        
                         </tr>
@@ -119,6 +132,39 @@
 
             </div>
 
+            <div id="divPerdu" hidden="true">
+                <h3>Livres perdu</h3>
+                
+                <table>
+                    <tr>
+                        <th>ISBN</th>
+                        <th>Titre</th>
+                        <th>Auteur</th>
+                        <th>Date du pret</th>
+                        <th>Date de retour prevu</th>
+                        <th>Date de la pert </th>
+                    </tr>
+                        
+                    <% emprunts.forEach(emprunt => { %>
+                        <% if (emprunt.EstPerdu == true){  %>
+                        <tr>                                                     
+                            <% livres.forEach(livre => { %>                               
+                                <% if (emprunt.Livre_id.toString() == livre._id.toString()){ %>
+                                    <td><%= livre.ISBN %> </td>
+                                    <td><%= livre.Titre %> </td>
+                                    <td><%= livre.Auteur %> </td>
+                                    <% } %>
+                                <% }) %>
+                            <td><%= emprunt.DatePret.getDate()%>-<%= emprunt.DatePret.getMonth()+1 %>-<%= emprunt.DatePret.getFullYear()%></td>
+                            <td><%= emprunt.DateRetourPrevu.getDate()%>-<%= emprunt.DateRetourPrevu.getMonth()+1 %>-<%= emprunt.DateRetourPrevu.getFullYear()%></td>
+                            <td><%= emprunt.DateRetour.getDate()%>-<%= emprunt.DateRetour.getMonth()+1 %>-<%= emprunt.DateRetour.getFullYear()%></td>                   
+                        </tr>
+                        <% } %>
+                    <% }) %>
+                </table>
+
+            </div>
+
 
 
             <%  } else { %>
@@ -144,7 +190,7 @@
                 document.getElementById('noteEmprunt').innerHTML = "Chaque personne peut emprunter 5 livres maximum. <br>"+
                                                                    "Un même livre ne peut pas prêter 2 copies à un personne. <br>" + 
                                                                    "Une durée du prêt est 14 jours. <br>" +
-                                                                   "Le livre sera enlevé automatiquement de liste de réservation de ce client"
+                                                                   "Le livre sera enlevé automatiquement de liste de réservation de ce client."
                                                                 
             }
         })
@@ -153,12 +199,26 @@
             if(document.getElementById('radioRetour').checked){
                 document.getElementById('title').innerHTML = "Retour du livre"
                 document.getElementById('btnEmpruntRetour').innerHTML = "Retour"
-                document.getElementById('noteEmprunt').innerHTML = ""
+                document.getElementById('noteEmprunt').innerHTML = "Lorsque un utilisateur retour un livre, On ajoute un frais automatiquement 0.5$ par jours.<br>"+
+                                                                   "Le maximum du frais en retard est 10$.<br>"+
+                                                                   "Le frais en retard sera déduit du compte d'utilisateur.<br>"+
+                                                                   "Les livres perdu doit entrer seulement dans l'option perdu."
+            }
+        })
+
+        document.getElementById('radioPerdu').addEventListener("click",()=>{
+            if(document.getElementById('radioPerdu').checked){
+                document.getElementById('title').innerHTML = "Livre Perdu"
+                document.getElementById('btnEmpruntRetour').innerHTML = "Livre Perdu"
+                document.getElementById('noteEmprunt').innerHTML = "Utilisateur doit mentionner le livre perdu au employee.<br>"+
+                                                                   "Le frais en retard sera déduit du compte d'utilisateur.<br>"+
+                                                                   "Le cout du livre perdu sera déduit du compte d'utilisateur."
+
             }
         })
 
         document.getElementById('btnEmpruntRetour').addEventListener("click",()=>{
-            if (!document.getElementById('radioEmprunt').checked && !document.getElementById('radioRetour').checked){
+            if (!document.getElementById('radioEmprunt').checked && !document.getElementById('radioRetour').checked && !document.getElementById('radioPerdu').checked){
                 alert("Il faut choissir un option")
             } else if (document.getElementById("isbnLivre").value.trim() == ""){
                 alert("Entrer ISBN du livre")
@@ -168,21 +228,26 @@
 
         })
 
-        document.getElementById('btnAfficher').addEventListener("click",()=>{
-            if (document.getElementById('btnAfficher').innerHTML == "Afficher les livres non retourné"){
-                document.getElementById('divHistorique').hidden = true;
-                document.getElementById('divNonRetourne').hidden = false;                
-                document.getElementById('btnAfficher').innerHTML = "Afficher tous les historique du pret";
- 
-            } else{
-                document.getElementById('btnAfficher').innerHTML = "Afficher les livres non retourné";
-                document.getElementById('divHistorique').hidden = false;
-                document.getElementById('divNonRetourne').hidden = true;  
-            }
 
+        document.getElementById('btnHistorique').addEventListener("click",()=>{
+            document.getElementById('divPerdu').hidden = true;
+            document.getElementById('divNonRetourne').hidden = true;    
+            document.getElementById('divHistorique').hidden = false;         
+        })
+
+        document.getElementById('btnNonRetourne').addEventListener("click",()=>{
+            document.getElementById('divPerdu').hidden = true;
+            document.getElementById('divNonRetourne').hidden = false;    
+            document.getElementById('divHistorique').hidden = true;                         
+        })
+            
+        document.getElementById('btnPerdu').addEventListener("click",()=>{
+            document.getElementById('divPerdu').hidden = false;
+            document.getElementById('divNonRetourne').hidden = true;    
+            document.getElementById('divHistorique').hidden = true;                         
+        })
             
 
-        })
 
     </script>
 

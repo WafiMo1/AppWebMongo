@@ -14,7 +14,9 @@ const utilisateurSchema =  new mongoose.Schema({
     Photo: String,
     MaxPret: Number,
     NbPret: Number,
-    Droit_id: Number   
+    Solde: Number,  
+    Droit_id: Number
+     
 })
 
 module.exports = mongoose.model('Utilisateur', utilisateurSchema, 'Utilisateurs');
