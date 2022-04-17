@@ -310,6 +310,15 @@ app.post('/ModifierMotDePasse', urlencodeParser, (req, res) => {
 });
 
 app.get('/ajoutLivre', (req, res) => {
+    //if(loginedUser!=null){
+        //if(loginedUser.Droit_id=99){
+            res.render("ajoutLivre");
+        //}
+        
+    //}
+});
+
+app.post('/ajoutLivre', (req, res) => {
     //     var nouveauLivre = { Auteur: req. address: "Highway 37" };
     // Livres.insertOne(nouveauLivre ,function(err, res) {
     //     if (err) throw err;
