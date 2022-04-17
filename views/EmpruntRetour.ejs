@@ -16,16 +16,21 @@
             <input type="hidden" id="option" name="option" value="RechercheClient">
             <button type="button" id="btnRechercheClient">Recherche</button>
         </form>
-        <% if (client != null){ %>
-            <% if (client.length != 0){ %>
-                <div>
-                    <p>Utilisateur trouvé : <%=client[0].Prenom%> <%=client[0].Nom %></p>
-                    <p>Telephone : <%=client[0].Telephone%></p>
-                    <p>Email : <%=client[0].Email%></p>
-                    <p>Nombre de pret : <%=client[0].NbPret%></p>
-                    <p>Solde du client : <%=client[0].Solde%></p>
-                </div>
-                
+
+        <div id ="AjaxDiv">
+
+        </div>
+
+            <% if (client != null){ %>
+                <% if (client.length != 0){ %>
+                    <div>
+                        <p>Utilisateur trouvé : <%=client[0].Prenom%> <%=client[0].Nom %></p>
+                        <p>Telephone : <%=client[0].Telephone%></p>
+                        <p>Email : <%=client[0].Email%></p>
+                        <p>Nombre de pret : <%=client[0].NbPret%></p>
+                        <p>Solde du client : <%=client[0].Solde%></p>
+                    </div>          
+
 
         
             
@@ -177,7 +182,31 @@
     <script>
         document.getElementById('btnRechercheClient').addEventListener("click",()=>{
             if (document.getElementById("telClient").value.trim() != ""){
-                document.getElementById('formRechercheClient').submit();
+                const xhr = new XMLHttpRequest();
+                xhr.responseType = 'json';
+                xhr.open('POST', 'http://localhost:4000/findCustomer');
+                xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+                xhr.send(document.getElementById("telClient").value.trim());
+                /**
+                 * readystate:
+                 * 0: not initial
+                 * 1: open 
+                 * 2: send
+                 * 3: partial response
+                 * 4: full response             
+                */
+                xhr.onreadystatechange = function(){
+                    if (xhr.readyState === 4){
+                        if(xhr.status >= 200 && xhr.status < 300){//200 succes
+                            document.getElementById('AjaxDiv').innerHTML = "Utilisateur trouvé : " + xhr.response.Prenom + xhr.response.Nom;
+                            
+                        }
+                    }
+                }
+
+
+
+                //document.getElementById('formRechercheClient').submit();
             } else{
                 alert("Entrer le numero du telephone pour un recherche du client");
             }  

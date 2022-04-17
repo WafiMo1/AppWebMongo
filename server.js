@@ -654,6 +654,18 @@ app.get('/ajoutLivre', (req, res) => {
         }
     })
 
+    //ajax
+    app.post('/findCustomer',(req,res)=> {
+        res.setHeader('Access-Control-Allow-Origin','*');
+        res.setHeader('Access-Control-Allow-Headers','*');//option,all
+
+        Utilisateurs.find({ Telephone: req.body.telClient }, function (err, client) {
+            if (err) throw err;
+            res.render('EmpruntRetour', {client: client})   
+        })    
+        
+    })
+
     app.get('/gestion/transactions', async (req, res) => {
         if (loginedUser != null) {
             if (loginedUser.Droit_id == 99 || loginedUser.Droit_id == 1) {
@@ -663,6 +675,20 @@ app.get('/ajoutLivre', (req, res) => {
             res.redirect('/login');
         }
     });
+
+    app.get('/gestion/client', (req, res) => {
+        if (loginedUser != null) {
+            if (loginedUser.Droit_id == 99 || loginedUser.Droit_id == 1) {//only for admin or staff
+                let client = null;
+                res.render('GestionClient', { loginedUser: loginedUser, client: client })
+            } else {
+                res.status(403).end("vous n'avez pas le droit")
+            }
+        } else {
+            res.redirect("/login")
+        }
+    })
+
 
 
 
