@@ -67,5 +67,10 @@
   </body>
   <br><br><br><br><br>
   <br><br><br><br><br>
-  <%- include ('../views/partials/footer.ejs') %> 
+  <%- include ('../views/partials/footer.ejs') %>
+  <script>
+    if(document.getElementById("livre_NbDisponible").value == 0){
+      document.getElementById("btnReserver").disabled = true;
+    }else document.getElementById("btnReserver").disabled = false;
+</script>
 </html>

@@ -1,11 +1,3 @@
-<!-- 
-// reservation info
-// title, auteur, year and isbn, maison edition
-// redirect the user to the book info page when he clicks on the title
-// put a button to cancel his reservation in the table boon info with a post and correct
-// the current amount of available books 
--- do the reservation time friday --another time
--->
 <!DOCTYPE html>
 <html>
     <head>
@@ -13,24 +5,39 @@
     <link rel="stylesheet" href="/CSS/style.css">
     </head>
     <body>
-        <div>
-           <h2>Réservation de livre(s)</h2> 
+        <div align="center">
+            <br><br><br><br><br><br>
+           <h2>Réservation de livres</h2> 
             <div>
-                <h4>Livres</h4>
-                <table>
+                <table style=width:80%;>
+
                     <th>ISBN</th>
                     <th>Auteur</th>
                     <th>Titre</th>
                     <th>MaisonEdition</th>
+                    <th>Date</th>
+                    <th>Action</th>
                     <% livres.forEach(leLivre => { %>
                         <% resInfo.forEach(leResInfo => { %>
                             <% if(leLivre._id.toString() == leResInfo.Livre_id.toString()) { %>
-                                <tr>
-                                    <td><%=leLivre.ISBN %></td>
-                                    <td><%=leLivre.Auteur %></td>
-                                    <td><%=leLivre.Titre %></td>
-                                    <td><%=leLivre.MaisonEdition %></td>
-                                </tr>
+                                    <tr>
+                                        <td align="center"><%=leLivre.ISBN %></td>
+                                        <td align="center"><%=leLivre.Auteur %></td>
+                                        <td align="center"><%=leLivre.Titre %></td>
+                                        <td align="center"><%=leLivre.MaisonEdition %></td>
+                                        <td align="center"><%=leResInfo.DateReservation.getHours() %>: <%=leResInfo.DateReservation.getMinutes() %>
+                                            <%=leResInfo.DateReservation.getDate()%>/<%=leResInfo.DateReservation.getMonth()+1 %>/<%=leResInfo.DateReservation.getFullYear() %>
+                                        </td>
+                                        <td align="center">  
+                                            <form action="/annulerReservation" method="post">
+                                                <input type="submit" value="Annuler la réservation" id="btnAnnuler">
+                                                <input type="hidden" value="<%= leLivre._id %>" name="livre_id" id="livre_id">
+                                                <input type="hidden" value="<%= leLivre.Titre %>" name="livre_titre" id="livre_titre">
+                                                <input type="hidden" value="<%= leLivre.NbDisponible %>" name="livre_NbDisponible" id="livre_NbDisponible">
+                                                <input type="hidden" value="<%= leResInfo.Utilisateur_id %>" name="user_id" id="user_id">
+                                            </form>
+                                        </td>
+                                    </tr>
                             <% } %>
                         <% }) %>
                     <% }) %>
