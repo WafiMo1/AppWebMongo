@@ -7,6 +7,7 @@ const Reservations = require('./models/Reservations');
 const Utilisateurs = require('./models/Utilisateurs');
 const Transactions = require('./models/Transactions');
 const path = require('path');
+const axios = require('axios');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 
@@ -36,7 +37,7 @@ app.use(session({
     secret: "secretsession",
     resave: false,
     saveUninitialized: true,
-    cookie: { maxAge: 10 * 1000 },
+    cookie: { maxAge: 30 * 60 * 1000 },// Need to login after 30 min not use
     rolling: true
 }))
 
@@ -251,12 +252,12 @@ app.get('/Modifier', (req, res) => {
     //Correspond à l'ID de l'utilisateur connecté
     // idUserActuel = loginedUser._id;
 
-    if (req.session.loginedUser){
+    if (req.session.loginedUser) {
         res.render('ModifierProfil.ejs', { loginedUser: req.session.loginedUser })
-    } else{
+    } else {
         res.redirect('/login');
     }
-    
+
 });
 
 app.post('/Modifier', urlencodeParser, (req, res) => {
@@ -462,10 +463,10 @@ app.get('/gestion', async (req, res) => {
     if (req.session.loginedUser) {
         if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {//only for admin or staff
             res.render('Gestion', { loginedUser: req.session.loginedUser });
-            } else {
-                res.status(403).end("vous n'avez pas le droit")
-            }
-    } else{
+        } else {
+            res.status(403).end("vous n'avez pas le droit")
+        }
+    } else {
         res.redirect("/login")
     }
 
@@ -502,8 +503,7 @@ app.get('/gestion', async (req, res) => {
 app.get('/gestion/empruntretour', (req, res) => {
     if (req.session.loginedUser) {
         if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {//only for admin or staff
-            let client = null;
-            res.render('empruntretour', { loginedUser: req.session.loginedUser, client: client })
+            res.render('empruntretour', { loginedUser: req.session.loginedUser })
         } else {
             res.status(403).end("vous n'avez pas le droit")
         }
@@ -525,8 +525,6 @@ app.post('/gestion/empruntretour', async (req, res) => {
                             res.render('EmpruntRetour', { loginedUser: req.session.loginedUser, client: client, emprunts: historique, livres: livres })
                         })
                     })
-
-
                 });
             }
             if (req.body.option == "EmpruntRetour") {//button clicked = EmpruntLivre
@@ -709,17 +707,48 @@ app.post('/gestion/empruntretour', async (req, res) => {
     }
 })
 
-//ajax
+//ajax axios
 app.post('/findCustomer', (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Headers', '*');//option,all
+    res.setHeader('Access-Control-Allow-Headers', '*');
+    if (req.session.loginedUser) {
+        if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {
+            Utilisateurs.findOne({ Telephone: req.body.tel }, function (err, client) {
+                if (err) throw err;
+                if (client) {
+                    Emprunts.find({ Utilisateur_id: client._id }, function (err, historique) {
+                        if (err) throw err;
+                        Livres.find({}, function (err, livres) {
+                            if (err) throw err;
+                            let data = { client, historique, livres }
+                            res.send(JSON.stringify(data))
+                        })
+                    })
+                } else{
+                    res.send(JSON.stringify({'message' : 'Client not exist'}));
+                }
 
-    Utilisateurs.find({ Telephone: req.body.telClient }, function (err, client) {
-        if (err) throw err;
-        res.render('EmpruntRetour', { client: client })
-    })
+            })
+        } else {
+            res.status(403).end("Forbidden")
+        }
+    } else {
+        res.redirect("/login")
+    }
 
 })
+
+
+// app.post('/findCustomer', (req, res) => {
+//     res.setHeader('Access-Control-Allow-Origin', '*');
+//     res.setHeader('Access-Control-Allow-Headers', '*');//option,all
+
+//     Utilisateurs.find({ Telephone: req.body.telClient }, function (err, client) {
+//         if (err) throw err;
+//         res.render('EmpruntRetour', { client: client })
+//     })
+
+// })
 
 app.get('/gestion/transactions', async (req, res) => {
     if (req.session.loginedUser) {
