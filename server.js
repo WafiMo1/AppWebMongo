@@ -750,11 +750,9 @@ app.post('/findCustomer', (req, res) => {
 
 // })
 
-app.get('/gestion/transactions', async (req, res) => {
+app.get('/profil/facture', async (req, res) => {
     if (req.session.loginedUser) {
-        if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {
-            res.render('Transactions', { loginedUser: req.session.loginedUser });
-        }
+        res.render('PaiementFacture', { loginedUser: req.session.loginedUser });
     } else {
         res.redirect('/login');
     }

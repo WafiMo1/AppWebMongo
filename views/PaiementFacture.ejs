@@ -1,0 +1,152 @@
+<html>
+
+<body>
+    <hidden id="name"><%= loginedUser.Nom %></hidden>
+    <table>
+        <th>
+            <p>Paiement!</p>
+        </th>
+        <tr>
+            <td>Montant du paiement</td>
+            <td></td>
+            <td>214.50$</td>
+        </tr>
+        <tr>
+            <td>Titulaire de la carte</td>
+            <td></td>
+            <td><input type="" placeholder="Nom Inscrit Sur La Carte" id="cardnumber" required></td>
+        </tr>
+        <tr>
+            <td>Numero de Carte</td>
+            <td></td>
+            <td><input type="number" placeholder="XXXX XXXX XXXX XXXX" id="cardnumber" required></td>
+        </tr>
+        <tr>
+            <td>Date D'expiration</td>
+            <td></td>
+            <td><input type="date" placeholder="MM/YY" id="cardnumber" size="auto" required></td>
+        </tr>
+        <tr>
+            <td>Code CVV</td>
+            <td></td>
+            <td><input type="" placeholder="123 (Inscrit a l'arriere de la carte)" id="cardnumber" size="auto" required>
+            </td>
+        </tr>
+    </table>
+
+    <br>
+
+        <table class="tab">
+            <td style="width:600px">
+                <input id="SearchBook" type="submit" style="width:auto" value="Search">
+            </td>
+        </table>
+    <button onclick="generationPDF()">Pai</button>
+</body>
+<script src="https://unpkg.com/jspdf-invoice-template@1.4.0/dist/index.js"></script>
+<script>
+
+    function generationPDF() {
+        var pdfObject = jsPDFInvoiceTemplate.default(props);
+
+        console.log("Object created: ", facturePDF);
+    }
+    var props = {
+        outputType: jsPDFInvoiceTemplate.OutputType.Save,
+        returnJsPDFDocObject: true,
+        fileName: "FactureDePaiement",
+        orientationLandscape: false,
+        compress: true,
+        logo: {
+            src: "https://raw.githubusercontent.com/edisonneza/jspdf-invoice-template/demo/images/logo.png",
+            width: 53.33, //aspect ratio = width/height
+            height: 26.66,
+            margin: {
+                top: 0, //negative or positive num, from the current position
+                left: 0 //negative or positive num, from the current position
+            }
+        },
+        business: {
+            name: "Biblioclick",
+            phone: "(+355) 069 11 11 111",
+            email: "biblioclick@gmail.com",
+            email_1: "info.biblioclick@gmail.com",
+            website: "www.biblioclick.com",
+        },
+        contact: {
+            label: "Facture genere Pour:",
+            name: document.getElementById("name").innerHTML,
+            phone: "111222333",
+            email: "Emailduclient@gmail.com",
+        },
+        invoice: {
+            label: "Invoice #: ",
+            num: 19,
+            invDate: "Payment Date: 01/01/2021 18:12",
+            invGenDate: "Invoice Date: 02/02/2021 10:17",
+            headerBorder: false,
+            tableBodyBorder: false,
+            header: [
+                {
+                    title: "#",
+                    style: {
+                        width: 10
+                    }
+                },
+                {
+                    title: "Title",
+                    style: {
+                        width: 30
+                    }
+                },
+                {
+                    title: "Description",
+                    style: {
+                        width: 80
+                    }
+                },
+                { title: "Price" },
+                { title: "Quantity" },
+                { title: "Unit" },
+                { title: "Total" }
+            ],
+            table: Array.from(Array(1), (item, index) => ([
+                index + 1,
+                "There are many variations ",
+                "Lorem Ipsum is simply dummy text dummy text ",
+                200.5,
+                4.5,
+                "m2",
+                400.5
+            ])),
+            invTotalLabel: "Total:",
+            invTotal: "145,250.50",
+            invCurrency: "ALL",
+            row1: {
+                col1: 'VAT:',
+                col2: '20',
+                col3: '%',
+                style: {
+                    fontSize: 10 //optional, default 12
+                }
+            },
+            row2: {
+                col1: 'SubTotal:',
+                col2: '116,199.90',
+                col3: 'ALL',
+                style: {
+                    fontSize: 10 //optional, default 12
+                }
+            },
+            invDescLabel: "Invoice Note",
+            invDesc: "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary.",
+        },
+        footer: {
+            text: "The invoice is created on a computer and is valid without the signature and stamp.",
+        },
+        pageEnable: true,
+        pageLabel: "Page ",
+    };
+</script>
+
+</html>
