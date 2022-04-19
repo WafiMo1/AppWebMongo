@@ -515,30 +515,31 @@ app.get('/gestion/empruntretour', (req, res) => {
 app.post('/gestion/empruntretour', async (req, res) => {
     if (req.session.loginedUser) {
         if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {//only for admin or staff
-            if (req.body.option == "RechercheClient") {//button clicked = RechercheClient
-                Utilisateurs.find({ Telephone: req.body.telClient }, function (err, client) {
-                    if (err) throw err;
-                    Emprunts.find({ Utilisateur_id: client[0]._id }, function (err, historique) {
-                        if (err) throw err;
-                        Livres.find({}, function (err, livres) {
-                            if (err) throw err;
-                            res.render('EmpruntRetour', { loginedUser: req.session.loginedUser, client: client, emprunts: historique, livres: livres })
-                        })
-                    })
-                });
-            }
-            if (req.body.option == "EmpruntRetour") {//button clicked = EmpruntLivre
+            // if (req.body.option == "RechercheClient") {//button clicked = RechercheClient
+            //     Utilisateurs.find({ Telephone: req.body.telClient }, function (err, client) {
+            //         if (err) throw err;
+            //         Emprunts.find({ Utilisateur_id: client[0]._id }, function (err, historique) {
+            //             if (err) throw err;
+            //             Livres.find({}, function (err, livres) {
+            //                 if (err) throw err;
+            //                 res.render('EmpruntRetour', { loginedUser: req.session.loginedUser, client: client, emprunts: historique, livres: livres })
+            //             })
+            //         })
+            //     });
+            // }
+
+            //if (req.body.option == "EmpruntRetour") {//button clicked = EmpruntLivre
                 Livres.findOne({ ISBN: req.body.isbnLivre }, function (err, livre) {
                     if (err) throw err;
                     if (livre == null) {
-                        return res.status(403).end("Livre non existe")
+                        return res.send(JSON.stringify({'message' : 'Livre non existe'}));
+                        //return res.status(403).end("Livre non existe")
                     } else {
                         Emprunts.find({
                             Livre_id: livre._id,
                             Utilisateur_id: req.body.clientEmprunt
                         }, function (err, emprunts) {
                             if (err) throw err;
-
                             if (req.body.choix == "radioEmprunt") {
                                 var islivreRetour = true;
                                 emprunts.forEach(emprunt => {
@@ -547,12 +548,14 @@ app.post('/gestion/empruntretour', async (req, res) => {
                                     }
                                 })
                                 if (!islivreRetour) {//user already borrowed this book
-                                    return res.status(403).end("user already borrowed this book")
+                                    //return res.status(403).end("user already borrowed this book")
+                                    return res.send(JSON.stringify({'message' : 'user already borrowed this book'}));
                                 } else {
                                     Utilisateurs.findOne({ _id: req.body.clientEmprunt }, function (err, utilisateur) {
                                         if (err) throw err;
                                         if (utilisateur.NbPret >= utilisateur.MaxPret) {
-                                            return res.status(403).end("client attend au maximun du pret ")
+                                            //return res.status(403).end("client attend au maximun du pret ")
+                                            return res.send(JSON.stringify({'message' : 'client attend au maximun du pret'}));
                                         } else {
                                             //verify if the book is already in reservation
                                             Reservations.findOneAndDelete({
@@ -569,7 +572,8 @@ app.post('/gestion/empruntretour', async (req, res) => {
                                             })
 
                                             if (livre.NbDisponible <= 0) {
-                                                res.status(403).end("livre non disponible")
+                                                //res.status(403).end("livre non disponible")
+                                                return res.send(JSON.stringify({'message' : 'livre non disponible'}));
                                             } else {
 
                                                 utilisateur.updateOne({ //update nombre de pret du utilisateur
@@ -595,7 +599,8 @@ app.post('/gestion/empruntretour', async (req, res) => {
                                                 }, function (err) {
                                                     if (err) throw err;
                                                     // return res.status(403).end("reussi")
-                                                    res.redirect("/gestion/empruntretour")
+                                                    //res.redirect("/gestion/empruntretour")
+                                                    return res.send(JSON.stringify({'message' : 'Emprunt reussi'}));
                                                 })
                                             }
                                         }
@@ -678,14 +683,20 @@ app.post('/gestion/empruntretour', async (req, res) => {
                                                     if (err) throw err;
                                                 })
                                             })
-
-                                            res.redirect("/gestion/empruntretour")
+                                            if (req.body.choix == "radioRetour") {
+                                                return res.send(JSON.stringify({'message' : 'Retour réussi'}));
+                                            }
+                                            if (req.body.choix == "radioPerdu") {
+                                                return res.send(JSON.stringify({'message' : 'Livre perdu traité'}));
+                                            }
+                                            //res.redirect("/gestion/empruntretour")
                                         })
                                     }
 
                                 })//end foreach
                                 if (compte == 0) {
-                                    res.status(403).end("Pas de enrigistement")
+                                    //res.status(403).end("Pas de enrigistement")
+                                    return res.send(JSON.stringify({'message' : 'Pas de enrigistement'}));
                                 }
 
                             }//end of radioRetour and radioPerdu
@@ -698,7 +709,7 @@ app.post('/gestion/empruntretour', async (req, res) => {
 
                 });
 
-            }
+            //}
         } else {
             return res.status(403).end("vous n'avez pas le droit")
         }

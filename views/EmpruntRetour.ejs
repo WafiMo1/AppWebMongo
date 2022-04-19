@@ -107,6 +107,9 @@
     <script>
         var emprunts
         var livres
+        var tableHistorique = document.getElementById('tableHistorique')
+        var tableNonRetourne = document.getElementById('tableNonRetourne')
+        var tablePerdu = document.getElementById('tablePerdu')
 
         axios.defaults.baseURL = 'http://localhost:4000'
         document.getElementById('btnRechercheClient').addEventListener("click",()=>{
@@ -135,13 +138,13 @@
             //         }
             //     }
 
-    
+                
                 //AXIOS 
                 axios.post('/findCustomer', {                   
                         tel: document.getElementById("telClient").value.trim()
                 }).then(res=>{
                     if (res.data.message){
-                        document.getElementById('labelMessageAxios').innerHTML = res.data.message
+                        alert(res.data.message)
                         document.getElementById('pName').innerHTML = ''
                         document.getElementById('pTel').innerHTML = ''
                         document.getElementById('pEmail').innerHTML = ''
@@ -160,9 +163,11 @@
                         document.getElementById('divFindCustomer').hidden = false
                         emprunts = res.data.historique
                         livres = res.data.livres
+                        document.getElementById('clientEmprunt').value = res.data.client._id
 
                         //add in to table
-                        var tableHistorique = document.getElementById('tableHistorique')                       
+                        
+                        //tableHistorique                 
                         emprunts.forEach(emprunt => {
                             var oTr = document.createElement('tr')
                             tableHistorique.appendChild(oTr)
@@ -203,7 +208,7 @@
                         })
 
 
-                        var tableNonRetourne = document.getElementById('tableNonRetourne')
+                        //tableNonRetourne
                         emprunts.forEach(emprunt => {
                             if (emprunt.DateRetour == null){
                                 var oTr = document.createElement('tr')
@@ -234,7 +239,8 @@
 
                         })
 
-                        var tablePerdu = document.getElementById('tablePerdu')
+                        //tablePerdu
+                        
                         emprunts.forEach(emprunt => {
                             if (emprunt.EstPerdu == true){
                                 var oTr = document.createElement('tr')
@@ -314,7 +320,14 @@
             } else if (document.getElementById("isbnLivre").value.trim() == ""){
                 alert("Entrer ISBN du livre")
             } else{
-                document.getElementById('formEmpruntLivre').submit();
+                //document.getElementById('formEmpruntLivre').submit();
+                axios.post('/gestion/empruntretour', {   
+                    clientEmprunt: document.getElementById('clientEmprunt').value,                
+                    choix: document.querySelector('input[name="choix"]:checked').value,
+                    isbnLivre: document.getElementById('isbnLivre').value.trim()
+                }).then(res=>{
+                    alert(res.data.message);
+                })
             }
 
         })
