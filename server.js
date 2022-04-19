@@ -184,7 +184,7 @@ app.get('/logout', (req, res) => {
 //TROUVER LE PROFIL D'UN USER ET AFFICHER LES EMPRUNTS- MOHAMED WAFI
 app.get('/profil', (req, res) => {
 
-    if (!req.session.loginedUser) {
+    if (req.session.loginedUser) {
 
         Emprunts.find({ Utilisateur_id: req.session.loginedUser }, function (err, livresEmpruntes) {
             //DÉBUT remplissage liste de livres empruntés à retourner
@@ -196,16 +196,13 @@ app.get('/profil', (req, res) => {
                 var DateDePret = livresEmpruntes[z].DatePret
                 //On prend ces id et on va chercher le livre au complet dans la table Livres
                 Livres.find({ _id: livresEmpruntes[z].Livre_id }, function (err, ElementListeLivres) {
-
                     //On parcoure les livres avec les attributs au complet
                     for (var j = 0; j < ElementListeLivres.length; j++) {
                         // console.log("Les attributs au complet des livres empruntés: " + ElementListeLivres[j])
-
                         //Déclaration des éléments à afficher sur la page
                         var Titre = ElementListeLivres[j].Titre;
                         var ISBN = ElementListeLivres[j].ISBN;
                         var Auteur = ElementListeLivres[j].Auteur;
-
                         //Déclaration de l'objet livre à afficher sur la page profil
                         let livreAfficher = {
                             titre: Titre,
@@ -228,10 +225,6 @@ app.get('/profil', (req, res) => {
 
                     }
                     //LE TABLEAU EST BEL ET BIEN REMPLI DES LIVRES QUE JE VEUX AFFICHER AVEC LES ATTRIBUTS (VOIR APP.GET MODIFIER) MAIS SA NE S'AFFICHE PAS ICI
-
-                    //LE TABLEAU EST BEL ET BIEN REMPLI DES LIVRES QUE JE VEUX AFFICHER AVEC LES ATTRIBUTS (VOIR APP.GET MODIFIER) MAIS SA NE S'AFFICHE PAS ICI
-
-
                 })
 
 
@@ -329,26 +322,42 @@ app.post('/ModifierMotDePasse', urlencodeParser, (req, res) => {
 });
 
 app.get('/ajoutLivre', (req, res) => {
-    //if(loginedUser!=null){
-    //if(loginedUser.Droit_id=99){
+    if (req.session.loginedUser != null) {
+    if (req.session.loginedUser.Droit_id == 99||loginedUser.Droit_id == 1) {
     res.render("ajoutLivre");
-    //}
+    }else{
+        res.redirect("Acceuil")
 
-    //}
+    }
+    }
 });
 
 app.post('/ajoutLivre', (req, res) => {
-    //     var nouveauLivre = { Auteur: req. address: "Highway 37" };
-    // Livres.insertOne(nouveauLivre ,function(err, res) {
-    //     if (err) throw err;
-    //     console.log("1 document inserted")
+    //On crée un nouvel objet de type Livres avec des attributs venant de la page ajout livre
+    const nouveauLivre = new Livres(
+        {
+            Auteur: req.body.auteurLivre,
+            Titre: req.body.titreLivre,
+            DateParution: req.body.dateParution,
+            NbCopies: parseInt(req.body.nbrCopies),
+            NbDisponible: parseInt(req.body.nbrCopies),
+            MaisonEdition: req.body.maisonEdition,
+            ISBN: req.body.isbnLivre,
+            Cout: parseInt(req.body.coutLivre),
+            Description: req.body.descriptionLivre,
+            Photo: req.body.photoLivre.toString()
+        }
+    );
+    //On sauvegarde l'objet du livre dans la base de données
+    nouveauLivre.save(function (err) {
+        if (err) console.log(err)
+        console.log("Le livre a été ajouté")
+
+    });
+
 
 });
-
-
-
 // FIN DE LA PARTIE DE MOHAMED WAFI
-
 app.get('/recherche', (req, res) => {
     Livres.find({}, function (err, livres) {
         try {
@@ -359,6 +368,7 @@ app.get('/recherche', (req, res) => {
         }
     });
 });
+
 app.post('/recherche', async (req, res) => {
     //Livres.find({Titre: {$regex: recherche}}, function(err,livres){
     Livres.find({ Titre: new RegExp(req.body.SearchInput, "i") }, function (err, livres) {
@@ -724,8 +734,8 @@ app.post('/findCustomer', (req, res) => {
                             res.send(JSON.stringify(data))
                         })
                     })
-                } else{
-                    res.send(JSON.stringify({'message' : 'Client not exist'}));
+                } else {
+                    res.send(JSON.stringify({ 'message': 'Client not exist' }));
                 }
 
             })
