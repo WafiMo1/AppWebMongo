@@ -1,37 +1,39 @@
 <header>
     <nav>
-    <ul>
-        <li> <img src="/Images/logo.png"></li>
-        <li><a href="/">Home</a> </li>
-        <li><a href="/recherche">Recherche</a></li>
-        
-    </ul>
+        <ul>
+            <li> <img src="/Images/logo.png"></li>
+            <li><a href="/">Home</a> </li>
+            <li><a href="/recherche">Recherche</a></li>
+            
+        </ul>
     <!-- Début du menu déroulant -->
-    <li class="logoP">
-        <% if (loginedUser == null){ %>
-            <img src="/Images/profile.png" alt="Profil" class="logo">
-        <% } else{ %>
-            <img src=<%=loginedUser.Photo%>  alt="Profil" class="logo">
-        <%} %>
-         
-    <ul>
-        <% if (loginedUser == null){ %>    
-            <li id="login"><a href="/login">Login</a> </li> 
-        <% } else{ %>
-    <!--Lorsque Modifier Profil est sélectionné-->
+        <ul>
+            <li class="logoP">
+                <% if (loginedUser == null){ %>
+                    <img src="/Images/profile.png" alt="Profil" class="logo">
+                <% } else{ %>
+                    <img src=<%=loginedUser.Photo%>  alt="Profil" class="logo">
+                <%} %>
+                
+                <ul>
+                    <% if (loginedUser == null){ %>    
+                        <li id="login"><a href="/login">Login</a> </li> 
+                    <% } else{ %>
+                <!--Lorsque Modifier Profil est sélectionné-->
 
-            <li  id="profil"><a href="/profil">Profil</a></li>   
-            <li  id="modifierProfil"><a href="/Modifier">Modifier les informations</a></li>   
-            <li  id="modifierMotDePasse"><a href="/ModifierMotDePasse">Modifier le mot de passe</a></li>  
-            <li  id="historiqueEmprunts"><a href="/HistoriqueDesEmprunts">Modifier les informations</a></li>  
+                        <li  id="profil"><a href="/profil">Profil</a></li>   
+                        <li  id="modifierProfil"><a href="/Modifier">Modifier les informations</a></li>   
+                        <li  id="modifierMotDePasse"><a href="/ModifierMotDePasse">Modifier le mot de passe</a></li>  
+                        <li  id="historiqueEmprunts"><a href="/HistoriqueDesEmprunts">Modifier les informations</a></li>  
 
-            <li id="deconnection"><a href="/logout">Déconnexion</a></li>
-        <%} %>
-    
-    
-    </ul> 
+                        <li id="deconnection"><a href="/logout">Déconnexion</a></li>
+                    <%} %>
+            
+            
+                </ul> 
 
-    </li></ul>
+            </li>
+        </ul>
     </nav>
 
     <script>
