@@ -3,6 +3,7 @@
     <head>
         
         <link rel="stylesheet" href="/CSS/style.css">
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     </head>
     <header>
         
@@ -16,21 +17,16 @@
             <input type="hidden" id="option" name="option" value="RechercheClient">
             <button type="button" id="btnRechercheClient">Recherche</button>
         </form>
-        <% if (client != null){ %>
-            <% if (client.length != 0){ %>
-                <div>
-                    <p>Utilisateur trouvé : <%=client[0].Prenom%> <%=client[0].Nom %></p>
-                    <p>Telephone : <%=client[0].Telephone%></p>
-                    <p>Email : <%=client[0].Email%></p>
-                    <p>Nombre de pret : <%=client[0].NbPret%></p>
-                    <p>Solde du client : <%=client[0].Solde%></p>
-                </div>
-                
 
-        
-            
 
-            <br>
+        <label id="labelMessageAxios"></label>
+        <div id ="divFindCustomer" hidden = true>
+            <p id="pName"></p>
+            <p id="pTel"></p>
+            <p id="pEmail" ></p>
+            <p id="pNbPret"></p>
+            <p id="pSolde"></p>
+
 
             <form id="formEmpruntLivre" action="#" method="post"> 
                 <input type="radio" id="radioEmprunt" name="choix" value="radioEmprunt" >
@@ -41,11 +37,8 @@
                 <label >Perdu</label>
                 <br>
                 <label>ISBN du livre: </label>
-                <input type="text" id="isbnLivre" name="isbnLivre" placeholder="ISBN du Livre">
-                <% if (client != null){ %>
-                    <% if (client.length != 0){ %>
-                        <input type="hidden" id="clientEmprunt" name="clientEmprunt" value=<%= client[0].id%>>
-                <%  } }%>  
+                <input type="text" id="isbnLivre" name="isbnLivre" placeholder="ISBN du Livre">    
+                <input type="hidden" id="clientEmprunt" name="clientEmprunt" value="">
                 <input type="hidden" id="option" name="option" value="EmpruntRetour">    
                 <button type="button" id="btnEmpruntRetour">Emprunt/Retour</button>
             </form>
@@ -57,10 +50,12 @@
             <button id="btnNonRetourne">Afficher tous les livres non retourné</button>
             <button id="btnPerdu">Afficher tous les livres perdu</button>
 
+
+
+            
             <div id="divHistorique" hidden="true">
                 <h3>Historique du pret</h3>
-                
-                <table>
+                <table id="tableHistorique">
                     <tr>
                         <th>ISBN</th>
                         <th>Titre</th>
@@ -70,39 +65,14 @@
                         <th>Date de retour ou pert </th>
                         <th>État</th>
                     </tr>
-                        
-                    <% emprunts.forEach(emprunt => { %>
-                        <tr>                    
-                            <% livres.forEach(livre => { %>
-                                <% if (emprunt.Livre_id.toString() == livre._id.toString()){ %>
-                                    <td><%= livre.ISBN %> </td>
-                                    <td><%= livre.Titre %> </td>
-                                    <td><%= livre.Auteur %> </td>
-                                    <% } %>
-                                <% }) %>
-                            <td><%= emprunt.DatePret.getDate()%>-<%= emprunt.DatePret.getMonth()+1 %>-<%= emprunt.DatePret.getFullYear()%></td>
-                            <td><%= emprunt.DateRetourPrevu.getDate()%>-<%= emprunt.DateRetourPrevu.getMonth()+1 %>-<%= emprunt.DateRetourPrevu.getFullYear()%></td>
-                            <% if (emprunt.DateRetour != null){  %>
-                                <td><%= emprunt.DateRetour.getDate()%>-<%= emprunt.DateRetour.getMonth()+1 %>-<%= emprunt.DateRetour.getFullYear()%></td>
-                                <% if (emprunt.EstPerdu == true){  %>
-                                    <td>Perdu</td>
-                                <% } else {  %>
-                                    <td>Retourné</td>    
-                                <% }  %>     
-                            <% } else{  %>
-                                <td> </td>
-                                <td>Non retourné</td>
-                            <% }  %>                        
-                        </tr>
-                    <% }) %>
                 </table>
-
             </div>
+
+
 
             <div id="divNonRetourne">
                 <h3>Livres non retourné</h3>
-                
-                <table>
+                <table id="tableNonRetourne">
                     <tr>
                         <th>ISBN</th>
                         <th>Titre</th>
@@ -111,31 +81,14 @@
                         <th>Date de retour prevu</th>
                         <th>Date de retour </th>
                     </tr>
-                        
-                    <% emprunts.forEach(emprunt => { %>
-                        <% if (emprunt.DateRetour == null){  %>
-                        <tr>                                                     
-                            <% livres.forEach(livre => { %>                               
-                                <% if (emprunt.Livre_id.toString() == livre._id.toString()){ %>
-                                    <td><%= livre.ISBN %> </td>
-                                    <td><%= livre.Titre %> </td>
-                                    <td><%= livre.Auteur %> </td>
-                                    <% } %>
-                                <% }) %>
-                            <td><%= emprunt.DatePret.getDate()%>-<%= emprunt.DatePret.getMonth()+1 %>-<%= emprunt.DatePret.getFullYear()%></td>
-                            <td><%= emprunt.DateRetourPrevu.getDate()%>-<%= emprunt.DateRetourPrevu.getMonth()+1 %>-<%= emprunt.DateRetourPrevu.getFullYear()%></td>
-                            <td>Non retourné</td>                   
-                        </tr>
-                        <% } %>
-                    <% }) %>
                 </table>
-
+                
             </div>
+
 
             <div id="divPerdu" hidden="true">
                 <h3>Livres perdu</h3>
-                
-                <table>
+                <table id="tablePerdu">
                     <tr>
                         <th>ISBN</th>
                         <th>Titre</th>
@@ -144,40 +97,184 @@
                         <th>Date de retour prevu</th>
                         <th>Date de la pert </th>
                     </tr>
-                        
-                    <% emprunts.forEach(emprunt => { %>
-                        <% if (emprunt.EstPerdu == true){  %>
-                        <tr>                                                     
-                            <% livres.forEach(livre => { %>                               
-                                <% if (emprunt.Livre_id.toString() == livre._id.toString()){ %>
-                                    <td><%= livre.ISBN %> </td>
-                                    <td><%= livre.Titre %> </td>
-                                    <td><%= livre.Auteur %> </td>
-                                    <% } %>
-                                <% }) %>
-                            <td><%= emprunt.DatePret.getDate()%>-<%= emprunt.DatePret.getMonth()+1 %>-<%= emprunt.DatePret.getFullYear()%></td>
-                            <td><%= emprunt.DateRetourPrevu.getDate()%>-<%= emprunt.DateRetourPrevu.getMonth()+1 %>-<%= emprunt.DateRetourPrevu.getFullYear()%></td>
-                            <td><%= emprunt.DateRetour.getDate()%>-<%= emprunt.DateRetour.getMonth()+1 %>-<%= emprunt.DateRetour.getFullYear()%></td>                   
-                        </tr>
-                        <% } %>
-                    <% }) %>
-                </table>
-
+                </table>                              
             </div>
+        </div>
 
 
-
-            <%  } else { %>
-                <p>Utilisateur non trouvé</p>
-            <%  } %>             
-
-            <% } %>  
 
     </body>
     <script>
+        var emprunts
+        var livres
+        var tableHistorique = document.getElementById('tableHistorique')
+        var tableNonRetourne = document.getElementById('tableNonRetourne')
+        var tablePerdu = document.getElementById('tablePerdu')
+
+        axios.defaults.baseURL = 'http://localhost:4000'
         document.getElementById('btnRechercheClient').addEventListener("click",()=>{
-            if (document.getElementById("telClient").value.trim() != ""){
-                document.getElementById('formRechercheClient').submit();
+            
+            if (document.getElementById("telClient").value.trim() != ""){               
+                //Ajax original
+            //     const xhr = new XMLHttpRequest();
+            //     xhr.responseType = 'json';
+            //     xhr.open('POST', 'http://localhost:4000/findCustomer');
+            //     xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+            //     xhr.send(document.getElementById("telClient").value.trim());
+            //     /**
+            //      * readystate:
+            //      * 0: not initial
+            //      * 1: open 
+            //      * 2: send
+            //      * 3: partial response
+            //      * 4: full response             
+            //     */
+            //     xhr.onreadystatechange = function(){
+            //         if (xhr.readyState === 4){
+            //             if(xhr.status >= 200 && xhr.status < 300){//200 succes
+            //                 document.getElementById('AjaxDiv').innerHTML = "Utilisateur trouvé : " + xhr.response.Prenom + xhr.response.Nom;
+                            
+            //             }
+            //         }
+            //     }
+
+                
+                //AXIOS 
+                axios.post('/findCustomer', {                   
+                        tel: document.getElementById("telClient").value.trim()
+                }).then(res=>{
+                    if (res.data.message){
+                        alert(res.data.message)
+                        document.getElementById('pName').innerHTML = ''
+                        document.getElementById('pTel').innerHTML = ''
+                        document.getElementById('pEmail').innerHTML = ''
+                        document.getElementById('pNbPret').innerHTML = ''
+                        document.getElementById('pSolde').innerHTML = ''
+                        document.getElementById('clientEmprunt').value = ''
+                        document.getElementById('divFindCustomer').hidden = true
+                    }else{
+                        document.getElementById('labelMessageAxios').innerHTML = ''
+                        document.getElementById('pName').innerHTML = "Utilisateur trouvé : " + res.data.client.Prenom + " " + res.data.client.Nom
+                        document.getElementById('pTel').innerHTML = "Telephone : " + res.data.client.Telephone
+                        document.getElementById('pEmail').innerHTML = "Email : " + res.data.client.Email
+                        document.getElementById('pNbPret').innerHTML = "Nombre de pret : " + res.data.client.NbPret
+                        document.getElementById('pSolde').innerHTML = "Solde : " + res.data.client.Solde
+                        document.getElementById('clientEmprunt').value = res.data.client._id
+                        document.getElementById('divFindCustomer').hidden = false
+                        emprunts = res.data.historique
+                        livres = res.data.livres
+                        document.getElementById('clientEmprunt').value = res.data.client._id
+
+                        //add in to table
+                        
+                        //tableHistorique                 
+                        emprunts.forEach(emprunt => {
+                            var oTr = document.createElement('tr')
+                            tableHistorique.appendChild(oTr)
+                            livres.forEach(livre => {
+                                if (emprunt.Livre_id.toString() == livre._id.toString()){
+                                    var oTd1 = document.createElement('td')
+                                    var oTd2 = document.createElement('td')
+                                    var oTd3 = document.createElement('td')
+                                    oTd1.innerHTML = livre.ISBN
+                                    oTd2.innerHTML = livre.Titre
+                                    oTd3.innerHTML = livre.Auteur
+                                    oTr.appendChild(oTd1)
+                                    oTr.appendChild(oTd2)
+                                    oTr.appendChild(oTd3)
+                                }
+                            })  
+                            var oTd4 = document.createElement('td')
+                            var oTd5 = document.createElement('td')
+                            var oTd6 = document.createElement('td')
+                            var oTd7 = document.createElement('td')
+                            oTd4.innerHTML = new Date(emprunt.DatePret).getDate() + "-" + (new Date(emprunt.DatePret).getMonth()+1) + "-" + new Date(emprunt.DatePret).getFullYear()
+                            oTd5.innerHTML = new Date(emprunt.DateRetourPrevu).getDate() + "-" + (new Date(emprunt.DateRetourPrevu).getMonth()+1) + "-" + new Date(emprunt.DateRetourPrevu).getFullYear()
+                            if (emprunt.DateRetour != null){
+                                oTd6.innerHTML = new Date(emprunt.DateRetour).getDate() + "-" + (new Date(emprunt.DateRetour).getMonth()+1) + "-" + new Date(emprunt.DateRetour).getFullYear()
+                                if (emprunt.EstPerdu == true){
+                                    oTd7.innerHTML = 'Perdu'
+                                } else{
+                                    oTd7.innerHTML = 'Retourné'
+                                }
+                            }else{
+                                oTd6.innerHTML = ''
+                                oTd7.innerHTML = 'Non retourné'
+                            }                         
+                            oTr.appendChild(oTd4)
+                            oTr.appendChild(oTd5)
+                            oTr.appendChild(oTd6)
+                            oTr.appendChild(oTd7)                        
+                        })
+
+
+                        //tableNonRetourne
+                        emprunts.forEach(emprunt => {
+                            if (emprunt.DateRetour == null){
+                                var oTr = document.createElement('tr')
+                                tableNonRetourne.appendChild(oTr)
+                                livres.forEach(livre => {
+                                    if (emprunt.Livre_id.toString() == livre._id.toString()){
+                                        var oTd1 = document.createElement('td')
+                                        var oTd2 = document.createElement('td')
+                                        var oTd3 = document.createElement('td')
+                                        oTd1.innerHTML = livre.ISBN
+                                        oTd2.innerHTML = livre.Titre
+                                        oTd3.innerHTML = livre.Auteur
+                                        oTr.appendChild(oTd1)
+                                        oTr.appendChild(oTd2)
+                                        oTr.appendChild(oTd3)
+                                    }
+                                })
+                            var oTd4 = document.createElement('td')
+                            var oTd5 = document.createElement('td')
+                            var oTd6 = document.createElement('td')
+                            oTd4.innerHTML = new Date(emprunt.DatePret).getDate() + "-" + (new Date(emprunt.DatePret).getMonth()+1) + "-" + new Date(emprunt.DatePret).getFullYear()
+                            oTd5.innerHTML = new Date(emprunt.DateRetourPrevu).getDate() + "-" + (new Date(emprunt.DateRetourPrevu).getMonth()+1) + "-" + new Date(emprunt.DateRetourPrevu).getFullYear()
+                            oTd6.innerHTML = 'Non retourné'
+                            oTr.appendChild(oTd4)
+                            oTr.appendChild(oTd5)
+                            oTr.appendChild(oTd6)
+                            }
+
+                        })
+
+                        //tablePerdu
+                        
+                        emprunts.forEach(emprunt => {
+                            if (emprunt.EstPerdu == true){
+                                var oTr = document.createElement('tr')
+                                tablePerdu.appendChild(oTr)
+                                livres.forEach(livre => {
+                                    if (emprunt.Livre_id.toString() == livre._id.toString()){ 
+                                        var oTd1 = document.createElement('td')
+                                        var oTd2 = document.createElement('td')
+                                        var oTd3 = document.createElement('td')
+                                        oTd1.innerHTML = livre.ISBN
+                                        oTd2.innerHTML = livre.Titre
+                                        oTd3.innerHTML = livre.Auteur
+                                        oTr.appendChild(oTd1)
+                                        oTr.appendChild(oTd2)
+                                        oTr.appendChild(oTd3)
+                                    }
+                                })
+                                var oTd4 = document.createElement('td')
+                                var oTd5 = document.createElement('td')
+                                var oTd6 = document.createElement('td')
+                                oTd4.innerHTML = new Date(emprunt.DatePret).getDate() + "-" + (new Date(emprunt.DatePret).getMonth()+1) + "-" + new Date(emprunt.DatePret).getFullYear()
+                                oTd5.innerHTML = new Date(emprunt.DateRetourPrevu).getDate() + "-" + (new Date(emprunt.DateRetourPrevu).getMonth()+1) + "-" + new Date(emprunt.DateRetourPrevu).getFullYear()
+                                oTd6.innerHTML = new Date(emprunt.DateRetour).getDate() + "-" + (new Date(emprunt.DateRetour).getMonth()+1) + "-" + new Date(emprunt.DateRetour).getFullYear()
+                                oTr.appendChild(oTd4)
+                                oTr.appendChild(oTd5)
+                                oTr.appendChild(oTd6)
+
+                            }
+
+                        })
+
+                    }
+                })
+                //document.getElementById('formRechercheClient').submit();
             } else{
                 alert("Entrer le numero du telephone pour un recherche du client");
             }  
@@ -223,7 +320,14 @@
             } else if (document.getElementById("isbnLivre").value.trim() == ""){
                 alert("Entrer ISBN du livre")
             } else{
-                document.getElementById('formEmpruntLivre').submit();
+                //document.getElementById('formEmpruntLivre').submit();
+                axios.post('/gestion/empruntretour', {   
+                    clientEmprunt: document.getElementById('clientEmprunt').value,                
+                    choix: document.querySelector('input[name="choix"]:checked').value,
+                    isbnLivre: document.getElementById('isbnLivre').value.trim()
+                }).then(res=>{
+                    alert(res.data.message);
+                })
             }
 
         })
