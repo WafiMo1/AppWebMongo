@@ -545,6 +545,8 @@ app.get('/gestion/empruntretour', (req, res) => {
 })
 
 app.post('/gestion/empruntretour', async (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', '*');
     if (req.session.loginedUser) {
         if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {//only for admin or staff
             // if (req.body.option == "RechercheClient") {//button clicked = RechercheClient
