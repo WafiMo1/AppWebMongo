@@ -622,7 +622,6 @@ app.post('/gestion/empruntretour', async (req, res) => {
                                                 }, function (err) {
                                                     if (err) throw err;
                                                     // return res.status(403).end("reussi")
-                                                    res.redirect("/gestion/empruntretour")
                                                 })
 
                                                 //put information into database               
@@ -636,8 +635,10 @@ app.post('/gestion/empruntretour', async (req, res) => {
                                                     if (err) throw err;
                                                     // return res.status(403).end("reussi")
                                                     //res.redirect("/gestion/empruntretour")
-                                                    return res.send(JSON.stringify({'message' : 'Emprunt reussi'}));
+                                                    
+                                                    //return res.send(JSON.stringify({'message' : 'Emprunt reussi'}));
                                                 })
+                                                return res.send(JSON.stringify({'message' : 'Emprunt reussi'}));
                                             }
                                         }
                                     })

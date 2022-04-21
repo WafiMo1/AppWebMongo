@@ -16,7 +16,7 @@
             <label>Telephone du client : </label>
             <input type="tel" id="telClient" name="telClient" placeholder="Telephone du client" maxlength="10" onchange="telChange()">
             <input type="text" hidden>    
-            <button type="button" id="btnRechercheClient">Recherche</button>
+            <button type="button" id="btnRechercheClient" onclick="rechercheClient()">Recherche</button>
         </form>
 
 
@@ -124,8 +124,7 @@
         }
         //document.getElementById('telClient')
 
-
-        document.getElementById('btnRechercheClient').addEventListener("click",()=>{
+        function rechercheClient(){
             //isRechercheClicked = true;
             document.getElementById('btnEmpruntRetour').disabled = false;
 
@@ -394,8 +393,8 @@
                 //document.getElementById('formRechercheClient').submit();
             } else{
                 alert("Entrer le numero du telephone pour un recherche du client");
-            }  
-        })
+            }
+        }
 
         document.getElementById('radioEmprunt').addEventListener("click",()=>{
             if(document.getElementById('radioEmprunt').checked){
@@ -445,6 +444,7 @@
                         isbnLivre: document.getElementById('isbnLivre').value.trim()
                     }).then(res=>{
                         alert(res.data.message);
+                        rechercheClient();
 
                     })
                 }
