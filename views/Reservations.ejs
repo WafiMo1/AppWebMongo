@@ -17,9 +17,9 @@
                     <th>MaisonEdition</th>
                     <th>Date</th>
                     <th>Action</th>
-                    <% livres.forEach(leLivre => { %>
-                        <% resInfo.forEach(leResInfo => { %>
-                            <% if(leLivre._id.toString() == leResInfo.Livre_id.toString()) { %>
+                    <% resInfo.forEach(leResInfo => { %>
+                        <% livres.forEach(leLivre => { %>
+                            <% if(leResInfo.Livre_id.toString() == leLivre._id.toString()) { %>
                                     <tr>
                                         <td align="center"><%=leLivre.ISBN %></td>
                                         <td align="center"><%=leLivre.Auteur %></td>

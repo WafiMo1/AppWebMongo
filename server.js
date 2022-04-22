@@ -222,9 +222,9 @@ app.get('/livres/:isbn', (req, res) => {
 app.post('/livres/:isbn', (req, res) => {
     if(loginedUser == null) res.redirect("/login")
     else {
-        Reservations.findOne({ Livre_id : req.body.livre_id, Utilisateur_id: loginedUser._id }, function (err, livre) {
-            if(livre == null && req.body.livre_NbDisponible > 0){
-                const date = Date.now()
+        Reservations.findOne({ Livre_id: req.body.livre_id, Utilisateur_id: req.session.loginedUser._id }, function (err, livre) {
+            if (livre == null && req.body.livre_NbDisponible > 0) {
+                const date = new Date(Date.now())
                 const livreReservee = new Reservations(
                     {
                         DateReservation: date,
@@ -251,9 +251,9 @@ app.post('/livres/:isbn', (req, res) => {
 });
 
 app.get('/reservations', (req, res) => {
-    if(loginedUser == null) res.redirect("/login")
-    Reservations.find({Utilisateur_id: loginedUser._id}, function(err,lesRes){
-        if (err) console.log(err)
+    if(!req.session.loginedUser) return res.redirect("/login")
+    Reservations.find({Utilisateur_id: req.session.loginedUser._id}).sort({DateReservation: 'desc'}).exec(function(err,lesRes){
+        if (err) throw (err)
         Livres.find({}, function (err, donneesLivre) {
             if (err) console.log(err)
             res.render("Reservations", {resInfo : lesRes, livres : donneesLivre, loginedUser : loginedUser})
@@ -269,7 +269,7 @@ app.post('/annulerReservation', (req, res) => {
             if (err) console.log(err)
             console.log("La reservation pour le livre " + req.body.livre_titre + " a ete annuler par l'user " + loginedUser.Nom);
             
-            Livres.findByIdAndUpdate(req.body.livre_id, { NbDisponible: parseInt(req.body.livre_NbDisponible)+ 1 },
+            Livres.findByIdAndUpdate(req.body.livre_id, { NbDisponible: parseInt(req.body.livre_NbDisponible) + 1 },
                 function (err, livre) {
                     if (err) console.log(err)
                     else console.log("Le nombre de copies disponible pour le livre " + req.body.livre_titre + " a ete mise a jour par l'user " + loginedUser.Nom);    
