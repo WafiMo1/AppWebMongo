@@ -1,14 +1,38 @@
 <header>
-    <nav>
+    <nav style="width: 100%;">
+       <div style="text-align: left;" > 
         <ul>
-            <li> <img src="/Images/logo.png"></li>
+            
+            <li><a href="/"><img src="/Images/logo.png"></a></li>
             <li><a href="/">Home</a> </li>
             <li><a href="/recherche">Recherche</a></li>
+            <% if (loginedUser){ %>
+               <li><a href="/reservations">Mes Réservations</a></li>    
+                <% if (loginedUser.Droit_id ==  99 || loginedUser.Droit_id == 1){ %>
+                    <li>
+                        <a href="/gestion">Gestion</a>
+                        <ul>
+                            <li><a href="/gestion/ModificationClient">Modifier l'informations du client</a></li>
+                            <li><a href="/gestion/Reservation">Réserver et Annuler les livres</a></li>
+                            <li><a href="/gestion/empruntretour">Emprunt et Retour</a></li>
+                            <li><a href="/gestion/Livre">Gestion du livre</a></li>
+                            <li><a href="/gestion/caisse">La caisse</a></li>
+                            <% if (loginedUser.Droit_id ==  99 ){ %>
+                                <li><a href="/gestion/employees">Gestion des employées</a></li>
+                            <% } %>
+                        </ul>                   
+                    </li>
+                <%} %>
+                
+
+            <% } %>
             
         </ul>
+    </div>
     <!-- Début du menu déroulant -->
+    <div style="float: right;">
         <ul>
-            <li class="logoP">
+            <li class="logoP" style="padding-right:50px; ">
                 <% if (loginedUser == null){ %>
                     <img src="/Images/profile.png" alt="Profil" class="logo">
                 <% } else{ %>
@@ -34,6 +58,7 @@
 
             </li>
         </ul>
+    </div>
     </nav>
 
     <script>

@@ -10,10 +10,10 @@ li {
     text-decoration: none;
 }
 
-li.logoP {
-    margin-left: 94%;
+/* li.logoP {
+    margin-right: 50px;
     position: fixed;
-}
+} */
 
 .logo {
     width: 70px;
@@ -49,6 +49,7 @@ div .menu {
 
 nav {
     margin-right: 0%;
+    position: fixed;
 }
 
 nav ul {
@@ -61,7 +62,7 @@ nav ul {
 
 nav ul li {
     list-style: none;
-    line-height: 44px;
+    line-height: 20px;
     float: left;
     background-color: #ffffff75;
     text-decoration: none;
@@ -99,8 +100,8 @@ nav ul li:hover ul li {
 }
 
 img {
-    width: 25px;
-    height: 25px;
+    width: 125px;
+    height: 125px;
 }
 
 
