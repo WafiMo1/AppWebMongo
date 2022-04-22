@@ -5,6 +5,7 @@ body{
 }
 li {
     list-style: none !important;
+    list-style-type: none;
     padding: 10px;
     font-size: 20px;
     text-decoration: none;
@@ -53,10 +54,10 @@ nav {
 }
 
 nav ul {
-
+    text-align: left;
     padding: 0;
     margin: 0;
-    width: 100%;
+    width: auto;
     list-style-type: none;
 }
 
