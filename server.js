@@ -440,7 +440,7 @@ app.post('/livres/:isbn', (req, res) => {
     else {
         Reservations.findOne({ Livre_id: req.body.livre_id, Utilisateur_id: req.session.loginedUser._id }, function (err, livre) {
             if (livre == null && req.body.livre_NbDisponible > 0) {
-                const date = Date.now()
+                const date = new Date(Date.now())
                 const livreReservee = new Reservations(
                     {
                         DateReservation: date,
@@ -468,7 +468,7 @@ app.post('/livres/:isbn', (req, res) => {
 
 app.get('/reservations', (req, res) => {
     if(!req.session.loginedUser) return res.redirect("/login")
-    Reservations.find({Utilisateur_id: req.session.loginedUser._id}, function(err, lesRes){
+    Reservations.find({Utilisateur_id: req.session.loginedUser._id}).sort({DateReservation: 'desc'}).exec(function(err,lesRes){
         if (err) throw (err)
         Livres.find({}, function (err, donneesLivre) {
             if (err) console.log(err)
@@ -485,7 +485,7 @@ app.post('/annulerReservation', (req, res) => {
             if (err) console.log(err)
             console.log("La reservation pour le livre " + req.body.livre_titre + " a ete annuler par l'user " + req.session.loginedUser.Nom);
             
-            Livres.findByIdAndUpdate(req.body.livre_id, { NbDisponible: parseInt(req.body.livre_NbDisponible)+ 1 },
+            Livres.findByIdAndUpdate(req.body.livre_id, { NbDisponible: parseInt(req.body.livre_NbDisponible) + 1 },
                 function (err, livre) {
                     if (err) console.log(err)
                     else console.log("Le nombre de copies disponible pour le livre " + req.body.livre_titre + " a ete mise a jour par l'user " + req.session.loginedUser.Nom);    
