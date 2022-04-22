@@ -596,17 +596,23 @@ app.post('/gestion/empruntretour', async (req, res) => {
                                             //return res.status(403).end("client attend au maximun du pret ")
                                             return res.send(JSON.stringify({'message' : 'client attend au maximun du pret'}));
                                         } else {
+                                            //mis a jour le nombre de livre
+                                            var livreNbDisponible = livre.NbDisponible;
+
                                             //verify if the book is already in reservation
                                             Reservations.findOneAndDelete({
                                                 Livre_id: livre._id,
                                                 Utilisateur_id: req.body.clientEmprunt
                                             }, function (err) {
                                                 if (err) throw err;
-                                                var livreNbDisponible = livre.NbDisponible;
+                                                
+                                                //console.log(livre.NbDisponible + 'before reservation')
+                                                livreNbDisponible++;
                                                 livre.updateOne({ //update nombre disponible du livre apres annuler le reservation
-                                                    NbDisponible: livreNbDisponible + 1
+                                                    NbDisponible: livreNbDisponible
                                                 }, function (err) {
                                                     if (err) throw err;
+                                                    //console.log(livre.NbDisponible + 'after reservation')
                                                 })
                                             })
 
@@ -620,10 +626,9 @@ app.post('/gestion/empruntretour', async (req, res) => {
                                                 }, function (err) {
                                                     if (err) throw err;
                                                 })
-
-                                                var livreNbDisponible = livre.NbDisponible;
+                                                livreNbDisponible--;
                                                 livre.updateOne({ //update nombre disponible du livre
-                                                    NbDisponible: livreNbDisponible - 1
+                                                    NbDisponible: livreNbDisponible 
                                                 }, function (err) {
                                                     if (err) throw err;
                                                     // return res.status(403).end("reussi")
