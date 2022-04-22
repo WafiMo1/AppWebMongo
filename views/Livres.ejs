@@ -8,6 +8,7 @@
       <%= livre[0].Titre %>
     </title>
       <link rel="stylesheet" href="/CSS/style.css">
+      <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
       <%- include ('../views/partials/header.ejs') %>
   </head>
 
@@ -55,7 +56,7 @@
         <tr>
           <form action="#" method="post">
             <td>
-              <input type="submit" value="Réserver le livre" id="btnReserver">
+              <input type="button" value="Réserver le livre" id="btnReserver" onclick="reserver()">
               <input type="hidden" value="<%= livre[0]._id %>" name="livre_id" id="livre_id">
               <input type="hidden" value="<%= livre[0].Titre %>" name="livre_Titre" id="livre_Titre">
               <input type="hidden" value="<%= livre[0].NbDisponible %>" name="livre_NbDisponible" id="livre_NbDisponible">
@@ -72,5 +73,23 @@
     if(document.getElementById("livre_NbDisponible").value == 0){
       document.getElementById("btnReserver").disabled = true;
     }else document.getElementById("btnReserver").disabled = false;
+
+    axios.defaults.baseURL = 'http://localhost:4000'
+    
+    function reserver(){
+      axios.post('/livres/:isbn', {   
+        livre_id: document.getElementById('livre_id').value,                
+        livre_Titre: document.getElementById('livre_Titre').value,   
+        livre_NbDisponible: document.getElementById('livre_NbDisponible').value,   
+      }).then(res=>{
+        alert(res.data.message);
+        if (res.data.code == 10){
+          window.location='/login'
+        }
+        location.reload();
+      })
+    }
+
+
 </script>
 </html>

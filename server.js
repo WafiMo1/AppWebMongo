@@ -433,7 +433,10 @@ app.get('/livres/:isbn', (req, res) => {
 
 
 app.post('/livres/:isbn', (req, res) => {
-    if (loginedUser == null) res.redirect("/login")
+    //if (req.session.loginedUser  == null) res.redirect("/login")
+    if (req.session.loginedUser  == null){
+        return res.send(JSON.stringify({'message' : "Il faut se connecter pour utiliser cette fonction", 'code' : 10}));
+    }
     else {
         Reservations.findOne({ Livre_id: req.body.livre_id, Utilisateur_id: req.session.loginedUser._id }, function (err, livre) {
             if (livre == null && req.body.livre_NbDisponible > 0) {
@@ -447,7 +450,8 @@ app.post('/livres/:isbn', (req, res) => {
                 );
                 livreReservee.save(function (err) {
                     if (err) console.log(err)
-                    console.log("Le livre: " + req.body.livre_Titre + " a ete reserve par l'user " + loginedUser.Nom)
+                    return res.send(JSON.stringify({'message' : "Le livre: " + req.body.livre_Titre + " a ete reserve par l'user " + req.session.loginedUser.Nom}));
+                    //console.log("Le livre: " + req.body.livre_Titre + " a ete reserve par l'user " + loginedUser.Nom)
                 });
                 Livres.findByIdAndUpdate(req.body.livre_id, { NbDisponible: req.body.livre_NbDisponible - 1 },
                     function (err, livre) {
@@ -455,16 +459,17 @@ app.post('/livres/:isbn', (req, res) => {
                             console.log(err);
                         }
                     })
-            } else console.log("Le livre: " + req.body.livre_Titre + " ne peut pas etre reserve")
+            } else return res.send(JSON.stringify({'message' : "Le livre: " + req.body.livre_Titre + " ne peut pas etre reserve"}));
+            //else console.log("Le livre: " + req.body.livre_Titre + " ne peut pas etre reserve")
         })
     }
 });
 
 
 app.get('/reservations', (req, res) => {
-    if(req.session.loginedUser == null) res.redirect("/login")
-    Reservations.find({Utilisateur_id: loginedUser._id}, function(err,lesRes){
-        if (err) console.log(err)
+    if(!req.session.loginedUser) return res.redirect("/login")
+    Reservations.find({Utilisateur_id: req.session.loginedUser._id}, function(err, lesRes){
+        if (err) throw (err)
         Livres.find({}, function (err, donneesLivre) {
             if (err) console.log(err)
             res.render("Reservations", { resInfo: lesRes, livres: donneesLivre, loginedUser: req.session.loginedUser })
@@ -473,12 +478,12 @@ app.get('/reservations', (req, res) => {
 });
 
 app.post('/annulerReservation', (req, res) => {
-    if(req.session.loginedUser == null) res.redirect("/login")
+    if(!req.session.loginedUser) return res.redirect("/login")
     else {
         Reservations.findOneAndDelete({ Livre_id : req.body.livre_id, Utilisateur_id: req.session.loginedUser._id }, 
             function (err, livre) {
             if (err) console.log(err)
-            console.log("La reservation pour le livre " + req.body.livre_titre + " a ete annuler par l'user " + loginedUser.Nom);
+            console.log("La reservation pour le livre " + req.body.livre_titre + " a ete annuler par l'user " + req.session.loginedUser.Nom);
             
             Livres.findByIdAndUpdate(req.body.livre_id, { NbDisponible: parseInt(req.body.livre_NbDisponible)+ 1 },
                 function (err, livre) {
