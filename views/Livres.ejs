@@ -84,9 +84,12 @@
       }).then(res=>{
         alert(res.data.message);
         if (res.data.code == 10){
-          window.location='/login'
+          console.log('here')
+          window.location='/login';
+        }else{
+          location.reload();
         }
-        location.reload();
+        
       })
     }
 
