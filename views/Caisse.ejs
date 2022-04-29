@@ -55,7 +55,8 @@
                     
                     <p>
                         <label for="montant">Montant: </label><br>
-                        <input type="text" id="montant" pattern="[0-9.]">
+                        <input type="text" id="montant" placeholder="ex: 10.99" pattern="[0-9.]" >
+                        
                     </p>
                     <p>
                        <label for="titre">Sujet: </label><br>
@@ -141,6 +142,31 @@
                 document.getElementById('btnRechargerFacturer').innerHTML = "";
                 document.getElementById('commentaire').placeholder = "Entrer la raison du remboursement";
                 document.getElementById('btnRechargerFacturer').innerHTML = "Remboursement";
+            }
+        }
+
+        function Submit(){
+            if (!document.getElementById('montant').value){ 
+                return alert("Entrer le montant")
+            } else if (!document.getElementById('titre').value){
+                return alert("Entrer le sujet")
+            } else{
+                var montant = parseFloat(document.getElementById('montant').value)
+                var methodePaiement = document.getElementById('methodePaiement').value;
+                if (document.getElementById('radioFacturer').checked){
+                    montant = -montant;
+                    methodePaiement = null;
+                }
+                axios.post('/gestion/caisse', {     
+                    MethodePaiement: methodePaiement, 
+                    Cout: montant,
+                    Utilisateur_id: document.getElementById('idClient').value,         
+                    Titre: document.getElementById('titre').value,
+                    Commentaire: document.getElementById('commentaire').value
+               }).then(res=>{
+                    alert(res.data.message);
+                    rechercheClient();
+               })
             }
         }
 

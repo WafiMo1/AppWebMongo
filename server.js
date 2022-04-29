@@ -843,6 +843,37 @@ app.get('/gestion/caisse', (req, res) => {
     }
 })
 
+app.post('/gestion/caisse', (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', '*');//option,all
+    if (req.session.loginedUser) {
+        if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {//only for admin or staff   
+            Transactions.create({
+                    DateTransaction: new Date(Date.now()),
+                    MethodePaiement: req.body.MethodePaiement,
+                    Cout: req.body.Cout,
+                    Utilisateur_id: req.body.Utilisateur_id,
+                    EmployeeId: req.session.loginedUser._id,
+                    Titre: req.body.Titre,
+                    Commentaire: req.body.Commentaire
+            }, function (err) { if (err) throw err })
+
+            Utilisateurs.findOne({ _id: req.body.Utilisateur_id }, function (err, client) {
+                if (err) throw err 
+                var newSolde = client.Solde + req.body.Cout;
+                client.updateOne({
+                    Solde: newSolde.toFixed(2)
+                }, function (err) { if (err) throw err })
+            }) 
+            res.send(JSON.stringify({ 'message': 'Transaction réussie' }))
+        } else {
+            res.status(403).end("vous n'avez pas le droit")
+        }
+    } else {
+        res.redirect("/login")
+    }
+})
+
 
 app.get('/profil/facture', async (req, res) => {
     if (req.session.loginedUser) {
