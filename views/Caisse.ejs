@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        
+        <link rel="stylesheet" href="/CSS/style.css">
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <%- include ('../views/partials/header.ejs') %>
+        <title>La Caisse</title>
+        
+    </head>
+    <header>
+        
+    </header>
+
+    <body>
+        <h1 id="title">La Caisse</h1>
+        <form id="formRechercheClient"> 
+            <label for="telClient">Telephone du client : </label>
+            <input type="tel" id="telClient" name="telClient" placeholder="Telephone du client" maxlength="10" onchange="telChange()">
+            <input type="text" id="idClient" hidden>    
+            <button type="button" id="btnRechercheClient" onclick="rechercheClient()">Recherche</button>
+        </form>
+
+        <div id ="divFindCustomer" hidden = true>
+            <p id="pName"></p>
+            <p id="pTel"></p>
+            <p id="pEmail" ></p>
+            <p id="pNbPret"></p>
+            <p id="pSolde"></p>
+
+            <hr>
+            <form id="formCaisse">
+                <h3>Recharger ou Facturer</h3>
+                <input type="radio" id="radioRecharger" name="choix" value="radioRecharger" onclick="RadioRecharger()">
+                <label for="radioRecharger">Recharger le compte de client</label>                
+                <input type="radio" id="radioFacturer" name="choix" value="radioFacturer" onclick="RadioFacturer()">
+                <label for="radioFacturer">Facturer le client</label>
+                <% if (loginedUser.Droit_id == 99 ){ %>
+                    <input type="radio" id="radioRemboursement" name="choix" value="radioRemboursement" onclick="RadioRemboursement()">
+                    <label for="radioRemboursement">Remboursement</label>
+                <% } %>
+
+
+                <div id="divRechargerFacturer" hidden="true">
+                    <p id="pMethodePaiement">
+                        <label for="methodePaiement" >Methode de Paiement: </label><br>
+                        <select id="methodePaiement">
+                            <option value="Comptant">Comptant</option>
+                            <option value="Visa">Visa</option>
+                            <option value="Mastercard">Mastercard</option>
+                            <option value="Amex">American Express</option>
+                            <option value="Debit">Carte de debit</option>  
+                        </select>
+                    </p>
+                    
+                    <p>
+                        <label for="montant">Montant: </label><br>
+                        <input type="text" id="montant" pattern="[0-9.]">
+                    </p>
+                    <p>
+                       <label for="titre">Sujet: </label><br>
+                        <input type="text" id="titre" > 
+                    </p>
+                    
+                    <p>
+                        <label for="commentaire">Commentaire: </label><br>
+                        <textarea id="commentaire" rows="6" cols="50"></textarea>
+                    </p>
+
+                    <button type="button" id="btnRechargerFacturer" onclick="Submit()"></button>
+                </div>                               
+            </form>             
+        </div>
+
+    </body>
+    <script>
+
+        axios.defaults.baseURL = 'http://localhost:4000'
+        function telChange(){
+           document.getElementById('btnRechargerFacturer').disabled = true;
+        }
+
+        function rechercheClient(){
+           document.getElementById('btnRechargerFacturer').disabled = false;
+           if (document.getElementById("telClient").value.trim() != ""){                         
+               axios.post('/findCustomer', {                   
+                       tel: document.getElementById("telClient").value.trim()
+               }).then(res=>{
+                   if (res.data.message){
+                       alert(res.data.message)
+                       document.getElementById('pName').innerHTML = ''
+                       document.getElementById('pTel').innerHTML = ''
+                       document.getElementById('pEmail').innerHTML = ''
+                       document.getElementById('pNbPret').innerHTML = ''
+                       document.getElementById('pSolde').innerHTML = ''
+                       document.getElementById('idClient').value = '';
+                       document.getElementById('divFindCustomer').hidden = true
+                   }else{
+                       document.getElementById('pName').innerHTML = "Utilisateur trouvé : " + res.data.client.Prenom + " " + res.data.client.Nom
+                       document.getElementById('pTel').innerHTML = "Telephone : " + res.data.client.Telephone
+                       document.getElementById('pEmail').innerHTML = "Email : " + res.data.client.Email
+                       document.getElementById('pNbPret').innerHTML = "Nombre de pret : " + res.data.client.NbPret
+                       document.getElementById('pSolde').innerHTML = "Solde : " + res.data.client.Solde
+                       document.getElementById('idClient').value = res.data.client._id;
+                       document.getElementById('divFindCustomer').hidden = false
+                   }
+               })
+            } else{
+                alert("Entrer le numero du telephone pour un recherche du client");
+            }
+        }
+
+        function RadioRecharger(){
+            if(document.getElementById('radioRecharger').checked){
+                document.getElementById('divRechargerFacturer').hidden = false;
+                document.getElementById('pMethodePaiement').hidden = false;
+                document.getElementById('titre').value = "Recharger le compte";
+                document.getElementById('commentaire').innerHTML = "Recharger le compte";
+                document.getElementById('btnRechargerFacturer').innerHTML = "Recharger le compte";
+            }          
+        }
+
+
+        function RadioFacturer(){
+            if(document.getElementById('radioFacturer').checked){
+                document.getElementById('divRechargerFacturer').hidden = false;
+                document.getElementById('pMethodePaiement').hidden = true;
+                document.getElementById('titre').value = "";
+                document.getElementById('titre').placeholder = "Entrer le sujet";
+                document.getElementById('commentaire').innerHTML = "Facturer le client";
+                document.getElementById('btnRechargerFacturer').innerHTML = "Facturer le client";
+            }
+        }
+
+        function RadioRemboursement(){
+            if(document.getElementById('radioRemboursement').checked){
+                document.getElementById('divRechargerFacturer').hidden = false;
+                document.getElementById('pMethodePaiement').hidden = false;
+                document.getElementById('titre').value = "";
+                document.getElementById('titre').placeholder = "Entrer le sujet";
+                document.getElementById('btnRechargerFacturer').innerHTML = "";
+                document.getElementById('commentaire').placeholder = "Entrer la raison du remboursement";
+                document.getElementById('btnRechargerFacturer').innerHTML = "Remboursement";
+            }
+        }
+
+    </script>
+
+    <footer class="f">
+        
+    </footer>
+</html>

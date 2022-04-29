@@ -297,7 +297,6 @@ app.post('/ModifierPhotoProfil', urlencodeParser, (req, res) => {
                 res.redirect('/Modifier');
             }); 
         }); 
-
     });
 
 //MISE À JOUR DU MOT DE PASSE- MOHAMED WAFI
@@ -799,8 +798,11 @@ app.post('/findCustomer', (req, res) => {
                         if (err) throw err;
                         Livres.find({}, function (err, livres) {
                             if (err) throw err;
-                            let data = { client, historique, livres }
-                            res.send(JSON.stringify(data))
+                            Transactions.find({ Utilisateur_id: client._id }, function (err, transactions){
+                                if (err) throw err;
+                                let data = { client, historique, livres, transactions}
+                                res.send(JSON.stringify(data))
+                            })
                         })
                     })
                 } else {
@@ -828,6 +830,19 @@ app.post('/findCustomer', (req, res) => {
 //     })
 
 // })
+
+app.get('/gestion/caisse', (req, res) => {
+    if (req.session.loginedUser) {
+        if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {//only for admin or staff
+            res.render('caisse', { loginedUser: req.session.loginedUser })
+        } else {
+            res.status(403).end("vous n'avez pas le droit")
+        }
+    } else {
+        res.redirect("/login")
+    }
+})
+
 
 app.get('/profil/facture', async (req, res) => {
     if (req.session.loginedUser) {

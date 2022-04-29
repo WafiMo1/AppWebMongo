@@ -6,6 +6,7 @@ const transactionSchema = mongoose.Schema({
     Cout: Number,
     Utilisateur_id: mongoose.Schema.ObjectId,
     EmployeeId: mongoose.Schema.ObjectId,
+    Titre: String,
     Commentaire: String
 });
 
