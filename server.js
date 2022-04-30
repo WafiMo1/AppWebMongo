@@ -511,7 +511,7 @@ app.get('/reservations', (req, res) => {
 app.post('/annulerReservation', (req, res) => {
     if (!req.session.loginedUser) return res.redirect("/login")
     else {
-        Reservations.findOneAndDelete({ Livre_id: req.body.livre_id, Utilisateur_id: req.session.loginedUser._id },
+        Reservations.findOneAndDelete({ Livre_id: req.body.livre_id, Utilisateur_id: req.body.user_id },
             function (err, livre) {
                 if (err) console.log(err)
                 console.log("La reservation pour le livre " + req.body.livre_titre + " a ete annuler par l'user " + req.session.loginedUser.Nom);
@@ -522,7 +522,7 @@ app.post('/annulerReservation', (req, res) => {
                         else console.log("Le nombre de copies disponible pour le livre " + req.body.livre_titre + " a ete mise a jour par l'user " + req.session.loginedUser.Nom);
                     })
             })
-        res.redirect("/reservations")
+        res.redirect(req.headers.referer)
     }
 });
 

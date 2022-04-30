@@ -50,10 +50,12 @@
         axios.defaults.baseURL = 'http://localhost:4000'
         function telChange(){
             document.getElementById('ListReservationClient').disabled = true;
+            document.getElementById('btnReserver').disabled = true;
         }
 
         function rechercheClient(){
             document.getElementById('ListReservationClient').disabled = false;
+            document.getElementById('btnReserver').disabled = false;
            if (document.getElementById("telClient").value.trim() != ""){                         
                axios.post('/findCustomer', {                   
                        tel: document.getElementById("telClient").value.trim()
