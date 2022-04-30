@@ -12,8 +12,8 @@ const axios = require('axios');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var http = require("http");
-var fs = require('fs'); 
-var formidable = require('formidable'); 
+var fs = require('fs');
+var formidable = require('formidable');
 
 var CryptoJS = require("crypto-js");
 
@@ -278,26 +278,26 @@ app.post('/Modifier', urlencodeParser, (req, res) => {
 
 
 app.post('/ModifierPhotoProfil', urlencodeParser, (req, res) => {
-       var uploadProfilPhotoPath = "./public/Images/Profil/"; 
-        var form = new formidable.IncomingForm(); 
-        form.parse(req, function (err, fields, files) { 
-            if (err) throw err
-            var oldPath = files.photoModifie.filepath; 
-            var newName = req.session.loginedUser._id + path.extname(files.photoModifie.originalFilename);
-            var newPath = uploadProfilPhotoPath + newName;
-            fs.rename(oldPath, newPath, function (err) { 
-                if (err) throw err;
-                console.log("photo updated");
-                //update database
-                Utilisateurs.findOneAndUpdate({ _id: req.session.loginedUser }, {
-                    Photo: "/Images/Profil/" + newName
-                }, function (err) {
-                    if (err) { console(err) }
-                });
-                res.redirect('/Modifier');
-            }); 
-        }); 
+    var uploadProfilPhotoPath = "./public/Images/Profil/";
+    var form = new formidable.IncomingForm();
+    form.parse(req, function (err, fields, files) {
+        if (err) throw err
+        var oldPath = files.photoModifie.filepath;
+        var newName = req.session.loginedUser._id + path.extname(files.photoModifie.originalFilename);
+        var newPath = uploadProfilPhotoPath + newName;
+        fs.rename(oldPath, newPath, function (err) {
+            if (err) throw err;
+            console.log("photo updated");
+            //update database
+            Utilisateurs.findOneAndUpdate({ _id: req.session.loginedUser }, {
+                Photo: "/Images/Profil/" + newName
+            }, function (err) {
+                if (err) { console(err) }
+            });
+            res.redirect('/Modifier');
+        });
     });
+});
 
 //MISE À JOUR DU MOT DE PASSE- MOHAMED WAFI
 app.get('/ModifierMotDePasse', (req, res) => {
@@ -453,34 +453,45 @@ app.get('/livres/:isbn', (req, res) => {
 
 
 app.post('/livres/:isbn', (req, res) => {
-    //if (req.session.loginedUser  == null) res.redirect("/login")
     if (req.session.loginedUser == null) {
         return res.send(JSON.stringify({ 'message': "Il faut se connecter pour utiliser cette fonction", 'code': 10 }));
-    }
-    else {
-        Reservations.findOne({ Livre_id: req.body.livre_id, Utilisateur_id: req.session.loginedUser._id }, function (err, livre) {
-            if (livre == null && req.body.livre_NbDisponible > 0) {
-                const date = new Date(Date.now())
-                const livreReservee = new Reservations(
-                    {
-                        DateReservation: date,
-                        Livre_id: req.body.livre_id,
-                        Utilisateur_id: req.session.loginedUser._id
-                    }
-                );
-                livreReservee.save(function (err) {
-                    if (err) console.log(err)
-                    return res.send(JSON.stringify({ 'message': "Le livre: " + req.body.livre_Titre + " a ete reserve par l'user " + req.session.loginedUser.Nom }));
-                    //console.log("Le livre: " + req.body.livre_Titre + " a ete reserve par l'user " + loginedUser.Nom)
-                });
-                Livres.findByIdAndUpdate(req.body.livre_id, { NbDisponible: req.body.livre_NbDisponible - 1 },
-                    function (err, livre) {
-                        if (err) {
-                            console.log(err);
-                        }
-                    })
-            } else return res.send(JSON.stringify({ 'message': "Le livre: " + req.body.livre_Titre + " ne peut pas etre reserve" }));
-            //else console.log("Le livre: " + req.body.livre_Titre + " ne peut pas etre reserve")
+    } else {
+
+        Livres.findOne({ ISBN: req.body.isbn }, function (err, livre) {
+            if (err) throw err;
+            if (livre == null) {
+                return res.send(JSON.stringify({ 'message': "Livre not existe" }))
+            } else {
+                var userID = req.body.client_id;
+                if (!req.body.client_id) {
+                    userID = req.session.loginedUser._id
+                }
+                Reservations.findOne({ Livre_id: livre._id, Utilisateur_id: userID }, function (err, reservation) {
+                    var nbDisponible = livre.NbDisponible
+                    if (reservation == null && nbDisponible > 0) {
+                        const date = new Date(Date.now())
+                        const livreReservee = new Reservations(
+                            {
+                                DateReservation: date,
+                                Livre_id: livre._id,
+                                Utilisateur_id: userID
+                            }
+                        );
+                        livreReservee.save(function (err) {
+                            if (err) console.log(err)
+                            return res.send(JSON.stringify({ 'message': "Le livre: " + livre.Titre + " a ete reserve par l'user " + req.session.loginedUser.Nom }));
+                            //console.log("Le livre: " + req.body.livre_Titre + " a ete reserve par l'user " + loginedUser.Nom)
+                        });
+                        Livres.findByIdAndUpdate(livre._id, { NbDisponible: nbDisponible - 1 },
+                            function (err, livre) {
+                                if (err) {
+                                    console.log(err);
+                                }
+                            })
+                    } else return res.send(JSON.stringify({ 'message': "Le livre: " + livre.Titre + " ne peut pas etre reserve" }));
+                    //else console.log("Le livre: " + req.body.livre_Titre + " ne peut pas etre reserve")
+                })
+            }
         })
     }
 });
@@ -798,9 +809,9 @@ app.post('/findCustomer', (req, res) => {
                         if (err) throw err;
                         Livres.find({}, function (err, livres) {
                             if (err) throw err;
-                            Transactions.find({ Utilisateur_id: client._id }, function (err, transactions){
+                            Transactions.find({ Utilisateur_id: client._id }, function (err, transactions) {
                                 if (err) throw err;
-                                let data = { client, historique, livres, transactions}
+                                let data = { client, historique, livres, transactions }
                                 res.send(JSON.stringify(data))
                             })
                         })
@@ -849,22 +860,22 @@ app.post('/gestion/caisse', (req, res) => {
     if (req.session.loginedUser) {
         if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {//only for admin or staff   
             Transactions.create({
-                    DateTransaction: new Date(Date.now()),
-                    MethodePaiement: req.body.MethodePaiement,
-                    Cout: req.body.Cout,
-                    Utilisateur_id: req.body.Utilisateur_id,
-                    EmployeeId: req.session.loginedUser._id,
-                    Titre: req.body.Titre,
-                    Commentaire: req.body.Commentaire
+                DateTransaction: new Date(Date.now()),
+                MethodePaiement: req.body.MethodePaiement,
+                Cout: req.body.Cout,
+                Utilisateur_id: req.body.Utilisateur_id,
+                EmployeeId: req.session.loginedUser._id,
+                Titre: req.body.Titre,
+                Commentaire: req.body.Commentaire
             }, function (err) { if (err) throw err })
 
             Utilisateurs.findOne({ _id: req.body.Utilisateur_id }, function (err, client) {
-                if (err) throw err 
+                if (err) throw err
                 var newSolde = client.Solde + req.body.Cout;
                 client.updateOne({
                     Solde: newSolde.toFixed(2)
                 }, function (err) { if (err) throw err })
-            }) 
+            })
             res.send(JSON.stringify({ 'message': 'Transaction réussie' }))
         } else {
             res.status(403).end("vous n'avez pas le droit")
@@ -895,6 +906,47 @@ app.get('/gestion/client', (req, res) => {
         res.redirect("/login")
     }
 })
+
+app.get('/gestion/reservation', async (req, res) => {
+    if (req.session.loginedUser) {
+        if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {//only for admin or staff
+            res.render('GestionReservations', { loginedUser: req.session.loginedUser });
+        } else {
+            res.status(403).end("vous n'avez pas le droit")
+        }
+    } else {
+        res.redirect("/login")
+    }
+})
+
+app.get('/gestion/reservation/:telClient', (req, res) => {
+    if (!req.session.loginedUser) return res.redirect("/login")
+    else {
+        if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {//only for admin or staff
+            Utilisateurs.findOne({ Telephone: req.params.telClient }, function (err, client) {
+                if (err) throw err;
+                Reservations.find({ Utilisateur_id: client._id }).sort({ DateReservation: 'desc' }).exec(function (err, lesRes) {
+                    if (err) throw (err)
+                    Livres.find({}, function (err, donneesLivre) {
+                        if (err) console.log(err)
+                        res.render("Reservations", { resInfo: lesRes, livres: donneesLivre, loginedUser: req.session.loginedUser })
+                    });
+                });
+            })
+
+
+        } else {
+            res.status(403).end("vous n'avez pas le droit")
+        }
+
+
+    }
+
+});
+
+
+
+
 
 app.listen(port, function (err) {
     if (err) console.log(err);

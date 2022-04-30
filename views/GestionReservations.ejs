@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        
+        <link rel="stylesheet" href="/CSS/style.css">
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <%- include ('../views/partials/header.ejs') %>
+        <title>La Caisse</title>
+        
+    </head>
+    <header>
+        
+    </header>
+
+    <body>
+        <h1 id="title">Gestion du reservation</h1>
+        <form id="formRechercheClient"> 
+            <label for="telClient">Telephone du client : </label>
+            <input type="tel" id="telClient" name="telClient" placeholder="Telephone du client" maxlength="10" onchange="telChange()">
+            <input type="text" id="idClient" hidden>    
+            <button type="button" id="btnRechercheClient" onclick="rechercheClient()">Recherche</button>
+        </form>
+
+        <div id ="divFindCustomer" hidden = true>
+            <p id="pName"></p>
+            <p id="pTel"></p>
+            <p id="pEmail" ></p>
+            <p id="pNbPret"></p>
+            <p id="pSolde"></p>
+            <button type="button" id="ListReservationClient" onclick="ListReservationClient()">Voir Liste des reservations</button>
+            <hr>
+            <h3>Réserver un livre</h3>
+            <form>
+                <label for="isbnLivre">ISBN du livre: </label>
+                <input type="text" id="isbnLivre" name="isbnLivre" placeholder="ISBN du Livre">    
+                <input type="hidden" id="clientEmprunt" name="clientEmprunt" value="">
+                <input type="text" hidden>
+                <button type="button" id="btnReserver" onclick="Reserver()">Réserver</button>    
+            </form>
+                    
+
+                    
+                                    
+                       
+        </div>
+
+    </body>
+    <script>
+
+        axios.defaults.baseURL = 'http://localhost:4000'
+        function telChange(){
+            document.getElementById('ListReservationClient').disabled = true;
+        }
+
+        function rechercheClient(){
+            document.getElementById('ListReservationClient').disabled = false;
+           if (document.getElementById("telClient").value.trim() != ""){                         
+               axios.post('/findCustomer', {                   
+                       tel: document.getElementById("telClient").value.trim()
+               }).then(res=>{
+                   if (res.data.message){
+                       alert(res.data.message)
+                       document.getElementById('pName').innerHTML = ''
+                       document.getElementById('pTel').innerHTML = ''
+                       document.getElementById('pEmail').innerHTML = ''
+                       document.getElementById('pNbPret').innerHTML = ''
+                       document.getElementById('pSolde').innerHTML = ''
+                       document.getElementById('idClient').value = '';
+                       document.getElementById('divFindCustomer').hidden = true
+                   }else{
+                       document.getElementById('pName').innerHTML = "Utilisateur trouvé : " + res.data.client.Prenom + " " + res.data.client.Nom
+                       document.getElementById('pTel').innerHTML = "Telephone : " + res.data.client.Telephone
+                       document.getElementById('pEmail').innerHTML = "Email : " + res.data.client.Email
+                       document.getElementById('pNbPret').innerHTML = "Nombre de pret : " + res.data.client.NbPret
+                       document.getElementById('pSolde').innerHTML = "Solde : " + res.data.client.Solde
+                       document.getElementById('idClient').value = res.data.client._id;
+                       document.getElementById('divFindCustomer').hidden = false
+                   }
+               })
+            } else{
+                alert("Entrer le numero du telephone pour un recherche du client");
+            }
+        }
+
+        function ListReservationClient(){
+            window.location='/gestion/reservation/' + document.getElementById('telClient').value;
+        }
+
+        function Reserver(){
+            axios.post('/livres/:isbn', {                   
+                isbn: document.getElementById('isbnLivre').value,
+                client_id: document.getElementById('idClient').value
+               }).then(res=>{
+                alert(res.data.message);
+               })
+        }
+
+        
+
+    </script>
+
+    <footer class="f">
+        
+    </footer>
+</html>
