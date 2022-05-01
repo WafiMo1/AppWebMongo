@@ -381,8 +381,6 @@ app.post('/ajoutLivre', (req, res) => {
     nouveauLivre.save(function (err) {
         if (err) console.log(err)
         console.log("Le livre a été ajouté")
-
-
     });
 });
 // FIN DE LA PARTIE DE MOHAMED WAFI
