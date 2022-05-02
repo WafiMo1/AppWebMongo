@@ -12,7 +12,7 @@ var cookieParser = require('cookie-parser');
 var session = require('express-session');
 
 var CryptoJS = require("crypto-js");
-
+//var listeLivresEmpruntes = new Array();
 
 const { check, validationResult } = require('express-validator');
 
@@ -56,7 +56,8 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 // var loginedUser = null;
-var listeLivresRetournes = new Array();
+
+
 
 
 //page Acceuil
@@ -180,61 +181,78 @@ app.get('/logout', (req, res) => {
     res.redirect("/")
 })
 
+
 // DÉBUT DE LA PARTIE DE MOHAMED WAFI
 //TROUVER LE PROFIL D'UN USER ET AFFICHER LES EMPRUNTS- MOHAMED WAFI
 app.get('/profil', (req, res) => {
-
+    
     if (req.session.loginedUser) {
-
+        var listeLivresEmpruntes = new Array();
         Emprunts.find({ Utilisateur_id: req.session.loginedUser }, function (err, livresEmpruntes) {
-            //DÉBUT remplissage liste de livres empruntés à retourner
+
+            console.log("Voici tous les livres empruntés par l'utilisateur " + livresEmpruntes[0])
 
             //On parcoure les livres empruntés
             for (var z = 0; z < livresEmpruntes.length; z++) {
-                // console.log("Les ID des livres empruntés par le user: " + livresEmpruntes[z].Livre_id)
-                var DateDeRetour = livresEmpruntes[z].DateRetourPrevu
-                var DateDePret = livresEmpruntes[z].DatePret
-                //On prend ces id et on va chercher le livre au complet dans la table Livres
-                Livres.find({ _id: livresEmpruntes[z].Livre_id }, function (err, ElementListeLivres) {
-                    //On parcoure les livres avec les attributs au complet
-                    for (var j = 0; j < ElementListeLivres.length; j++) {
-                        // console.log("Les attributs au complet des livres empruntés: " + ElementListeLivres[j])
-                        //Déclaration des éléments à afficher sur la page
-                        var Titre = ElementListeLivres[j].Titre;
-                        var ISBN = ElementListeLivres[j].ISBN;
-                        var Auteur = ElementListeLivres[j].Auteur;
-                        //Déclaration de l'objet livre à afficher sur la page profil
-                        let livreAfficher = {
+
+                var Titre;
+                var Auteur;
+                var ISBN;
+                var DateRetourLivre;
+                var DateDeRetourPrevue;
+                var DateDePret;
+
+                console.log("Livre numéro: " + z);
+
+                if (livresEmpruntes[z].DateRetour == null) {
+                    DateRetourLivre = "Livre non retourné"
+
+                } else {
+                    DateRetourLivre = livresEmpruntes[z].DateRetour.toDateString()
+                }
+
+                DateDeRetourPrevue = livresEmpruntes[z].DateRetourPrevu.toDateString()
+                DateDePret = livresEmpruntes[z].DatePret.toDateString()
+
+                console.log("La date de prêt  du livre est " + DateDePret);
+                console.log("La date de retour du livre est " + DateRetourLivre);
+                console.log("La date de retour prévue du livre est " + DateDeRetourPrevue);
+
+
+                Livres.find({ _id: livresEmpruntes[z].Livre_id }, function (err, livresInfos) {
+
+                    console.log("Voici les informations de chaque livre emprunté " + livresInfos)
+
+                    for (var j = 0; j < livresInfos.length; j++) {
+
+                        Titre = livresInfos[j].Titre;
+                        ISBN = livresInfos[j].ISBN;
+                        Auteur = livresInfos[j].Auteur;
+
+                        console.log("Le titre du livre est " + Titre)
+                        console.log("Le isbn du livre est " + ISBN)
+                        console.log("L'auteur du livre est " + Auteur)
+
+                        let livre = {
                             titre: Titre,
                             isbn: ISBN,
-                            dateRetour: DateDeRetour,
+                            dateRetourPrevue: DateDeRetourPrevue,
                             datePret: DateDePret,
-                            auteur: Auteur
+                            auteur: Auteur,
+                            dateRetour: DateRetourLivre
                         }
                         //On ajoute ce livre dans la liste des livres à afficher
-
-                        listeLivresRetournes.push(livreAfficher);
-
-
-                        if (z == livresEmpruntes.length - 1) {
-                            if (j == ElementListeLivres.length - 1) {
-                                console.log(listeLivresRetournes)
-                            }
-
-                        }
-
+                
+                        
+                        listeLivresEmpruntes.push(livre);
                     }
-                    //LE TABLEAU EST BEL ET BIEN REMPLI DES LIVRES QUE JE VEUX AFFICHER AVEC LES ATTRIBUTS (VOIR APP.GET MODIFIER) MAIS SA NE S'AFFICHE PAS ICI
                 })
 
 
+              
             }
-
-            //res.render('Profil.ejs', { loginedUser: loginedUser, listeLivresRetournes: listeLivresRetournes })
-
-            //FIN remplissage liste de livres empruntés à retourner
+            res.render('Profil.ejs', { loginedUser: req.session.loginedUser, listeLivresEmpruntes: listeLivresEmpruntes })
         });
-        res.render('Profil.ejs', { loginedUser: req.session.loginedUser, listeLivresRetournes: listeLivresRetournes })
     } else {
         res.redirect('/login');
     }
@@ -298,7 +316,7 @@ app.post('/ModifierMotDePasse', urlencodeParser, (req, res) => {
         if (req.body.nvxMdp == req.body.nvxMdpDeuxiemeFois) {
             console.log("les deux nouveaux mots de passe concordent ");
 
-            //On dirait que ce code ne s'exécute pas, le mot de passe ne se met pas à jour
+
             Utilisateurs.findOneAndUpdate({ _id: req.session.loginedUser._id }, {
                 Password: req.body.nvxMdp
             }, function (err, result) {
@@ -314,30 +332,21 @@ app.post('/ModifierMotDePasse', urlencodeParser, (req, res) => {
         }
 
     } else if (!ancienMotDepasseSaisi) {
+        res.redirect('ModifierMotDePasse');
         console.log("Le mdp saisi n'est pas l'ancien");
     }
-
-
-
-        Livres.find({}, function(err,livres){
-            try{
-                res.render("Recherche", {livresTab:livres, loginedUser: loginedUser})
-            }catch(err){
-                console.log(err);
-            }
-        });
 
 });
 
 app.get('/ajoutLivre', (req, res) => {
 
     if (req.session.loginedUser != null) {
-    if (req.session.loginedUser.Droit_id == 99||loginedUser.Droit_id == 1) {
-    res.render("ajoutLivre");
-    }else{
-        res.redirect("Acceuil")
+        if (req.session.loginedUser.Droit_id == 99 || loginedUser.Droit_id == 1) {
+            res.render("ajoutLivre");
+        } else {
+            res.redirect("Acceuil")
 
-    }
+        }
     }
 });
 
@@ -363,7 +372,7 @@ app.post('/ajoutLivre', (req, res) => {
         console.log("Le livre a été ajouté")
 
 
-});
+    });
 });
 // FIN DE LA PARTIE DE MOHAMED WAFI
 app.get('/recherche', (req, res) => {
@@ -462,8 +471,8 @@ app.post('/livres/:isbn', (req, res) => {
 
 
 app.get('/reservations', (req, res) => {
-    if(req.session.loginedUser == null) res.redirect("/login")
-    Reservations.find({Utilisateur_id: loginedUser._id}, function(err,lesRes){
+    if (req.session.loginedUser == null) res.redirect("/login")
+    Reservations.find({ Utilisateur_id: loginedUser._id }, function (err, lesRes) {
         if (err) console.log(err)
         Livres.find({}, function (err, donneesLivre) {
             if (err) console.log(err)
@@ -473,19 +482,19 @@ app.get('/reservations', (req, res) => {
 });
 
 app.post('/annulerReservation', (req, res) => {
-    if(req.session.loginedUser == null) res.redirect("/login")
+    if (req.session.loginedUser == null) res.redirect("/login")
     else {
-        Reservations.findOneAndDelete({ Livre_id : req.body.livre_id, Utilisateur_id: req.session.loginedUser._id }, 
+        Reservations.findOneAndDelete({ Livre_id: req.body.livre_id, Utilisateur_id: req.session.loginedUser._id },
             function (err, livre) {
-            if (err) console.log(err)
-            console.log("La reservation pour le livre " + req.body.livre_titre + " a ete annuler par l'user " + loginedUser.Nom);
-            
-            Livres.findByIdAndUpdate(req.body.livre_id, { NbDisponible: parseInt(req.body.livre_NbDisponible)+ 1 },
-                function (err, livre) {
-                    if (err) console.log(err)
-                    else console.log("Le nombre de copies disponible pour le livre " + req.body.livre_titre + " a ete mise a jour par l'user " + req.session.loginedUser.Nom);    
+                if (err) console.log(err)
+                console.log("La reservation pour le livre " + req.body.livre_titre + " a ete annuler par l'user " + loginedUser.Nom);
+
+                Livres.findByIdAndUpdate(req.body.livre_id, { NbDisponible: parseInt(req.body.livre_NbDisponible) + 1 },
+                    function (err, livre) {
+                        if (err) console.log(err)
+                        else console.log("Le nombre de copies disponible pour le livre " + req.body.livre_titre + " a ete mise a jour par l'user " + req.session.loginedUser.Nom);
+                    })
             })
-        })
         res.redirect("/reservations")
     }
 });
@@ -561,187 +570,187 @@ app.post('/gestion/empruntretour', async (req, res) => {
             // }
 
             //if (req.body.option == "EmpruntRetour") {//button clicked = EmpruntLivre
-                Livres.findOne({ ISBN: req.body.isbnLivre }, function (err, livre) {
-                    if (err) throw err;
-                    if (livre == null) {
-                        return res.send(JSON.stringify({'message' : 'Livre non existe'}));
-                        //return res.status(403).end("Livre non existe")
-                    } else {
-                        Emprunts.find({
-                            Livre_id: livre._id,
-                            Utilisateur_id: req.body.clientEmprunt
-                        }, function (err, emprunts) {
-                            if (err) throw err;
-                            if (req.body.choix == "radioEmprunt") {
-                                var islivreRetour = true;
-                                emprunts.forEach(emprunt => {
-                                    if (emprunt.DateRetour == null) {
-                                        islivreRetour = false;
-                                    }
-                                })
-                                if (!islivreRetour) {//user already borrowed this book
-                                    //return res.status(403).end("user already borrowed this book")
-                                    return res.send(JSON.stringify({'message' : 'user already borrowed this book'}));
-                                } else {
-                                    Utilisateurs.findOne({ _id: req.body.clientEmprunt }, function (err, utilisateur) {
-                                        if (err) throw err;
-                                        if (utilisateur.NbPret >= utilisateur.MaxPret) {
-                                            //return res.status(403).end("client attend au maximun du pret ")
-                                            return res.send(JSON.stringify({'message' : 'client attend au maximun du pret'}));
+            Livres.findOne({ ISBN: req.body.isbnLivre }, function (err, livre) {
+                if (err) throw err;
+                if (livre == null) {
+                    return res.send(JSON.stringify({ 'message': 'Livre non existe' }));
+                    //return res.status(403).end("Livre non existe")
+                } else {
+                    Emprunts.find({
+                        Livre_id: livre._id,
+                        Utilisateur_id: req.body.clientEmprunt
+                    }, function (err, emprunts) {
+                        if (err) throw err;
+                        if (req.body.choix == "radioEmprunt") {
+                            var islivreRetour = true;
+                            emprunts.forEach(emprunt => {
+                                if (emprunt.DateRetour == null) {
+                                    islivreRetour = false;
+                                }
+                            })
+                            if (!islivreRetour) {//user already borrowed this book
+                                //return res.status(403).end("user already borrowed this book")
+                                return res.send(JSON.stringify({ 'message': 'user already borrowed this book' }));
+                            } else {
+                                Utilisateurs.findOne({ _id: req.body.clientEmprunt }, function (err, utilisateur) {
+                                    if (err) throw err;
+                                    if (utilisateur.NbPret >= utilisateur.MaxPret) {
+                                        //return res.status(403).end("client attend au maximun du pret ")
+                                        return res.send(JSON.stringify({ 'message': 'client attend au maximun du pret' }));
+                                    } else {
+                                        //verify if the book is already in reservation
+                                        Reservations.findOneAndDelete({
+                                            Livre_id: livre._id,
+                                            Utilisateur_id: req.body.clientEmprunt
+                                        }, function (err) {
+                                            if (err) throw err;
+                                            var livreNbDisponible = livre.NbDisponible;
+                                            livre.updateOne({ //update nombre disponible du livre apres annuler le reservation
+                                                NbDisponible: livreNbDisponible + 1
+                                            }, function (err) {
+                                                if (err) throw err;
+                                            })
+                                        })
+
+                                        if (livre.NbDisponible <= 0) {
+                                            //res.status(403).end("livre non disponible")
+                                            return res.send(JSON.stringify({ 'message': 'livre non disponible' }));
                                         } else {
-                                            //verify if the book is already in reservation
-                                            Reservations.findOneAndDelete({
+
+                                            utilisateur.updateOne({ //update nombre de pret du utilisateur
+                                                NbPret: utilisateur.NbPret + 1
+                                            }, function (err) {
+                                                if (err) throw err;
+                                            })
+
+                                            var livreNbDisponible = livre.NbDisponible;
+                                            livre.updateOne({ //update nombre disponible du livre
+                                                NbDisponible: livreNbDisponible - 1
+                                            }, function (err) {
+                                                if (err) throw err;
+                                                // return res.status(403).end("reussi")
+                                                res.redirect("/gestion/empruntretour")
+                                            })
+
+                                            //put information into database               
+                                            Emprunts.create({
+                                                DatePret: new Date(Date.now()),
+                                                DateRetourPrevu: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
+                                                DateRetour: null,
                                                 Livre_id: livre._id,
                                                 Utilisateur_id: req.body.clientEmprunt
                                             }, function (err) {
                                                 if (err) throw err;
-                                                var livreNbDisponible = livre.NbDisponible;
-                                                livre.updateOne({ //update nombre disponible du livre apres annuler le reservation
-                                                    NbDisponible: livreNbDisponible + 1
-                                                }, function (err) {
-                                                    if (err) throw err;
-                                                })
+                                                // return res.status(403).end("reussi")
+                                                //res.redirect("/gestion/empruntretour")
+                                                return res.send(JSON.stringify({ 'message': 'Emprunt reussi' }));
                                             })
-
-                                            if (livre.NbDisponible <= 0) {
-                                                //res.status(403).end("livre non disponible")
-                                                return res.send(JSON.stringify({'message' : 'livre non disponible'}));
-                                            } else {
-
-                                                utilisateur.updateOne({ //update nombre de pret du utilisateur
-                                                    NbPret: utilisateur.NbPret + 1
-                                                }, function (err) {
-                                                    if (err) throw err;
-                                                })
-
-                                                var livreNbDisponible = livre.NbDisponible;
-                                                livre.updateOne({ //update nombre disponible du livre
-                                                    NbDisponible: livreNbDisponible - 1
-                                                }, function (err) {
-                                                    if (err) throw err;
-                                                    // return res.status(403).end("reussi")
-                                                    res.redirect("/gestion/empruntretour")
-                                                })
-
-                                                //put information into database               
-                                                Emprunts.create({
-                                                    DatePret: new Date(Date.now()),
-                                                    DateRetourPrevu: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
-                                                    DateRetour: null,
-                                                    Livre_id: livre._id,
-                                                    Utilisateur_id: req.body.clientEmprunt
-                                                }, function (err) {
-                                                    if (err) throw err;
-                                                    // return res.status(403).end("reussi")
-                                                    //res.redirect("/gestion/empruntretour")
-                                                    return res.send(JSON.stringify({'message' : 'Emprunt reussi'}));
-                                                })
-                                            }
                                         }
-                                    })
-                                }
-                            }//end of radioEmprunt
+                                    }
+                                })
+                            }
+                        }//end of radioEmprunt
 
-                            if (req.body.choix == "radioRetour" || req.body.choix == "radioPerdu") {
-                                var compte = 0;
-                                emprunts.forEach(emprunt => {
+                        if (req.body.choix == "radioRetour" || req.body.choix == "radioPerdu") {
+                            var compte = 0;
+                            emprunts.forEach(emprunt => {
 
-                                    if (emprunt.DateRetour == null) {
-                                        compte++;
-                                        //supose d'avoir un seule resultat (Un même livre ne peut pas prêter 2 copies à un personne. )
-                                        if (req.body.choix == "radioPerdu") {
-                                            emprunt.updateOne({
-                                                EstPerdu: true
+                                if (emprunt.DateRetour == null) {
+                                    compte++;
+                                    //supose d'avoir un seule resultat (Un même livre ne peut pas prêter 2 copies à un personne. )
+                                    if (req.body.choix == "radioPerdu") {
+                                        emprunt.updateOne({
+                                            EstPerdu: true
+                                        }, function (err) {
+                                            if (err) throw err;
+                                        })
+                                    }
+
+                                    emprunt.updateOne({
+                                        DateRetour: new Date(Date.now())
+                                    }, function (err) {
+                                        if (err) throw err;
+
+                                        if (req.body.choix == "radioRetour") {
+                                            //modification du livre disponible
+                                            var livreNbDisponible = livre.NbDisponible;
+                                            livre.updateOne({
+                                                NbDisponible: livreNbDisponible + 1
                                             }, function (err) {
                                                 if (err) throw err;
                                             })
                                         }
 
-                                        emprunt.updateOne({
-                                            DateRetour: new Date(Date.now())
-                                        }, function (err) {
+                                        //charge le frais du retard
+                                        var fraisRetard = 0;
+                                        retard = new Date(Date.now()) - emprunt.DateRetourPrevu
+                                        if (retard > 0) {
+                                            retard = Math.floor(retard / (1000 * 3600 * 24))
+                                            fraisRetard = retard * 0.5// 0.5$ par jour
+                                            if (fraisRetard > 10) {
+                                                fraisRetard = 10;//maximum 10$ pour le retard
+                                            }
+                                            fraisRetard = -fraisRetard; //Tous les charge du clients sont au negative                                            
+                                            Transactions.create({
+                                                DateTransaction: new Date(Date.now()),
+                                                MethodePaiement: null,
+                                                Cout: fraisRetard,
+                                                Utilisateur_id: req.body.clientEmprunt,
+                                                EmployeeId: req.session.loginedUser._id,
+                                                Commentaire: "Frais du retard pour le livre: " + livre.Titre + ", " + livre.Auteur + ", " + livre.ISBN
+                                            }, function (err) { if (err) throw err })
+                                        }
+                                        //charge le cout du livre
+                                        var cout = 0;
+                                        if (req.body.choix == "radioPerdu") {
+                                            cout = -livre.Cout;
+                                            Transactions.create({
+                                                DateTransaction: new Date(Date.now()),
+                                                MethodePaiement: null,
+                                                Cout: cout,
+                                                Utilisateur_id: req.body.clientEmprunt,
+                                                EmployeeId: req.session.loginedUser._id,
+                                                Commentaire: "Frais pour la pert du livre: " + livre.Titre + ", " + livre.Auteur + ", " + livre.ISBN
+                                            }, function (err) { if (err) throw err })
+                                        }
+
+                                        //modification nombre pret d'utilisateur
+                                        Utilisateurs.findOne({ _id: req.body.clientEmprunt }, function (err, utilisateur) {
                                             if (err) throw err;
-
-                                            if (req.body.choix == "radioRetour") {
-                                                //modification du livre disponible
-                                                var livreNbDisponible = livre.NbDisponible;
-                                                livre.updateOne({
-                                                    NbDisponible: livreNbDisponible + 1
-                                                }, function (err) {
-                                                    if (err) throw err;
-                                                })
-                                            }
-
-                                            //charge le frais du retard
-                                            var fraisRetard = 0;
-                                            retard = new Date(Date.now()) - emprunt.DateRetourPrevu
-                                            if (retard > 0) {
-                                                retard = Math.floor(retard / (1000 * 3600 * 24))
-                                                fraisRetard = retard * 0.5// 0.5$ par jour
-                                                if (fraisRetard > 10) {
-                                                    fraisRetard = 10;//maximum 10$ pour le retard
-                                                }
-                                                fraisRetard = -fraisRetard; //Tous les charge du clients sont au negative                                            
-                                                Transactions.create({
-                                                    DateTransaction: new Date(Date.now()),
-                                                    MethodePaiement: null,
-                                                    Cout: fraisRetard,
-                                                    Utilisateur_id: req.body.clientEmprunt,
-                                                    EmployeeId: req.session.loginedUser._id,
-                                                    Commentaire: "Frais du retard pour le livre: " + livre.Titre + ", " + livre.Auteur + ", " + livre.ISBN
-                                                }, function (err) { if (err) throw err })
-                                            }
-                                            //charge le cout du livre
-                                            var cout = 0;
-                                            if (req.body.choix == "radioPerdu") {
-                                                cout = -livre.Cout;
-                                                Transactions.create({
-                                                    DateTransaction: new Date(Date.now()),
-                                                    MethodePaiement: null,
-                                                    Cout: cout,
-                                                    Utilisateur_id: req.body.clientEmprunt,
-                                                    EmployeeId: req.session.loginedUser._id,
-                                                    Commentaire: "Frais pour la pert du livre: " + livre.Titre + ", " + livre.Auteur + ", " + livre.ISBN
-                                                }, function (err) { if (err) throw err })
-                                            }
-
-                                            //modification nombre pret d'utilisateur
-                                            Utilisateurs.findOne({ _id: req.body.clientEmprunt }, function (err, utilisateur) {
+                                            var nbpret = utilisateur.NbPret
+                                            var solde = (utilisateur.Solde + cout + fraisRetard).toFixed(2)
+                                            utilisateur.updateOne({
+                                                NbPret: nbpret - 1,
+                                                Solde: solde
+                                            }, function (err) {
                                                 if (err) throw err;
-                                                var nbpret = utilisateur.NbPret
-                                                var solde = (utilisateur.Solde + cout + fraisRetard).toFixed(2)
-                                                utilisateur.updateOne({
-                                                    NbPret: nbpret - 1,
-                                                    Solde: solde
-                                                }, function (err) {
-                                                    if (err) throw err;
-                                                })
                                             })
-                                            if (req.body.choix == "radioRetour") {
-                                                return res.send(JSON.stringify({'message' : 'Retour réussi'}));
-                                            }
-                                            if (req.body.choix == "radioPerdu") {
-                                                return res.send(JSON.stringify({'message' : 'Livre perdu traité'}));
-                                            }
-                                            //res.redirect("/gestion/empruntretour")
                                         })
-                                    }
-
-                                })//end foreach
-                                if (compte == 0) {
-                                    //res.status(403).end("Pas de enrigistement")
-                                    return res.send(JSON.stringify({'message' : 'Pas de enrigistement'}));
+                                        if (req.body.choix == "radioRetour") {
+                                            return res.send(JSON.stringify({ 'message': 'Retour réussi' }));
+                                        }
+                                        if (req.body.choix == "radioPerdu") {
+                                            return res.send(JSON.stringify({ 'message': 'Livre perdu traité' }));
+                                        }
+                                        //res.redirect("/gestion/empruntretour")
+                                    })
                                 }
 
-                            }//end of radioRetour and radioPerdu
+                            })//end foreach
+                            if (compte == 0) {
+                                //res.status(403).end("Pas de enrigistement")
+                                return res.send(JSON.stringify({ 'message': 'Pas de enrigistement' }));
+                            }
 
-                        })// end of emprunt
+                        }//end of radioRetour and radioPerdu
+
+                    })// end of emprunt
 
 
-                    }//end of if livre existe
+                }//end of if livre existe
 
 
-                });
+            });
 
             //}
         } else {
@@ -816,7 +825,7 @@ app.get('/gestion/client', (req, res) => {
     }
 })
 
-app.listen(port, function(err){
+app.listen(port, function (err) {
     if (err) console.log(err);
     console.log("Server listening on PORT", port);
 
