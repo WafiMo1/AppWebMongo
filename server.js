@@ -509,6 +509,7 @@ app.get('/reservations', (req, res) => {
 app.post('/annulerReservation', (req, res) => {
     if (!req.session.loginedUser) return res.redirect("/login")
     else {
+        
         Reservations.findOneAndDelete({ Livre_id: req.body.livre_id, Utilisateur_id: req.body.user_id },
             function (err, livre) {
                 if (err) console.log(err)
