@@ -16,7 +16,7 @@ var fs = require('fs');
 var formidable = require('formidable');
 
 var CryptoJS = require("crypto-js");
-//var listeLivresEmpruntes = new Array();
+
 
 const { check, validationResult } = require('express-validator');
 
@@ -341,26 +341,7 @@ app.get('/ajoutLivre', (req, res) => {
 });
 
 app.post('/ajoutLivre', (req, res) => {
-    //On crée un nouvel objet de type Livres avec des attributs venant de la page ajout livre
-    const nouveauLivre = new Livres(
-        {
-            Auteur: req.body.auteurLivre,
-            Titre: req.body.titreLivre,
-            DateParution: req.body.dateParution,
-            NbCopies: parseInt(req.body.nbrCopies),
-            NbDisponible: parseInt(req.body.nbrCopies),
-            MaisonEdition: req.body.maisonEdition,
-            ISBN: req.body.isbnLivre,
-            Cout: parseInt(req.body.coutLivre),
-            Description: req.body.descriptionLivre,
-            Photo: req.body.photoLivre.toString()
-        }
-    );
-    //On sauvegarde l'objet du livre dans la base de données
-    nouveauLivre.save(function (err) {
-        if (err) console.log(err)
-        console.log("Le livre a été ajouté")
-    });
+var nouveauLivre;
 });
 // FIN DE LA PARTIE DE MOHAMED WAFI
 app.get('/recherche', (req, res) => {
