@@ -4,116 +4,139 @@
         
         <link rel="stylesheet" href="/CSS/style.css">
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <%- include ('../views/partials/header.ejs') %>
+        <%- include ('../views/partials/footer.ejs') %>
+        <title>Emprunt et Retour</title>
+        
     </head>
     <header>
         
     </header>
 
     <body>
-        <h1 id="title">Emprunt et Retour</h1>
-        <form id="formRechercheClient" action="#" method="post"> 
-            <label>Telephone du client : </label>
-            <input type="tel" id="telClient" name="telClient" placeholder="Telephone du client" maxlength="10">
-            <input type="hidden" id="option" name="option" value="RechercheClient">
-            <button type="button" id="btnRechercheClient">Recherche</button>
-        </form>
+        
+        <section>
+            <div class="container">    
+                <h1 id="title" class="fw">Emprunt et Retour</h1>
+            </div>
+        </section>
+        
+        <section class="p-3">
+            <div class="container">
+                <form id="formRechercheClient" action="#" method="post">
+                <div class="mb-3">
+                    <label for="telClient" class="form-label">Telephone du client :</label>
+                    <input class="form-control" type="tel" id="telClient" name="telClient" placeholder="Telephone du client" maxlength="10" onchange="telChange()" aria-describedby="telHelp">
+                    <div id="telHelp" class="form-text">Lorem ipsum dolor sit amet.</div>
+                </div>
+                <input type="text" hidden>    
+                <button class="btn btn-sm btn-primary" type="button" id="btnRechercheClient" onclick="rechercheClient()">Recherche</button>
+                </form>        
+            </div>
+        </section>
+        
 
-
-        <label id="labelMessageAxios"></label>
         <div id ="divFindCustomer" hidden = true>
-            <p id="pName"></p>
-            <p id="pTel"></p>
-            <p id="pEmail" ></p>
-            <p id="pNbPret"></p>
-            <p id="pSolde"></p>
 
-
-            <form id="formEmpruntLivre" action="#" method="post"> 
-                <input type="radio" id="radioEmprunt" name="choix" value="radioEmprunt" >
-                <label>Emprunt</label>
-                <input type="radio" id="radioRetour" name="choix" value="radioRetour">
-                <label >Retour</label>
-                <input type="radio" id="radioPerdu" name="choix" value="radioPerdu">
-                <label >Perdu</label>
-                <br>
-                <label>ISBN du livre: </label>
-                <input type="text" id="isbnLivre" name="isbnLivre" placeholder="ISBN du Livre">    
-                <input type="hidden" id="clientEmprunt" name="clientEmprunt" value="">
-                <input type="hidden" id="option" name="option" value="EmpruntRetour">    
-                <button type="button" id="btnEmpruntRetour">Emprunt/Retour</button>
-            </form>
-            <p id="noteEmprunt"></p>
-
-            
-            <hr>
-            <button id="btnHistorique">Afficher tous les historique du pret</button>
-            <button id="btnNonRetourne">Afficher tous les livres non retourné</button>
-            <button id="btnPerdu">Afficher tous les livres perdu</button>
-
-
-
-            
-            <div id="divHistorique" hidden="true">
-                <h3>Historique du pret</h3>
-                <table id="tableHistorique">
-                    <tr>
-                        <th>ISBN</th>
-                        <th>Titre</th>
-                        <th>Auteur</th>
-                        <th>Date du pret</th>
-                        <th>Date de retour prevu</th>
-                        <th>Date de retour ou pert </th>
-                        <th>État</th>
-                    </tr>
-                </table>
-            </div>
-
-
-
-            <div id="divNonRetourne">
-                <h3>Livres non retourné</h3>
-                <table id="tableNonRetourne">
-                    <tr>
-                        <th>ISBN</th>
-                        <th>Titre</th>
-                        <th>Auteur</th>
-                        <th>Date du pret</th>
-                        <th>Date de retour prevu</th>
-                        <th>Date de retour </th>
-                    </tr>
-                </table>
+        <section class="p-3">
+            <div class="container">
+                <!-- <label id="labelMessageAxios"></label> -->
                 
+                    <p id="pName"></p>
+                    <p id="pTel"></p>
+                    <p id="pEmail" ></p>
+                    <p id="pNbPret"></p>
+                    <p id="pSolde"></p>
+
             </div>
+        </section>
 
 
-            <div id="divPerdu" hidden="true">
-                <h3>Livres perdu</h3>
-                <table id="tablePerdu">
-                    <tr>
-                        <th>ISBN</th>
-                        <th>Titre</th>
-                        <th>Auteur</th>
-                        <th>Date du pret</th>
-                        <th>Date de retour prevu</th>
-                        <th>Date de la pert </th>
-                    </tr>
-                </table>                              
+        <section class="p-3">
+            <div class="container">
+                <form id="formEmpruntLivre" action="#" method="post"> 
+                    <div class="mb-3">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" id="radioEmprunt" name="choix" value="radioEmprunt">
+                            <label class="form-check-label" for="radioEmprunt">Emprunt</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" id="radioRetour" name="choix" value="radioRetour">
+                            <label class="form-check-label" for="radioRetour">Retour</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" id="radioPerdu" name="choix" value="radioPerdu">
+                            <label class="form-check-label" for="radioPerdu">Perdu</label>
+                        </div>
+                    </div>
+
+
+                    <div class="mb-3">
+                        <label for="telClient" class="form-label">ISBN du livre :</label>
+                        <input class="form-control" type="text" id="isbnLivre" name="isbnLivre" placeholder="ISBN du Livre" aria-describedby="isbnHelp">
+                        <div id="isbnHelp" class="form-text">ISBN se trouve près de code a bar de tous les livres</div>
+                    </div>
+                    <input type="hidden" id="clientEmprunt" name="clientEmprunt" value="">  
+                    <button class="btn btn-sm btn-primary" type="button" id="btnEmpruntRetour">Emprunt/Retour</button>
+                </form>
+            </div> 
+        </section>
+        <section class="p-3">
+            <div class="mb-3 container">
+                    <p id="noteEmprunt"></p>
+            </div>                          
+        </section>
+            
+        <section>
+            <div class="mb-3 container">
+                <div class="row g-4">
+                    <div class="col-md">
+                        <button class="btn btn-sm btn-primary" id="btnHistorique">Historiques du pret</button>
+                    </div>
+                    <div class="col-md">
+                        <button class="btn btn-sm btn-primary" id="btnNonRetourne">Livres non retourné</button>
+                    </div>
+                    <div class="col-md">
+                        <button class="btn btn-sm btn-primary" id="btnPerdu">Tous les livres perdu</button>
+                    </div>
+                </div>
             </div>
-        </div>
+        </section>
 
+        <section class="p-3">
+            <div class="mb-3 container">
+                <div id="divHistorique" hidden="true"></div>
+                <div id="divNonRetourne"></div>
+                <div id="divPerdu" hidden="true"></div>
+            </div>
+        </section>
 
-
+        
     </body>
+    
     <script>
         var emprunts
         var livres
-        var tableHistorique = document.getElementById('tableHistorique')
-        var tableNonRetourne = document.getElementById('tableNonRetourne')
-        var tablePerdu = document.getElementById('tablePerdu')
-
+        //var isRechercheClicked = false;
         axios.defaults.baseURL = 'http://localhost:4000'
-        document.getElementById('btnRechercheClient').addEventListener("click",()=>{
-            
+       
+        
+        function telChange(){
+            //isRechercheClicked = false;
+            document.getElementById('btnEmpruntRetour').disabled = true;
+            // if (event.keyCode == 13){//enter key
+            //     event.keyCode = 0;
+            //     event.returnValue = false;
+            //     console.log('client')
+            // }
+
+        }
+        //document.getElementById('telClient')
+
+        function rechercheClient(){
+            //isRechercheClicked = true;
+            document.getElementById('btnEmpruntRetour').disabled = false;
+
             if (document.getElementById("telClient").value.trim() != ""){               
                 //Ajax original
             //     const xhr = new XMLHttpRequest();
@@ -153,7 +176,7 @@
                         document.getElementById('clientEmprunt').value = ''
                         document.getElementById('divFindCustomer').hidden = true
                     }else{
-                        document.getElementById('labelMessageAxios').innerHTML = ''
+                        // document.getElementById('labelMessageAxios').innerHTML = ''
                         document.getElementById('pName').innerHTML = "Utilisateur trouvé : " + res.data.client.Prenom + " " + res.data.client.Nom
                         document.getElementById('pTel').innerHTML = "Telephone : " + res.data.client.Telephone
                         document.getElementById('pEmail').innerHTML = "Email : " + res.data.client.Email
@@ -166,8 +189,48 @@
                         document.getElementById('clientEmprunt').value = res.data.client._id
 
                         //add in to table
+
+
+
                         
-                        //tableHistorique                 
+                        //tableHistorique                      
+                        var divHistorique = document.getElementById('divHistorique')
+                        while (divHistorique.hasChildNodes()) {
+                            divHistorique.removeChild(divHistorique.firstChild);
+                        }
+                        var title = document.createElement('h3')
+                        title.innerHTML = 'Historique du pret'
+                        var tableHistorique = document.createElement('table') 
+                        tableHistorique.setAttribute('class', 'table table-striped')                       
+                        divHistorique.appendChild(title)
+                        divHistorique.appendChild(tableHistorique)
+                        var oTr0= document.createElement('tr')
+                        tableHistorique.appendChild(oTr0)
+                        var oTh1 = document.createElement('th')
+                        var oTh2 = document.createElement('th')
+                        var oTh3 = document.createElement('th')
+                        var oTh4 = document.createElement('th')
+                        var oTh5 = document.createElement('th')
+                        var oTh6 = document.createElement('th')
+                        var oTh7 = document.createElement('th')
+                        oTh1.innerHTML = 'ISBN'
+                        oTh2.innerHTML = 'Titre'
+                        oTh3.innerHTML = 'Auteur'
+                        oTh4.innerHTML = 'Date du pret'
+                        oTh5.innerHTML = 'Date de retour prevu'
+                        oTh6.innerHTML = 'Date de retour ou pert'
+                        oTh7.innerHTML = 'État'
+                        oTr0.appendChild(oTh1)
+                        oTr0.appendChild(oTh2)
+                        oTr0.appendChild(oTh3)
+                        oTr0.appendChild(oTh4)
+                        oTr0.appendChild(oTh5)
+                        oTr0.appendChild(oTh6)
+                        oTr0.appendChild(oTh7)
+                        
+
+
+
                         emprunts.forEach(emprunt => {
                             var oTr = document.createElement('tr')
                             tableHistorique.appendChild(oTr)
@@ -209,6 +272,40 @@
 
 
                         //tableNonRetourne
+
+
+                        var divNonRetourne = document.getElementById('divNonRetourne')
+                        while (divNonRetourne.hasChildNodes()) {
+                            divNonRetourne.removeChild(divNonRetourne.firstChild);
+                        }
+                        var title = document.createElement('h3')
+                        title.innerHTML = 'Livres non retourné'
+                        var tableNonRetourne = document.createElement('table')
+                        tableNonRetourne.setAttribute('class', 'table table-striped')                           
+                        divNonRetourne.appendChild(title)
+                        divNonRetourne.appendChild(tableNonRetourne)
+                        var oTr0= document.createElement('tr')
+                        tableNonRetourne.appendChild(oTr0)
+                        var oTh1 = document.createElement('th')
+                        var oTh2 = document.createElement('th')
+                        var oTh3 = document.createElement('th')
+                        var oTh4 = document.createElement('th')
+                        var oTh5 = document.createElement('th')
+                        var oTh6 = document.createElement('th')
+                        oTh1.innerHTML = 'ISBN'
+                        oTh2.innerHTML = 'Titre'
+                        oTh3.innerHTML = 'Auteur'
+                        oTh4.innerHTML = 'Date du pret'
+                        oTh5.innerHTML = 'Date de retour prevu'
+                        oTh6.innerHTML = 'Date de retour'
+                        oTr0.appendChild(oTh1)
+                        oTr0.appendChild(oTh2)
+                        oTr0.appendChild(oTh3)
+                        oTr0.appendChild(oTh4)
+                        oTr0.appendChild(oTh5)
+                        oTr0.appendChild(oTh6)
+                        
+
                         emprunts.forEach(emprunt => {
                             if (emprunt.DateRetour == null){
                                 var oTr = document.createElement('tr')
@@ -240,6 +337,37 @@
                         })
 
                         //tablePerdu
+                        var divPerdu = document.getElementById('divPerdu')
+                        while (divPerdu.hasChildNodes()) {
+                            divPerdu.removeChild(divPerdu.firstChild);
+                        }
+                        var title = document.createElement('h3')
+                        title.innerHTML = 'Livres non retourné'
+                        var tablePerdu = document.createElement('table')
+                        tablePerdu.setAttribute('class', 'table table-striped')                           
+                        divPerdu.appendChild(title)
+                        divPerdu.appendChild(tablePerdu)
+                        var oTr0= document.createElement('tr')
+                        tablePerdu.appendChild(oTr0)
+                        var oTh1 = document.createElement('th')
+                        var oTh2 = document.createElement('th')
+                        var oTh3 = document.createElement('th')
+                        var oTh4 = document.createElement('th')
+                        var oTh5 = document.createElement('th')
+                        var oTh6 = document.createElement('th')
+                        oTh1.innerHTML = 'ISBN'
+                        oTh2.innerHTML = 'Titre'
+                        oTh3.innerHTML = 'Auteur'
+                        oTh4.innerHTML = 'Date du pret'
+                        oTh5.innerHTML = 'Date de retour prevu'
+                        oTh6.innerHTML = 'Date de retour'
+                        oTr0.appendChild(oTh1)
+                        oTr0.appendChild(oTh2)
+                        oTr0.appendChild(oTh3)
+                        oTr0.appendChild(oTh4)
+                        oTr0.appendChild(oTh5)
+                        oTr0.appendChild(oTh6)
+
                         
                         emprunts.forEach(emprunt => {
                             if (emprunt.EstPerdu == true){
@@ -277,8 +405,8 @@
                 //document.getElementById('formRechercheClient').submit();
             } else{
                 alert("Entrer le numero du telephone pour un recherche du client");
-            }  
-        })
+            }
+        }
 
         document.getElementById('radioEmprunt').addEventListener("click",()=>{
             if(document.getElementById('radioEmprunt').checked){
@@ -315,20 +443,28 @@
         })
 
         document.getElementById('btnEmpruntRetour').addEventListener("click",()=>{
-            if (!document.getElementById('radioEmprunt').checked && !document.getElementById('radioRetour').checked && !document.getElementById('radioPerdu').checked){
-                alert("Il faut choissir un option")
-            } else if (document.getElementById("isbnLivre").value.trim() == ""){
-                alert("Entrer ISBN du livre")
-            } else{
-                //document.getElementById('formEmpruntLivre').submit();
-                axios.post('/gestion/empruntretour', {   
-                    clientEmprunt: document.getElementById('clientEmprunt').value,                
-                    choix: document.querySelector('input[name="choix"]:checked').value,
-                    isbnLivre: document.getElementById('isbnLivre').value.trim()
-                }).then(res=>{
-                    alert(res.data.message);
-                })
-            }
+            // if (isRechercheClicked) {
+                if (!document.getElementById('radioEmprunt').checked && !document.getElementById('radioRetour').checked && !document.getElementById('radioPerdu').checked){
+                    alert("Il faut choissir un option")
+                } else if (document.getElementById("isbnLivre").value.trim() == ""){
+                    alert("Entrer ISBN du livre")
+                } else{
+                    //document.getElementById('formEmpruntLivre').submit();
+                    axios.post('/gestion/empruntretour', {   
+                        clientEmprunt: document.getElementById('clientEmprunt').value,                
+                        choix: document.querySelector('input[name="choix"]:checked').value,
+                        isbnLivre: document.getElementById('isbnLivre').value.trim()
+                    }).then(res=>{
+                        document.getElementById('isbnLivre').value='';
+                        alert(res.data.message);
+                        rechercheClient();
+
+                    })
+                }
+            // } else{
+            //     alert('Il faut faire un recherche du client')
+            // }
+            
 
         })
 
@@ -348,12 +484,13 @@
         document.getElementById('btnPerdu').addEventListener("click",()=>{
             document.getElementById('divPerdu').hidden = false;
             document.getElementById('divNonRetourne').hidden = true;    
-            document.getElementById('divHistorique').hidden = true;                         
+            document.getElementById('divHistorique').hidden = true;                       
         })
             
 
 
     </script>
+  
 
     <footer class="f">
         

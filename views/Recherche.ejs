@@ -20,8 +20,9 @@
         <table class="TabDesLivres">
             <% for(var i=0; i<livresTab.length; i++) {%>
                 <% if (i % 5==0){%>
-                    <td class="recherche">
+                    <tr class="recherche">
                         <% } %>
+                        <td>
                             <div id="Unlivre">
                                 <table class="Unlivre">
                                     <tr class="recherche" class="caseTabeLivre">
@@ -35,8 +36,9 @@
                                         </a><br></td>
                                 </table>
                             </div>
+                        </td>    
                             <% if (i % 5==4){%>
-                    </td>
+                    </tr>
                     <% } %>
                         <% } %>
         </table>

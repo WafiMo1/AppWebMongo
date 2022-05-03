@@ -1,19 +1,24 @@
-body{
-    height: 100%;
-    min-height: 100%;
-    padding-bottom:60px
+html, body{
+    background-image: url("/Images/Logo/logoappweb.png");
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center center;
+    /* height: 100%;
+    min-height: 100%; */
+    padding-bottom:60px;
 }
 li {
     list-style: none !important;
+    list-style-type: none;
     padding: 10px;
     font-size: 20px;
     text-decoration: none;
 }
 
-li.logoP {
-    margin-left: 94%;
+/* li.logoP {
+    margin-right: 50px;
     position: fixed;
-}
+} */
 
 .logo {
     width: 70px;
@@ -31,7 +36,7 @@ header {
 }
 
 footer {
-    position: absolute;
+    position: fixed;
     color: #00aeff;
     text-align: center;
     padding: 3px;
@@ -49,19 +54,20 @@ div .menu {
 
 nav {
     margin-right: 0%;
+    position: fixed;
 }
 
 nav ul {
-
+    text-align: left;
     padding: 0;
     margin: 0;
-    width: 100%;
+    width: auto;
     list-style-type: none;
 }
 
 nav ul li {
     list-style: none;
-    line-height: 44px;
+    line-height: 20px;
     float: left;
     background-color: #ffffff75;
     text-decoration: none;
@@ -99,8 +105,8 @@ nav ul li:hover ul li {
 }
 
 img {
-    width: 25px;
-    height: 25px;
+    width: 125px;
+    height: 125px;
 }
 
 
@@ -125,6 +131,7 @@ table.tab {
     padding-top: 100px;
     margin: auto;
 }
+
 
 .bouttonTab {
     left: auto;

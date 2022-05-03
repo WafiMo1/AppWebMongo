@@ -38,12 +38,34 @@
     <input type="text" name="emailModifie" id="emailModifie" value="<%= loginedUser.Email %>">
     <br>
     <br>
-   <label for="photo">Photo: </label>
-    <input type="file" name="photoModifie" id="photoModifie" value="<%= loginedUser.Photo %>" enctype="mult">
-
-    <input type="submit">
+    <input type="submit" value="Mis a jeu vos informations">
     
 </form>
+<br>
+<hr>
+<br>
+<form method="post" action="/ModifierPhotoProfil" enctype="multipart/form-data" id="formModifPhoto">
+    <label for="photo">Photo: </label>
+    <input type="file" name="photoModifie" id="photoModifie" enctype="mult" accept="image/png, image/jpeg, image/png, image/jpg">
+    <br>
+    <br>
+    <input type="button" id="btnPhoto" value="Mis a jeu votre photo de Profil" onclick="submitPhoto()">
+    <p>Note: Il faut déconnexion pour afficher le nouveau photo de profil si le photo est JPG</p>
+</form>
+<script>
+    function submitPhoto(){
+        if (document.getElementById('photoModifie').value){
+            document.getElementById('formModifPhoto').submit()
+        }else{
+            alert("Vous devez choisir un photo") 
+        } 
+    }
+    
+
+</script>
+
+
+
 </body>
 <footer class="f">
     <p>Author: Mebarkia Mohamed / Mohamed Wafi / Zhi Bo / Omar Khoudair</p>
