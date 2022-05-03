@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="/CSS/style.css">
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <%- include ('../views/partials/header.ejs') %>
+        <%- include ('../views/partials/footer.ejs') %>
+        <title>Gestion des Utilisateurs et des employe</title>
+        
+    </head>
+    <header>
+        
+    </header>
+
+    <body>
+        <section class="p-3">
+            <div class="container">
+                <h1 id="title" class="fw">Gestion des utilisateurs et des employee</h1>
+            </div>           
+        </section>
+
+
+        <section class="p-3">
+            <div class="container">
+                <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th scope="col">Nom</th>
+                        <th scope="col">Prenom</th>
+                        <th scope="col">Telephone</th>
+                        <th scope="col">Email</th>                       
+                        <th scope="col">MaxPret</th>
+                        <th scope="col">NombrePret</th>
+                        <th scope="col">Solde</th>
+                        <th scope="col">Droit</th>
+                        <th scope="col">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        <% utilisateurs.forEach(utilisateur => { %>
+                            <tr>
+                                <td><%= utilisateur.Nom %></td>
+                                <td><%= utilisateur.Prenom %></td>
+                                <td><%= utilisateur.Telephone %></td>
+                                <td><%= utilisateur.Email %></td>
+                                <td><%= utilisateur.MaxPret %></td>
+                                <td><%= utilisateur.NbPret %></td>
+                                <td><%= utilisateur.Solde %></td>
+                                <td><%= utilisateur.Droit_id %></td>
+                                <td>
+                                    <button class="btn btn-warning text-white"><span class="glyphicon glyphicon-pencil"></span>edit</button>
+                                    <button class="btn btn-danger text-white"><span class="glyphicon glyphicon-remove"></span>remove</button>
+                                </td>
+                              </tr>                           
+                        <% }) %>
+                      
+                    </tbody>
+                  </table>
+
+            </div>           
+        </section>
+
+        
+      
+    </body>
+    <script>
+
+        axios.defaults.baseURL = 'http://localhost:4000'
+       
+
+    </script>
+
+</html>

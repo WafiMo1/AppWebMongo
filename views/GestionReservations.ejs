@@ -5,7 +5,8 @@
         <link rel="stylesheet" href="/CSS/style.css">
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
         <%- include ('../views/partials/header.ejs') %>
-        <title>La Caisse</title>
+        <%- include ('../views/partials/footer.ejs') %>
+        <title>Gestion du reservation</title>
         
     </head>
     <header>
@@ -13,37 +14,60 @@
     </header>
 
     <body>
-        <h1 id="title">Gestion du reservation</h1>
-        <form id="formRechercheClient"> 
-            <label for="telClient">Telephone du client : </label>
-            <input type="tel" id="telClient" name="telClient" placeholder="Telephone du client" maxlength="10" onchange="telChange()">
-            <input type="text" id="idClient" hidden>    
-            <button type="button" id="btnRechercheClient" onclick="rechercheClient()">Recherche</button>
-        </form>
+        <section class="p-3">
+            <div class="container">
+                <h1 id="title" class="fw">Gestion du reservation</h1>
+            </div>           
+        </section>
+        
+        <section class="p-3">
+            <div class="container">
+                <form id="formRechercheClient">
+                    <div class="mb-3">
+                        <label for="telClient" class="form-label">Telephone du client : </label>
+                        <input class="form-control" type="tel" id="telClient" name="telClient" placeholder="Telephone du client" maxlength="10" onchange="telChange()" aria-describedby="telHelp">
+                        <div id="telHelp" class="form-text">Lorem ipsum dolor sit amet.</div>
+                    </div> 
+                    <input type="text" id="idClient" hidden>    
+                    <div class="mb-3">
+                        <button class="btn btn-sm btn-primary" type="button" id="btnRechercheClient" onclick="rechercheClient()">Recherche</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
 
         <div id ="divFindCustomer" hidden = true>
-            <p id="pName"></p>
-            <p id="pTel"></p>
-            <p id="pEmail" ></p>
-            <p id="pNbPret"></p>
-            <p id="pSolde"></p>
-            <button type="button" id="ListReservationClient" onclick="ListReservationClient()">Voir Liste des reservations</button>
-            <hr>
-            <h3>Réserver un livre</h3>
-            <form>
-                <label for="isbnLivre">ISBN du livre: </label>
-                <input type="text" id="isbnLivre" name="isbnLivre" placeholder="ISBN du Livre">    
-                <input type="hidden" id="clientEmprunt" name="clientEmprunt" value="">
-                <input type="text" hidden>
-                <button type="button" id="btnReserver" onclick="Reserver()">Réserver</button>    
-            </form>
-                    
-
-                    
-                                    
-                       
+            <section class="p-3">
+                <div class="container">
+                    <p id="pName"></p>
+                    <p id="pTel"></p>
+                    <p id="pEmail" ></p>
+                    <p id="pNbPret"></p>
+                    <p id="pSolde"></p>            
+                </div>          
+            </section>
+            <section class="p-3">
+                <div class="container">
+                    <button class="btn btn-sm btn-primary" type="button" id="ListReservationClient" onclick="ListReservationClient()">Voir Liste des reservations</button>
+                </div>
+            </section>
+            
+            <section class="p-3">
+                <div class="container">
+                    <h3>Réserver un livre</h3>
+                    <form>
+                        <div class="mb-3">
+                            <label for="isbnLivre" class="form-label">ISBN du livre :</label>
+                            <input class="form-control" type="text" id="isbnLivre" name="isbnLivre" placeholder="ISBN du Livre" aria-describedby="isbnHelp">
+                            <div id="isbnHelp" class="form-text">ISBN se trouve près de code a bar de tous les livres</div>
+                        </div>
+                        <input type="text" hidden> 
+                        <button class="btn btn-sm btn-primary" type="button" id="btnReserver" onclick="Reserver()">Réserver</button>               
+                    </form>
+                </div>
+            </section>                      
         </div>
-
     </body>
     <script>
 
@@ -101,7 +125,4 @@
 
     </script>
 
-    <footer class="f">
-        
-    </footer>
 </html>

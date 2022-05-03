@@ -910,16 +910,26 @@ app.get('/gestion/reservation/:telClient', (req, res) => {
                     });
                 });
             })
-
-
         } else {
             res.status(403).end("vous n'avez pas le droit")
         }
-
-
     }
-
 });
+
+app.get('/gestion/employees', async (req, res) => {
+    if (req.session.loginedUser) {
+        if (req.session.loginedUser.Droit_id == 99) {//only for admin 
+            Utilisateurs.find({},function(err, utilisateurs){
+                if (err) throw err;
+                res.render('GestionEmployee', { loginedUser: req.session.loginedUser, utilisateurs: utilisateurs});
+            })           
+        } else {
+            res.status(403).end("vous n'avez pas le droit")
+        }
+    } else {
+        res.redirect("/login")
+    }
+})
 
 
 
