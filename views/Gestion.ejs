@@ -16,10 +16,10 @@
             <%- include ('../views/partials/header.ejs') %>
         </div>
 
-        <div class="container">
+        
 
-            <section class="p-5">
-
+        <section class="p-5">
+            <div class="container">
                 <div>
                     <h1 class="fw-bold">Bonjour <br>
                         <%=loginedUser.Prenom%>
@@ -27,13 +27,17 @@
                     </h1>
 
                 </div>
-            </section>
+            </div>
+        </section>
 
             <!-- <div>
         <h3>Choisir un option</h3>
     </div> -->
 
-            <section >
+        <section >
+            <div class="container">
+
+                
                 <div class="row g-4">
                     <div class="col-md-6">
                         <div class="card bg-secondary text-light">
@@ -121,11 +125,12 @@
                     </div>
                     <% } %>
                 </div>
+            </div>
 
-            </section>
+        </section>
 
             
-        </div>
+     
 
 
     <!-- </div> -->
