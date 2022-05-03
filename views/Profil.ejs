@@ -1,120 +1,87 @@
-
 <!DOCTYPE html>
 <html>
-    <head>
-        <%- include ('../views/partials/header.ejs') %>
+
+<head>
+    <%- include ('../views/partials/header.ejs') %>
         <link rel="stylesheet" href="/CSS/style.css">
-    </head>
+</head>
 
-    <style>
+<style>
 
-        .droite{
-           padding-left: 200px;
-        }
-        .gauche{
-            position: absolute; 
-            left: 54px;
-        }
-        .wrapper{
-            padding-top: 125px;
-        }
-        .bouttonMettreAJour{
-            padding-left: 100px;
-        }
-        .listeLivresEmpruntes{
-            padding-left: 1000px;
-            padding-bottom: 200px;
-            position: absolute;
-            top: 90px;
-        }
-    </style>
 
-    <body class="body">
-        <form action="profilUser" method="post">
-       <div class="wrapper">
+    .droite {
+        padding-left: 200px;
+    }
+
+    .gauche {
+        position: absolute;
+        left: 54px;
+    }
+
+  
+</style>
+
+<body class="body">
+    <form action="profilUser" method="post">
+        <div class="wrapper">
             <div class="gauche">
                 <img class="photoProfil" src="<%= loginedUser.Photo %>" alt="utilisateur" width="100">
             </div>
             <div class="droite">
                 <div class="infos">
                     <h3>Informations</h3>
-                    
+
                     <div class="infos_data">
                         <label for="nom">Nom:</label>
                         <!-- TRÈS IMPORTANT, IL FAUT FAIRE APPEL AU PROFIL (DÉCLARÉ DANS LE SERVEUR NODE JS) CAR ON VA UTILISER LES ATTRIBUTS qu'ils contient pour les afficher  -->
-                        <label for="nomSaisi"><%= loginedUser.Nom %></label>
+                        <label for="nomSaisi">
+                            <%= loginedUser.Nom %>
+                        </label>
                         <br>
                         <br>
                         <label for="prenom">Prénom:</label>
-                        <label for="prenomSaisi"><%= loginedUser.Prenom %></label>
+                        <label for="prenomSaisi">
+                            <%= loginedUser.Prenom %>
+                        </label>
                         <br>
                         <br>
                         <label for="telephone">Téléphone:</label>
-                        <label for="telephoneSaisi"><%= loginedUser.Telephone %></label>
+                        <label for="telephoneSaisi">
+                            <%= loginedUser.Telephone %>
+                        </label>
                         <br>
                         <br>
                         <label for="email">Courriel:</label>
-                        <label for="emailSaisi"><%= loginedUser.Email %></label>
+                        <label for="emailSaisi">
+                            <%= loginedUser.Email %>
+                        </label>
                         <br>
                         <br>
                         <label for="solde">Solde:</label>
-                        <label for="soldeSaisi"><%= loginedUser.Solde %></label>                                               
-                        </div>
-                        <br>
-                        <br>
-                        
+                        <label for="soldeSaisi">
+                            <%= loginedUser.Solde %>
+                        </label>
                     </div>
+                    <br>
+                    <br>
+
                 </div>
             </div>
-
-
-
-       </div>
-       
-        </form>
-
-        <div class="listeLivresEmpruntes">
-
-            <table>
-                <th>ISBN</th>
-                <th>Titre</th>
-                <th>Auteur</th>
-                <th>Date de prêt</th>
-                <th>Date de retour prévue</th>
-                <%for(var i=0; i<listeLivresRetournes.length; i++) {%>
-                       <!-- UN LIVRE -->
-                    <tr>
-                        <!-- CHAQUE ATTRIBUT DU LIVRE -->
-                        <td><%=listeLivresRetournes[i].isbn%></td>
-                        <td  type="date" name="begin" placeholder="dd-mm-yyyy"><%=listeLivresRetournes[i].titre%></td>
-                        <td><%=listeLivresRetournes[i].auteur%></td>
-                        <td><%=listeLivresRetournes[i].datePret%></td>
-                        <td> <%=listeLivresRetournes[i].dateRetour%></td>
-    
-                    </tr>
-
-                    <%}%>
-
-            </table>
-          
-           
-                
-              
-              
-               
-
-
-                
-            
-
-
-
-                    
         </div>
 
-    </body>
-    <footer class="f">
-        <p>Author: Mebarkia Mohamed / Mohamed Wafi / Zhi Bo / Omar Khoudair</p>
-        <img src="/Images/logo.png" class="logo">
-    </footer>
+
+
+        </div>
+
+    </form>
+
+
+
+
+</body>
+<footer class="f">
+    <p>Author: Mebarkia Mohamed / Mohamed Wafi / Zhi Bo / Omar Khoudair</p>
+    <img src="/Images/logo.png" class="logo">
+</footer>
+
 </html>
