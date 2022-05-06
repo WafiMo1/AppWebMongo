@@ -7,7 +7,7 @@
         <link rel="stylesheet" href="/CSS/style.css">
 </head>
 
-<style>
+<!-- <style>
     td {
         padding: 0.6rem 0.6rem;
     }
@@ -50,81 +50,91 @@
         padding-left: 20px;
 
     }
-</style>
+</style> -->
 
 <body>
     <div class="box">
         <div class="section">
-            
-            <table id="tableauLivres" align="center">
-                <thead>
-                    <th>ISBN</th>
-                    <th>Titre</th>
-                    <th>Auteur</th>
-                    <th>Date de prêt</th>
-                    <th>Date de retour prévue</th>
-                    <th>Date de retour</th>
-                </thead>
-                <%for(var i=0; i<livresEmpruntes.length; i++) {%>
-                    <%for(var j=0; j<livresInfos.length; j++) {%>
-        
-                        <%if(livresEmpruntes[i].Livre_id.toString()==livresInfos[j]._id.toString()){%>
-                            <%console.log(livresEmpruntes[i] + " " +livresInfos[j])%>
-                                <!-- UN LIVRE -->
-                                <tbody>
-                                    <tr id="livre">
-                                        <!-- CHAQUE ATTRIBUT DU LIVRE -->
-                                        <td id="isbnLivre">
-                                            <%=livresInfos[j].ISBN%>
-                                        </td>
-                                        <td id="titreLivre">
-                                            <%=livresInfos[j].Titre%>
-                                        </td id="auteurLivre">
-                                        <td>
-                                            <%=livresInfos[j].Auteur%>
-                                        </td>
-                                        <td id="datePretLivre">
-                                            <%=livresEmpruntes[i].DatePret.toDateString()%>
-                                        </td>
-                                        <td id="dateRetourPrevuLivre">
-                                            <%=livresEmpruntes[i].DateRetourPrevu.toDateString()%>
-                                        </td>
-                                        <%if(livresEmpruntes[i].DateRetour!=null){%>
-                                            <td id="dateRetourLivre">
-                                                <%=livresEmpruntes[i].DateRetour.toDateString()%>
-                                            </td>
-                                            <%}%> 
-                                             <%if(livresEmpruntes[i].DateRetour==null){%>
-                                            <td id="dateRetourLivre">
-                                                Non retourné
-                                            </td>
-                                            <%}%> 
-        
-                                    </tr>
-                                    <%}%>
-                                        <%}%>
-                                            <%}%>
-                                </tbody>
-        
-            </table>
-            <div class="bouttons" >
-        
-                <button class='btn btn-primary' onclick="MontrerLivresEmpruntes()" type="button" id="livresEmpruntes">Livres
-                    empruntés</button>
-                <button class='btn btn-primary' onclick="MontrerLivresRetournes()" type="button" id="livresRetournes">Livres
-                    retournés</button>
-                <button class='btn btn-primary' onclick="MontrerLivresNonRetournes()" type="button"
-                    id="livresNonRetournes">Livres non-retournés</button>
-            </div>
-            </div>
-            </div>
-        
-          
-        </div>
-        <%- include ('../views/partials/footer.ejs') %>
-    </div>
+            <section class="p-5">
+                <div class="contrainer">
+                    <table id="tableauLivres" align="center">
+                        <thead>
+                            <th>ISBN</th>
+                            <th>Titre</th>
+                            <th>Auteur</th>
+                            <th>Date de prêt</th>
+                            <th>Date de retour prévue</th>
+                            <th>Date de retour</th>
+                        </thead>
+                        <%for(var i=0; i<livresEmpruntes.length; i++) {%>
+                            <%for(var j=0; j<livresInfos.length; j++) {%>
 
-    
+                                <%if(livresEmpruntes[i].Livre_id.toString()==livresInfos[j]._id.toString()){%>
+                                    <%console.log(livresEmpruntes[i] + " " +livresInfos[j])%>
+                                        <!-- UN LIVRE -->
+                                        <tbody>
+                                            <tr id="livre">
+                                                <!-- CHAQUE ATTRIBUT DU LIVRE -->
+                                                <td id="isbnLivre">
+                                                    <%=livresInfos[j].ISBN%>
+                                                </td>
+                                                <td id="titreLivre">
+                                                    <%=livresInfos[j].Titre%>
+                                                </td id="auteurLivre">
+                                                <td>
+                                                    <%=livresInfos[j].Auteur%>
+                                                </td>
+                                                <td id="datePretLivre">
+                                                    <%=livresEmpruntes[i].DatePret.toDateString()%>
+                                                </td>
+                                                <td id="dateRetourPrevuLivre">
+                                                    <%=livresEmpruntes[i].DateRetourPrevu.toDateString()%>
+                                                </td>
+                                                <%if(livresEmpruntes[i].DateRetour!=null){%>
+                                                    <td id="dateRetourLivre">
+                                                        <%=livresEmpruntes[i].DateRetour.toDateString()%>
+                                                    </td>
+                                                    <%}%>
+                                                        <%if(livresEmpruntes[i].DateRetour==null){%>
+                                                            <td id="dateRetourLivre">
+                                                                Non retourné
+                                                            </td>
+                                                            <%}%>
+
+                                            </tr>
+                                            <%}%>
+                                                <%}%>
+                                                    <%}%>
+                                        </tbody>
+
+                    </table>
+
+
+                </div>
+
+            </section>
+
+            <section class="p-5">
+                <div class="contrainer">
+                    <button class='btn btn-primary' onclick="MontrerLivresEmpruntes()" type="button"
+                        id="livresEmpruntes">Livres
+                        empruntés</button>
+                    <button class='btn btn-primary' onclick="MontrerLivresRetournes()" type="button"
+                        id="livresRetournes">Livres
+                        retournés</button>
+                    <button class='btn btn-primary' onclick="MontrerLivresNonRetournes()" type="button"
+                        id="livresNonRetournes">Livres non-retournés</button>
+                </div>
+            </section>
+
+        </div>
+
+
+    </div>
+    <%- include ('../views/partials/footer.ejs') %>
+        </div>
+
+
 
 </body>
 <script>
@@ -149,21 +159,21 @@
 
         }
 
-        
+
 
     }
     function MontrerLivresNonRetournes() {
-        
+
         var listeLivres = document.getElementById('tableauLivres')
         console.log(listeLivres.rows.length)
         console.log(listeLivres.getElementsByTagName('tr')[1].getElementsByTagName('td').namedItem("dateRetourLivre"))
         for (var i = 1; i < listeLivres.rows.length; i++) {
-            
+
             if (listeLivres.getElementsByTagName('tr')[i].getElementsByTagName('td').namedItem("dateRetourLivre").innerHTML == "Non retourné") {
 
                 listeLivres.getElementsByTagName('tr')[i].hidden = false
             }
-            
+
         }
     }
 </script>
