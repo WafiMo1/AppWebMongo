@@ -6,76 +6,61 @@
         <link rel="stylesheet" href="/CSS/style.css">
 </head>
 
-<style>
-
-
-    .droite {
-        padding-left: 200px;
-    }
-
-    .gauche {
-        position: absolute;
-        left: 54px;
-    }
-
-  
-</style>
-
 <body class="body">
     <div class="box">
         <div class="section">
-            <form action="profilUser" method="post">
-                <div class="wrapper">
-                    <div class="gauche">
-                        <img class="photoProfil" src="<%= loginedUser.Photo %>" alt="utilisateur" width="100">
-                    </div>
-                    <div class="droite">
-                        <div class="infos">
-                            <h3>Informations</h3>
-        
-                            <div class="infos_data">
-                                <label for="nom">Nom:</label>
-                                <!-- TRÈS IMPORTANT, IL FAUT FAIRE APPEL AU PROFIL (DÉCLARÉ DANS LE SERVEUR NODE JS) CAR ON VA UTILISER LES ATTRIBUTS qu'ils contient pour les afficher  -->
-                                <label for="nomSaisi">
+            <section class="p-3">
+               <div class="container">
+                    <div class="d-flex p-5">
+                        <div class="mb-3 p-5">
+                            <div class="mb-3">
+                            <img src="<%= loginedUser.Photo %>" alt="utilisateur" width="180">
+                            </div>
+                            <div class="mb-3">
+                            <a href="/Modifier" class="btn btn-sm btn-primary" >Modifier vos informations</a>
+                            </div>
+                            <div class="mb-3">
+                            <a href="/ModifierMotDePasse" class="btn btn-sm btn-danger" >Modifier vos informations</a>
+                            </div>
+                        </div>
+                        <div class="mb-3 p-5" >
+                            <div class="mb-3">
+                                <h3>Informations</h3>
+                            </div>
+                            <div class="mb-3">
+                                <label for="nom" class="form-label">Nom:</label>
+                                <label for="nomSaisi" class="form-label">
                                     <%= loginedUser.Nom %>
                                 </label>
-                                <br>
-                                <br>
-                                <label for="prenom">Prénom:</label>
-                                <label for="prenomSaisi">
+                            </div>
+                            <div class="mb-3">
+                                <label for="prenom" class="form-label">Prénom:</label>
+                                <label for="prenomSaisi" class="form-label">
                                     <%= loginedUser.Prenom %>
                                 </label>
-                                <br>
-                                <br>
-                                <label for="telephone">Téléphone:</label>
-                                <label for="telephoneSaisi">
+                            </div>
+                            <div class="mb-3">
+                                <label for="telephone" class="form-label">Téléphone:</label>
+                                <label for="telephoneSaisi" class="form-label">
                                     <%= loginedUser.Telephone %>
                                 </label>
-                                <br>
-                                <br>
-                                <label for="email">Courriel:</label>
-                                <label for="emailSaisi">
+                            </div>    
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Courriel:</label>
+                                <label for="emailSaisi" class="form-label">
                                     <%= loginedUser.Email %>
-                                </label>
-                                <br>
-                                <br>
-                                <label for="solde">Solde:</label>
-                                <label for="soldeSaisi">
-                                    <%= loginedUser.Solde %>
-                                </label>
+                                </label>                                
                             </div>
-                            <br>
-                            <br>
-        
+                            <div class="mb-3">
+                                <label for="solde" class="form-label">Solde:</label>
+                                <label for="soldeSaisi" class="form-label">
+                                    <%= loginedUser.Solde %>
+                                </label>                                
+                            </div>    
                         </div>
                     </div>
                 </div>
-        
-        
-        
-                </div>
-        
-            </form>
+            </section>         
         </div>
         <%- include ('../views/partials/footer.ejs') %>
     </div>
