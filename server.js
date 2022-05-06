@@ -191,12 +191,6 @@ app.get('/logout', (req, res) => {
 // DÉBUT DE LA PARTIE DE MOHAMED WAFI
 //TROUVER LE PROFIL D'UN USER ET AFFICHER LES EMPRUNTS- MOHAMED WAFI
 
-app.get('/ajoutLivres', (req,res)=>{
-
-    if (req.session.loginedUser) {
-        
-    }
-})
 app.get('/HistoriqueDesEmprunts', (req, res) => {
 
     if (req.session.loginedUser) {
@@ -333,20 +327,40 @@ app.post('/ModifierMotDePasse', urlencodeParser, (req, res) => {
 
 });
 
-app.get('/ajoutLivre', (req, res) => {
+app.get('/gestion/ajoutLivre', (req, res) => {
 
+    
     if (req.session.loginedUser != null) {
-        if (req.session.loginedUser.Droit_id == 99 || loginedUser.Droit_id == 1) {
-            res.render("ajoutLivre");
-        } else {
-            res.redirect("Acceuil")
-
-        }
+       
+    if (req.session.loginedUser.Droit_id.toString()=="1" ||req.session.loginedUser.Droit_id.toString()=="99") {
+        console.log(req.session.loginedUser.Droit_id);
+             res.render("ajoutLivre");
+    //     } else {
+    //         res.redirect("Acceuil")
     }
+     }
 });
 
-app.post('/ajoutLivre', (req, res) => {
-var nouveauLivre;
+app.post('/gestion/ajoutLivre', (req, res) => {
+
+    var nouveauLivre=new Livres({
+        Auteur:req.body.auteurLivre ,
+        Titre: req.body.titreLivre,
+        DateParution:req.body.dateParution ,
+        NbCopies: req.body.nbrCopies,
+        NbDisponible:req.body.nbrCopies ,
+        MaisonEdition:req.body.maisonEdition ,
+        ISBN:req.body.isbnLivre ,
+        Cout:req.body.coutLivre ,
+        Description:req.body.descriptionLivre ,
+        Photo:req.body.photoLivre ,
+    })
+
+    nouveauLivre.save(function (err, book) {
+       res.json("Le livre a été ajouté avec succès")
+        if (err) return console.error(err);
+      });
+
 });
 
 // FIN DE LA PARTIE DE MOHAMED WAFI

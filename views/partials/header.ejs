@@ -33,6 +33,7 @@
                         <div class="nav-link">
                             <a href="/gestion">Gestion</a>
                             <ul class="dropdown-menu">
+                                <li><a href="/gestion/ajoutLivre">Ajouter un livre</a></li>
                                 <li><a href="/gestion/ModificationClient">Modifier l'informations du client</a></li>
                                 <li><a href="/gestion/Reservation">Réserver et Annuler les livres</a></li>
                                 <li><a href="/gestion/empruntretour">Emprunt et Retour</a></li>
@@ -67,15 +68,13 @@
                                     <li id="login"><a href="/login">Login</a> </li>
                                     <% } else{ %>
                                         <!--Lorsque Modifier Profil est sélectionné-->
-
+                                        
                                         <li id="profil"><a href="/profil">Profil</a></li>
-                                        <li id="modifierProfil"><a href="/Modifier">Modifier les informations</a>
-                                        </li>
-                                        <li id="modifierMotDePasse"><a href="/ModifierMotDePasse">Modifier le mot de
-                                                passe</a></li>
+                                        <li id="modifierProfil"><a href="/Modifier">Modifier les informations</a></li>
+                                        <li id="modifierMotDePasse"><a href="/ModifierMotDePasse">Modifier le mot de passe</a></li>
                                         <li id="historiqueEmprunts"><a href="/HistoriqueDesEmprunts">Historique des emprunts</a></li>
-
                                         <li id="deconnection"><a href="/logout">Déconnexion</a></li>
+
                                         <%} %>
 
 
