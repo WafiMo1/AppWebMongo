@@ -692,6 +692,7 @@ app.post('/gestion/empruntretour', async (req, res) => {
                                                 Cout: fraisRetard,
                                                 Utilisateur_id: req.body.clientEmprunt,
                                                 EmployeeId: req.session.loginedUser._id,
+                                                Titre: "Retard : " + livre.Titre,
                                                 Commentaire: "Frais du retard pour le livre: " + livre.Titre + ", " + livre.Auteur + ", " + livre.ISBN
                                             }, function (err) { if (err) throw err })
                                         }
@@ -705,6 +706,7 @@ app.post('/gestion/empruntretour', async (req, res) => {
                                                 Cout: cout,
                                                 Utilisateur_id: req.body.clientEmprunt,
                                                 EmployeeId: req.session.loginedUser._id,
+                                                Titre: "Perte : " + livre.Titre,
                                                 Commentaire: "Frais pour la pert du livre: " + livre.Titre + ", " + livre.Auteur + ", " + livre.ISBN
                                             }, function (err) { if (err) throw err })
                                         }
