@@ -192,18 +192,15 @@ app.get('/logout', (req, res) => {
 //TROUVER LE PROFIL D'UN USER ET AFFICHER LES EMPRUNTS- MOHAMED WAFI
 
 app.get('/HistoriqueDesEmprunts', (req, res) => {
-
     if (req.session.loginedUser) {
-        Emprunts.find({ Utilisateur_id: req.session.loginedUser }, function (err, livresEmpruntes) {
+        Emprunts.find({ Utilisateur_id: req.session.loginedUser }).sort({ DatePret: 'desc' }).exec(function (err, livresEmpruntes) {
             if (err) {
                 res.json("erreur")
             }
-
             Livres.find({}, function (err, livresInfos) {
                 if (err) {
                     res.json("erreur")
                 }
-
                 res.render('HistoriqueEmprunts.ejs', { loginedUser: req.session.loginedUser, livresEmpruntes: livresEmpruntes, livresInfos: livresInfos })
             })
 
@@ -657,7 +654,6 @@ app.post('/gestion/empruntretour', async (req, res) => {
                         if (req.body.choix == "radioRetour" || req.body.choix == "radioPerdu") {
                             var compte = 0;
                             emprunts.forEach(emprunt => {
-
                                 if (emprunt.DateRetour == null) {
                                     compte++;
                                     //supose d'avoir un seule resultat (Un même livre ne peut pas prêter 2 copies à un personne. )
@@ -775,7 +771,7 @@ app.post('/findCustomer', (req, res) => {
             Utilisateurs.findOne({ Telephone: req.body.tel }, function (err, client) {
                 if (err) throw err;
                 if (client) {
-                    Emprunts.find({ Utilisateur_id: client._id }, function (err, historique) {
+                    Emprunts.find({ Utilisateur_id: client._id }).sort({ DatePret: 'desc' }).exec(function (err, historique) {
                         if (err) throw err;
                         Livres.find({}, function (err, livres) {
                             if (err) throw err;

@@ -6,7 +6,6 @@
         <title>Réservations</title>
     </head>
     <body>
-<<<<<<< Updated upstream
         <div class="box">
             <div class="section">
                 <section class="p-5">
@@ -35,13 +34,13 @@
                                                              <td><%=leLivre.MaisonEdition %></td>
                                                              <td>
                                                                  <% if(leResInfo.DateReservation.getHours() < 10) { %>
-                                                                     0<%=leResInfo.DateReservation.getHours() %> : <%=leResInfo.DateReservation.getMinutes() %>
+                                                                     0<%=leResInfo.DateReservation.getHours() %>:<%=leResInfo.DateReservation.getMinutes() %>
                                                                      <%=leResInfo.DateReservation.getDate()%>/<%=leResInfo.DateReservation.getMonth()+1 %>/<%=leResInfo.DateReservation.getFullYear() %>
                                                                  <% } else if(leResInfo.DateReservation.getMinutes() < 10) {%>
-                                                                     <%=leResInfo.DateReservation.getHours() %> : 0<%=leResInfo.DateReservation.getMinutes() %>
+                                                                     <%=leResInfo.DateReservation.getHours() %>:0<%=leResInfo.DateReservation.getMinutes() %>
                                                                      <%=leResInfo.DateReservation.getDate()%>/<%=leResInfo.DateReservation.getMonth()+1 %>/<%=leResInfo.DateReservation.getFullYear() %>
                                                                  <% } else { %>
-                                                                     <%=leResInfo.DateReservation.getHours() %> : <%=leResInfo.DateReservation.getMinutes() %>
+                                                                     <%=leResInfo.DateReservation.getHours() %>:<%=leResInfo.DateReservation.getMinutes() %>
                                                                      <%=leResInfo.DateReservation.getDate()%>/<%=leResInfo.DateReservation.getMonth()+1 %>/<%=leResInfo.DateReservation.getFullYear() %>
                                                                  <% } %>
                                                              </td>
@@ -65,58 +64,6 @@
 
                 </section>
                 
-=======
-        <div align="center">
-           <h2>Réservation de livres</h2> 
-            <div>
-                <table class="table table-hover">
-                        <thead>
-                          <tr align="center">
-                            <th scope="col">ISBN</th>
-                            <th scope="col">Auteur</th>
-                            <th scope="col">Titre</th>
-                            <th scope="col">MaisonEdition</th>                       
-                            <th scope="col">Date</th>
-                            <th scope="col">Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                            <% resInfo.forEach(leResInfo => { %>
-                                <% livres.forEach(leLivre => { %>
-                                    <% if(leResInfo.Livre_id.toString() == leLivre._id.toString()) { %>
-                                            <tr align="center">
-                                                <td><%=leLivre.ISBN %></td>
-                                                <td><%=leLivre.Auteur %></td>
-                                                <td><%=leLivre.Titre %></td>
-                                                <td><%=leLivre.MaisonEdition %></td>
-                                                <td>
-                                                    <% if(leResInfo.DateReservation.getHours() < 10) { %>
-                                                        0<%=leResInfo.DateReservation.getHours() %>:<%=leResInfo.DateReservation.getMinutes() %>
-                                                        <%=leResInfo.DateReservation.getDate()%>/<%=leResInfo.DateReservation.getMonth()+1 %>/<%=leResInfo.DateReservation.getFullYear() %>
-                                                    <% } else if(leResInfo.DateReservation.getMinutes() < 10) {%>
-                                                        <%=leResInfo.DateReservation.getHours() %>:0<%=leResInfo.DateReservation.getMinutes() %>
-                                                        <%=leResInfo.DateReservation.getDate()%>/<%=leResInfo.DateReservation.getMonth()+1 %>/<%=leResInfo.DateReservation.getFullYear() %>
-                                                    <% } else { %>
-                                                        <%=leResInfo.DateReservation.getHours() %>:<%=leResInfo.DateReservation.getMinutes() %>
-                                                        <%=leResInfo.DateReservation.getDate()%>/<%=leResInfo.DateReservation.getMonth()+1 %>/<%=leResInfo.DateReservation.getFullYear() %>
-                                                    <% } %>
-                                                </td>
-                                                <td>
-                                                    <form action="/annulerReservation" method="post">
-                                                        <input type="submit" class="btn btn-danger text-white" value="Annuler la réservation" id="btnAnnuler">
-                                                        <input type="hidden" value="<%= leLivre._id %>" name="livre_id" id="livre_id">
-                                                        <input type="hidden" value="<%= leLivre.Titre %>" name="livre_titre" id="livre_titre">
-                                                        <input type="hidden" value="<%= leLivre.NbDisponible %>" name="livre_NbDisponible" id="livre_NbDisponible">
-                                                        <input type="hidden" value="<%= leResInfo.Utilisateur_id %>" name="user_id" id="user_id">
-                                                    </form>
-                                                </td>
-                                            </tr>
-                                    <% } %>
-                                <% }) %>
-                            <% }) %>
-                        </tbody>
-                </table> 
->>>>>>> Stashed changes
             </div>
             <%- include ('../views/partials/footer.ejs') %>
         </div>
