@@ -101,6 +101,11 @@
             }
         }
 
+        function edit(obj){
+            var id = $(obj).parents('tr').children('td')[0].innerHTML
+            window.location='/gestion/utilisateur/' + id
+        }
+
 
         
        

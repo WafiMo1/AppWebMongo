@@ -93,8 +93,12 @@
                                             <td id="dateRetourLivre">
                                                 <%=livresEmpruntes[i].DateRetour.toDateString()%>
                                             </td>
-                                            <%}%>
-                                                <td id="dateRetourLivre">Non retourné</td>
+                                            <%}%> 
+                                             <%if(livresEmpruntes[i].DateRetour==null){%>
+                                            <td id="dateRetourLivre">
+                                                Non retourné
+                                            </td>
+                                            <%}%> 
         
                                     </tr>
                                     <%}%>

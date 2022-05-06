@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <%- include ('../views/partials/header.ejs') %>
+        <link rel="stylesheet" href="/CSS/style.css">
+</head>
+
+<body class="body">
+    <div class="box">
+        <div class="section">
+            <section class="p-3">
+               <div class="container">
+                    <div class="d-flex p-5">
+                        <div class="mb-3 p-5">
+                            <div class="mb-3">
+                            <img src="<%= utilisateur.Photo %>" alt="utilisateur" width="180">
+                            </div>
+                            <div class="mb-3">
+                            <button class="btn btn-danger" onclick="ResetPassword()" >Initialiser le mots de passe</button>
+                            </div>
+                        </div>
+                        <div class="mb-3 p-5" >
+                            <div class="mb-3">
+                                <h3>Gestion d'utilisateur</h3>
+                            </div>
+                            <div class="mb-3">
+                                <label for="droit" class="form-label">Droit: </label>
+                                <select name="droit" id="droit" class="form-select">
+                                <% droits.forEach(droit =>{ %>
+                                    <option value="<%=droit._id%>"><%=droit.Description%></option>
+                                <% }) %>                                   
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="nom" class="form-label">Nom:</label>
+                                <input id="nom" class="form-control" value="<%= utilisateur.Nom %>">
+                            </div>
+                            <div class="mb-3">
+                                <label for="prenom" class="form-label">Prénom:</label>
+                                <input id="prenom" class="form-control"  value="<%= utilisateur.Prenom %>">
+                            </div>
+                            <div class="mb-3">
+                                <label for="telephone" class="form-label">Téléphone:</label>
+                                <input id="telephone" class="form-control" value="<%= utilisateur.Telephone %>">
+                            </div>    
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Courriel:</label>
+                                <input id="email" class="form-control" value="<%= utilisateur.Email %>">                          
+                            </div>
+                            <div class="mb-3">
+                                <label for="MaxPret" class="form-label">Prêt maximum:</label>
+                                <input id="MaxPret" class="form-control" value="<%= utilisateur.MaxPret %>">                          
+                            </div>
+                            <div class="mb-3">
+                                <label for="NbPret" class="form-label">Nombre de prêt:</label>
+                                <input id="NbPret" class="form-control" value="<%= utilisateur.NbPret %>" aria-describedby="nbpretHelp">
+                                <div id="nbpretHelp" class="form-text">Le nombre de prêt sont générer automatiquement</div>                         
+                            </div>
+                            <div class="mb-3">
+                                <label for="solde" class="form-label">Solde:</label>
+                                <input id="solde" class="form-control" value="<%= utilisateur.Solde %>">                             
+                            </div>
+                            <div class="mb-3">
+                                <input type="button" class="btn btn-sm btn-success" value="Enregister">                             
+                            </div> 
+                            <input hidden id="userDroit" value="<%= utilisateur.Droit_id %>"     
+                        </div>
+                    </div>
+                </div>
+            </section>         
+        </div>
+        <%- include ('../views/partials/footer.ejs') %>
+    </div>
+
+</body>
+<script>
+    document.getElementById('droit').value = document.getElementById('userDroit').value;
+    
+    
+
+
+</script>
+
+</html>
