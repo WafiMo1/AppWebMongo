@@ -343,6 +343,7 @@ app.get('/ajoutLivre', (req, res) => {
 app.post('/ajoutLivre', (req, res) => {
 var nouveauLivre;
 });
+
 // FIN DE LA PARTIE DE MOHAMED WAFI
 app.get('/recherche', (req, res) => {
     Livres.find({}, function (err, livres) {
@@ -530,7 +531,7 @@ app.get('/gestion', async (req, res) => {
 app.get('/gestion/empruntretour', (req, res) => {
     if (req.session.loginedUser) {
         if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {//only for admin or staff
-            res.render('empruntretour', { loginedUser: req.session.loginedUser })
+            res.render('GestionEmpruntRetour', { loginedUser: req.session.loginedUser })
         } else {
             res.status(403).end("vous n'avez pas le droit")
         }
@@ -804,7 +805,7 @@ app.post('/findCustomer', (req, res) => {
 app.get('/gestion/caisse', (req, res) => {
     if (req.session.loginedUser) {
         if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {//only for admin or staff
-            res.render('caisse', { loginedUser: req.session.loginedUser })
+            res.render('GestionCaisse', { loginedUser: req.session.loginedUser })
         } else {
             res.status(403).end("vous n'avez pas le droit")
         }
@@ -898,12 +899,15 @@ app.get('/gestion/reservation/:telClient', (req, res) => {
     }
 });
 
-app.get('/gestion/employees', async (req, res) => {
+app.get('/gestion/listUtilisateur', async (req, res) => {
     if (req.session.loginedUser) {
         if (req.session.loginedUser.Droit_id == 99) {//only for admin 
             Utilisateurs.find({},function(err, utilisateurs){
                 if (err) throw err;
-                res.render('GestionEmployee', { loginedUser: req.session.loginedUser, utilisateurs: utilisateurs});
+                Droits.find({}, function(err, droits){
+                    if (err) throw err;
+                        res.render('GestionListUtilisateur', { loginedUser: req.session.loginedUser, utilisateurs: utilisateurs, droits: droits});
+                } )
             })           
         } else {
             res.status(403).end("vous n'avez pas le droit")
@@ -912,6 +916,24 @@ app.get('/gestion/employees', async (req, res) => {
         res.redirect("/login")
     }
 })
+
+app.post('/gestion/supprimerUtilisateur', async(req,res) =>{
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    if (req.session.loginedUser) {
+        if (req.session.loginedUser.Droit_id == 99) {//only for admin
+            Utilisateurs.findByIdAndRemove(req.body.ID, function(err){
+                if (err) throw err;
+                res.send(JSON.stringify({ 'message': 'Utilisateur supprimé' }))
+            })
+        } else {
+            res.status(403).end("vous n'avez pas le droit")
+        }
+    }else {
+        res.redirect("/login")
+    }
+})
+
+
 
 app.get('/test', (req, res)=>{
     res.render('test');

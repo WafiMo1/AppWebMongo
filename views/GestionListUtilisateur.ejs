@@ -3,6 +3,7 @@
     <head>
         <link rel="stylesheet" href="/CSS/style.css">
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <%- include ('../views/partials/header.ejs') %>
         
         <title>Gestion des Utilisateurs et des employe</title>
@@ -20,13 +21,22 @@
                         <h1 id="title" class="fw">Gestion des utilisateurs et des employee</h1>
                     </div>           
                 </section>
-        
+
+                  <table id="lesDroits" hidden>
+                    <% droits.forEach(droit => { %>
+                        <td >
+                            <input value="<%= droit.Description %>">
+                            <input value="<%=droit._id%>">
+                        </td>
+                    <% }) %>
+                  </table>
         
                 <section class="p-3">
                     <div class="container">
                         <table class="table table-hover">
                             <thead>
                               <tr>
+                                <th scope="col" hidden>ID</th>
                                 <th scope="col">Nom</th>
                                 <th scope="col">Prenom</th>
                                 <th scope="col">Telephone</th>
@@ -35,12 +45,14 @@
                                 <th scope="col">NombrePret</th>
                                 <th scope="col">Solde</th>
                                 <th scope="col">Droit</th>
-                                <th scope="col">Action</th>
+                                <th scope="col" hidden>Droit_id</th>
+                                <th scope="col">Action</th>                                
                               </tr>
                             </thead>
                             <tbody>
                                 <% utilisateurs.forEach(utilisateur => { %>
                                     <tr>
+                                        <td hidden><%= utilisateur._id %></td>
                                         <td><%= utilisateur.Nom %></td>
                                         <td><%= utilisateur.Prenom %></td>
                                         <td><%= utilisateur.Telephone %></td>
@@ -48,10 +60,16 @@
                                         <td><%= utilisateur.MaxPret %></td>
                                         <td><%= utilisateur.NbPret %></td>
                                         <td><%= utilisateur.Solde %></td>
-                                        <td><%= utilisateur.Droit_id %></td>
+                                        <% droits.forEach(droit => { %>
+                                        <%    if(utilisateur.Droit_id == droit._id){ %>
+                                                <td><%= droit.Description %></td>
+                                                <td hidden><%= droit._id %></td>
+                                        <%    } %>
+                                        <% }) %>
+                                        
                                         <td>
-                                            <button class="btn btn-warning text-white"><span class="glyphicon glyphicon-pencil"></span>edit</button>
-                                            <button class="btn btn-danger text-white"><span class="glyphicon glyphicon-remove"></span>remove</button>
+                                            <button class="btn btn-warning text-white" onclick="edit(this)">Modifier</button>
+                                            <button class="btn btn-danger text-white" onclick="supprimer(this)">Supprimer</button>
                                         </td>
                                       </tr>                           
                                 <% }) %>
@@ -64,11 +82,27 @@
             </div>
             <%- include ('../views/partials/footer.ejs') %>
         </div>
-        
     </body>
     <script>
 
-        axios.defaults.baseURL = 'http://localhost:4000'
+        axios.defaults.baseURL = 'http://localhost:4000' 
+        function supprimer(obj){
+            var confirmation = confirm("Êtes-vous sûr de vouloir supprimer cette utilisateur?");
+            if (confirmation){
+                var id = $(obj).parents('tr').children('td')[0].innerHTML
+                axios.post('/gestion/supprimerUtilisateur', {                   
+                    ID: id
+                }).then(res=>{
+                    alert(res.data.message);
+                    location.reload();
+                })
+            } else{
+                alert('Action annulé')
+            }
+        }
+
+
+        
        
 
     </script>
