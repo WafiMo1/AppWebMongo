@@ -3,7 +3,8 @@
 
 <head>
     <%- include ('../views/partials/header.ejs') %>
-        <link rel="stylesheet" href="/CSS/style.css">
+        <link rel="stylesheet" href="/CSS/style.css">      
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
         <title>Gestion des utilisateurs</title>
 </head>
 
@@ -18,7 +19,7 @@
                             <img src="<%= utilisateur.Photo %>" alt="utilisateur" width="180">
                             </div>
                             <div class="mb-3">
-                            <button class="btn btn-danger" onclick="ResetPassword()" >Initialiser le mots de passe</button>
+                                <button class="btn btn-danger" id="ResetPassword" onclick="btnResetPassword()">Initialiser le mots de passe</button>
                             </div>
                         </div>
                         <div class="mb-3 p-5" >
@@ -43,11 +44,11 @@
                             </div>
                             <div class="mb-3">
                                 <label for="telephone" class="form-label">Téléphone:</label>
-                                <input id="telephone" class="form-control" value="<%= utilisateur.Telephone %>">
+                                <input id="telephone" class="form-control" value="<%= utilisateur.Telephone %>" maxlength="10">
                             </div>    
                             <div class="mb-3">
                                 <label for="email" class="form-label">Courriel:</label>
-                                <input id="email" class="form-control" value="<%= utilisateur.Email %>">                          
+                                <input type="email" id="email" class="form-control" value="<%= utilisateur.Email %>">                          
                             </div>
                             <div class="mb-3">
                                 <label for="MaxPret" class="form-label">Prêt maximum:</label>
@@ -63,9 +64,11 @@
                                 <input id="solde" class="form-control" value="<%= utilisateur.Solde %>">                             
                             </div>
                             <div class="mb-3">
-                                <input type="button" class="btn btn-sm btn-success" value="Enregister">                             
+                                <input type="button" class="btn btn-sm btn-success" value="Enregister" onclick="btnSave()">                             
                             </div> 
-                            <input hidden id="userDroit" value="<%= utilisateur.Droit_id %>"     
+                            <input hidden id="userDroit" value="<%= utilisateur.Droit_id %>" >
+                            <input hidden id="userId" value="<%= utilisateur._id %>" >
+
                         </div>
                     </div>
                 </div>
@@ -77,8 +80,62 @@
 </body>
 <script>
     document.getElementById('droit').value = document.getElementById('userDroit').value;
-    
-    
+    axios.defaults.baseURL = 'http://localhost:4000' 
+
+    function btnSave(){
+        if (!document.getElementById('nom').value.trim()){
+            alert("nom")
+        }else if(!document.getElementById('prenom').value.trim()){
+            alert("nom")
+        }else if(!document.getElementById('telephone').value.trim()){
+            alert("nom")
+        }else if(!document.getElementById('email').value.trim()){
+            alert("nom")
+        }else if(!document.getElementById('MaxPret').value.trim()){
+            alert("nom")
+        }else if(!document.getElementById('NbPret').value.trim()){
+            alert("nom")
+        }else if(!document.getElementById('solde').value.trim()){
+            alert("nom")
+        }else if(!document.getElementById('droit').value.trim()){
+            alert("nom")
+        }else{
+            axios.post('/gestion/utilisateurUpdate', {
+                id: document.getElementById('userId').value,
+                nom: document.getElementById('nom').value,
+                prenom: document.getElementById('prenom').value,
+                telephone: document.getElementById('telephone').value,
+                email: document.getElementById('email').value,
+                MaxPret: document.getElementById('MaxPret').value,
+                NbPret: document.getElementById('NbPret').value,
+                solde: document.getElementById('solde').value,
+                droit: document.getElementById('droit').value      
+            }).then(res => {
+                alert(res.data.message);
+                if (res.data.code == 10) {
+                window.location = '/login';
+                } else {
+                location.reload();
+                }
+
+            })
+        }
+    }
+    function btnResetPassword(){
+        var confirmation = confirm("Êtes-vous sûr de vouloir initialiser le mots de passe?");
+        if (confirmation){
+            axios.post('/gestion/resetPassword', {                   
+                id: document.getElementById('userId').value,
+            }).then(res=>{
+                alert(res.data.message);
+                location.reload();
+            })
+        } else{
+            alert('Action annulé')
+        }
+
+    }
+
 
 
 </script>

@@ -958,6 +958,66 @@ app.get('/gestion/utilisateur/:id', (req, res) => {
     }
 })
 
+app.post('/gestion/utilisateurUpdate', async(req, res) =>{
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    if (req.session.loginedUser == null) {
+        return res.send(JSON.stringify({ 'message': "Il faut se connecter pour utiliser cette fonction", 'code': 10 }));
+    }
+    if (req.session.loginedUser.Droit_id == 99) {//only for admin
+
+        Utilisateurs.findOne({ Telephone: req.body.telephone }, function (err, result) {
+            if(err) throw err;
+            if (result._id != req.body.id){
+                return res.send(JSON.stringify({ 'message': 'Le téléphone existe dans la base de données' }));
+            } else {
+                Utilisateurs.findOne({ Email: req.body.email }, function (err, result) {
+                    if(err) throw err;
+                    if (result._id != req.body.id){
+                        return res.send(JSON.stringify({ 'message': 'Email existe dans la base de données' }));
+                    } else {
+                        Utilisateurs.findByIdAndUpdate(req.body.id, {
+                            Nom: req.body.nom,
+                            Prenom: req.body.prenom,
+                            Telephone: req.body.telephone,
+                            Email: req.body.email,
+                            MaxPret: req.body.MaxPret,
+                            NbPret: req.body.NbPret,
+                            Solde: req.body.solde,
+                            Droit_id: req.body.droit 
+                        },function(err){
+                            if (err) throw err;
+                            res.send(JSON.stringify({ 'message': 'Utilisateur update' }));
+                        })          
+                        
+                    }
+                })
+            }
+        })
+    } else {
+        res.status(403).end("vous n'avez pas le droit")
+    }
+
+})
+
+app.post('/gestion/resetPassword', async(req, res) =>{
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    if (req.session.loginedUser == null) {
+        return res.send(JSON.stringify({ 'message': "Il faut se connecter pour utiliser cette fonction", 'code': 10 }));
+    }
+    if (req.session.loginedUser.Droit_id == 99) {//only for admin
+        var passwordtemp = Math.floor(1000 + Math.random() * 9000).toString().trim();
+        Utilisateurs.findByIdAndUpdate(req.body.id,{
+            Password: passwordtemp
+        }, function(err){
+           if (err) throw err;
+           return res.send(JSON.stringify({ 'message': "Le nouveau mot de passe est: " + passwordtemp}));
+        })
+    
+    } else {
+        res.status(403).end("vous n'avez pas le droit")
+    }
+
+})
 
 
 
