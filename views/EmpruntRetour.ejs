@@ -5,7 +5,6 @@
         <link rel="stylesheet" href="/CSS/style.css">
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
         <%- include ('../views/partials/header.ejs') %>
-        <%- include ('../views/partials/footer.ejs') %>
         <title>Emprunt et Retour</title>
         
     </head>
@@ -14,102 +13,108 @@
     </header>
 
     <body>
-        
-        <section>
-            <div class="container">    
-                <h1 id="title" class="fw">Emprunt et Retour</h1>
-            </div>
-        </section>
-        
-        <section class="p-3">
-            <div class="container">
-                <form id="formRechercheClient" action="#" method="post">
-                <div class="mb-3">
-                    <label for="telClient" class="form-label">Telephone du client :</label>
-                    <input class="form-control" type="tel" id="telClient" name="telClient" placeholder="Telephone du client" maxlength="10" onchange="telChange()" aria-describedby="telHelp">
-                    <div id="telHelp" class="form-text">Lorem ipsum dolor sit amet.</div>
-                </div>
-                <input type="text" hidden>    
-                <button class="btn btn-sm btn-primary" type="button" id="btnRechercheClient" onclick="rechercheClient()">Recherche</button>
-                </form>        
-            </div>
-        </section>
-        
-
-        <div id ="divFindCustomer" hidden = true>
-
-        <section class="p-3">
-            <div class="container">
-                <!-- <label id="labelMessageAxios"></label> -->
+        <div class="box">
+            <div class="section">
+                <section>
+                    <div class="container">    
+                        <h1 id="title" class="fw">Emprunt et Retour</h1>
+                    </div>
+                </section>
                 
-                    <p id="pName"></p>
-                    <p id="pTel"></p>
-                    <p id="pEmail" ></p>
-                    <p id="pNbPret"></p>
-                    <p id="pSolde"></p>
+                <section class="p-3">
+                    <div class="container">
+                        <form id="formRechercheClient" action="#" method="post">
+                        <div class="mb-3">
+                            <label for="telClient" class="form-label">Telephone du client :</label>
+                            <input class="form-control" type="tel" id="telClient" name="telClient" placeholder="Telephone du client" maxlength="10" onchange="telChange()" aria-describedby="telHelp">
+                            <div id="telHelp" class="form-text">Lorem ipsum dolor sit amet.</div>
+                        </div>
+                        <input type="text" hidden>    
+                        <button class="btn btn-sm btn-primary" type="button" id="btnRechercheClient" onclick="rechercheClient()">Recherche</button>
+                        </form>        
+                    </div>
+                </section>
+                
+        
+                <div id ="divFindCustomer" hidden = true>
+        
+                <section class="p-3">
+                    <div class="container">
+                        <!-- <label id="labelMessageAxios"></label> -->
+                        
+                            <p id="pName"></p>
+                            <p id="pTel"></p>
+                            <p id="pEmail" ></p>
+                            <p id="pNbPret"></p>
+                            <p id="pSolde"></p>
+        
+                    </div>
+                </section>
+        
+        
+                <section class="p-3">
+                    <div class="container">
+                        <form id="formEmpruntLivre" action="#" method="post"> 
+                            <div class="mb-3">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" id="radioEmprunt" name="choix" value="radioEmprunt">
+                                    <label class="form-check-label" for="radioEmprunt">Emprunt</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" id="radioRetour" name="choix" value="radioRetour">
+                                    <label class="form-check-label" for="radioRetour">Retour</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" id="radioPerdu" name="choix" value="radioPerdu">
+                                    <label class="form-check-label" for="radioPerdu">Perdu</label>
+                                </div>
+                            </div>
+        
+        
+                            <div class="mb-3">
+                                <label for="telClient" class="form-label">ISBN du livre :</label>
+                                <input class="form-control" type="text" id="isbnLivre" name="isbnLivre" placeholder="ISBN du Livre" aria-describedby="isbnHelp">
+                                <div id="isbnHelp" class="form-text">ISBN se trouve près de code a bar de tous les livres</div>
+                            </div>
+                            <input type="hidden" id="clientEmprunt" name="clientEmprunt" value="">  
+                            <button class="btn btn-sm btn-primary" type="button" id="btnEmpruntRetour">Emprunt/Retour</button>
+                        </form>
+                    </div> 
+                </section>
+                <section class="p-3">
+                    <div class="mb-3 container">
+                            <p id="noteEmprunt"></p>
+                    </div>                          
+                </section>
+                    
+                <section>
+                    <div class="mb-3 container">
+                        <div class="row g-4">
+                            <div class="col-md">
+                                <button class="btn btn-sm btn-primary" id="btnHistorique">Historiques du pret</button>
+                            </div>
+                            <div class="col-md">
+                                <button class="btn btn-sm btn-primary" id="btnNonRetourne">Livres non retourné</button>
+                            </div>
+                            <div class="col-md">
+                                <button class="btn btn-sm btn-primary" id="btnPerdu">Tous les livres perdu</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+        
+                <section class="p-3">
+                    <div class="mb-3 container">
+                        <div id="divHistorique" hidden="true"></div>
+                        <div id="divNonRetourne"></div>
+                        <div id="divPerdu" hidden="true"></div>
+                    </div>
+                </section>
 
             </div>
-        </section>
-
-
-        <section class="p-3">
-            <div class="container">
-                <form id="formEmpruntLivre" action="#" method="post"> 
-                    <div class="mb-3">
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" id="radioEmprunt" name="choix" value="radioEmprunt">
-                            <label class="form-check-label" for="radioEmprunt">Emprunt</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" id="radioRetour" name="choix" value="radioRetour">
-                            <label class="form-check-label" for="radioRetour">Retour</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" id="radioPerdu" name="choix" value="radioPerdu">
-                            <label class="form-check-label" for="radioPerdu">Perdu</label>
-                        </div>
-                    </div>
-
-
-                    <div class="mb-3">
-                        <label for="telClient" class="form-label">ISBN du livre :</label>
-                        <input class="form-control" type="text" id="isbnLivre" name="isbnLivre" placeholder="ISBN du Livre" aria-describedby="isbnHelp">
-                        <div id="isbnHelp" class="form-text">ISBN se trouve près de code a bar de tous les livres</div>
-                    </div>
-                    <input type="hidden" id="clientEmprunt" name="clientEmprunt" value="">  
-                    <button class="btn btn-sm btn-primary" type="button" id="btnEmpruntRetour">Emprunt/Retour</button>
-                </form>
-            </div> 
-        </section>
-        <section class="p-3">
-            <div class="mb-3 container">
-                    <p id="noteEmprunt"></p>
-            </div>                          
-        </section>
-            
-        <section>
-            <div class="mb-3 container">
-                <div class="row g-4">
-                    <div class="col-md">
-                        <button class="btn btn-sm btn-primary" id="btnHistorique">Historiques du pret</button>
-                    </div>
-                    <div class="col-md">
-                        <button class="btn btn-sm btn-primary" id="btnNonRetourne">Livres non retourné</button>
-                    </div>
-                    <div class="col-md">
-                        <button class="btn btn-sm btn-primary" id="btnPerdu">Tous les livres perdu</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="p-3">
-            <div class="mb-3 container">
-                <div id="divHistorique" hidden="true"></div>
-                <div id="divNonRetourne"></div>
-                <div id="divPerdu" hidden="true"></div>
-            </div>
-        </section>
+            <%- include ('../views/partials/footer.ejs') %>
+        </div>
+        
 
         
     </body>

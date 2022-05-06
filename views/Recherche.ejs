@@ -6,96 +6,51 @@
         <link rel="stylesheet" href="/CSS/style.css">
 </head>
 <body class="recherche">
-    
-    <form class="recherche" method="post" action="#">
-        <table class="tab">
-            <td style="width:600px">
-                <input type="text" class="SSS" placeholder="Search..." name="SearchInput" id="SearchInput">
-                <input id="SearchBook" type="submit"  style="width:auto" value="Search">
-            </td>
-        </table>
-    </form>
-    <br>
-    <div>
-        <table class="TabDesLivres">
-            <% for(var i=0; i<livresTab.length; i++) {%>
-                <% if (i % 5==0){%>
-                    <tr class="recherche">
-                        <% } %>
-                        <td>
-                            <div id="Unlivre">
-                                <table class="Unlivre">
-                                    <tr class="recherche" class="caseTabeLivre">
-                                        <a href='/livres/<%=livresTab[i].ISBN %>'>
-                                            <image class="imgRecherche" src="<%=livresTab[i].Photo %>" aligne="middle">
-                                        </a>
-                                    </tr>
-                                    <td class="recherche"><a class="titreLivreRecherche"
-                                            href='/livres/<%=livresTab[i].ISBN %>'>
-                                            <%= livresTab[i].Titre %>
-                                        </a><br></td>
-                                </table>
-                            </div>
-                        </td>    
-                            <% if (i % 5==4){%>
-                    </tr>
-                    <% } %>
-                        <% } %>
-        </table>
+    <div class="box">   
+        <div class="section">
+            <form class="recherche" method="post" action="#">
+                <table class="tab">
+                    <td style="width:600px">
+                        <input type="text" class="SSS" placeholder="Search..." name="SearchInput" id="SearchInput">
+                        <input id="SearchBook" type="submit"  style="width:auto" value="Search">
+                    </td>
+                </table>
+            </form>
+            <br>
+            <div>
+                <table class="TabDesLivres">
+                    <% for(var i=0; i<livresTab.length; i++) {%>
+                        <% if (i % 5==0){%>
+                            <tr class="recherche">
+                                <% } %>
+                                <td>
+                                    <div id="Unlivre">
+                                        <table class="Unlivre">
+                                            <tr class="recherche" class="caseTabeLivre">
+                                                <a href='/livres/<%=livresTab[i].ISBN %>'>
+                                                    <image class="imgRecherche" src="<%=livresTab[i].Photo %>" aligne="middle">
+                                                </a>
+                                            </tr>
+                                            <td class="recherche"><a class="titreLivreRecherche"
+                                                    href='/livres/<%=livresTab[i].ISBN %>'>
+                                                    <%= livresTab[i].Titre %>
+                                                </a><br></td>
+                                        </table>
+                                    </div>
+                                </td>    
+                                    <% if (i % 5==4){%>
+                            </tr>
+                            <% } %>
+                                <% } %>
+                </table>
+            </div>
+        <%- include ('../views/partials/footer.ejs') %>
     </div>
+    
+    
 
-    <!-- <script>
-        function good() {
-
-            let searchValue = document.getElementById("SearchInput").value;
-            console.log('aaa')
-
-            if (searchValue.length == 0) {
-                console.log("Riennnnnnnnnnnnnnnn!!!!!!!");
-            }
-            else {
-                for (var i = 0; i < livresTab.length; i++) {
-                    if (livresTab[i].Titre.Contains(searchValue)) {
-                        console.log(livresTab[i].Titre)
-                    }
-                }
-            }
-
-
-        } -->
-<!-- /*
-                        document.getElementById("SearchBook").addEventListener("click", () =>  {
-                        alert("aaa")
-                        let searchValue = document.getElementById("SearchInput").value;
-                        console.log('aaa')
-        
-                        if(searchValue.length == 0){
-                            console.log("Riennnnnnnnnnnnnnnn!!!!!!!");
-                        }
-                        else{
-                            let livreRecherche = livresTab.filter( function(err, livres){
-                                for(var i=0; i<livresTab.length; i++){
-                                    if(livresTab[i].Titre.Contains(searchValue)) {
-                                    livreRecherche[i] == livresTab[i];
-                                    }
-                                }
-                            
-                            });
-                        livresTab = livreRecherche;  
-                        }
-                        
-                    });
-                    
-                        
-                    
-                   */
-
-
-
-    </script>
- -->
-
- <script>
+</body>
+<script>
     function good() {
     let searchValue = document.getElementById("SearchInput").value;
 
@@ -110,10 +65,7 @@
     }
 }
  </script>
-</body>
-<footer class="f">
-    <%- include ('../views/partials/footer.ejs') %>
-</footer>
+    
 
 </html>
 

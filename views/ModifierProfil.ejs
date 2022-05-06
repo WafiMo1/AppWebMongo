@@ -12,46 +12,54 @@
         }
 </style>
 <body>
-    <br>
-    <br>
-    <br>
-    <br>
-    
-    <br>
-    <br>
+    <div class="box">
+        <div class="section">
+            <br>
+            <br>
+            <br>
+            <br>
+            
+            <br>
+            <br>
 
 
-    <form id="MiseAJourInfos" method="post" action="/Modifier">
-    <label for="nom">Nom: </label>
-    <input type="text" name="nomModifie" id="nomModifie" value="<%= loginedUser.Nom %>">
-    <br>
-    <br>
-    <label for="prenom">Prénom: </label>
-    <input type="text" name="prenomModifie" id="prenomModifie" value="<%= loginedUser.Prenom %>">
-    <br>
-    <br>
-    <label for="telephoneModifie">Téléphone: </label>
-    <input type="tel" name="telephoneModifie" id="telephoneModifie" value="<%= loginedUser.Telephone %>" pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}">
-    <br>
-    <br>
-    <label for="email">Email: </label>
-    <input type="text" name="emailModifie" id="emailModifie" value="<%= loginedUser.Email %>">
-    <br>
-    <br>
-    <input type="submit" value="Mise à jour de vos informations">
-    
-</form>
-<br>
-<hr>
-<br>
-<form method="post" action="/ModifierPhotoProfil" enctype="multipart/form-data" id="formModifPhoto">
-    <label for="photo">Photo: </label>
-    <input type="file" name="photoModifie" id="photoModifie" enctype="mult" accept="image/png, image/jpeg, image/png, image/jpg">
-    <br>
-    <br>
-    <input type="button" id="btnPhoto" value="Mis à jour votre photo de profil" onclick="submitPhoto()">
-    <p>Note: Il faut vous déconnecter pour afficher la nouveau photo de profil le format de votre photo est JPG</p>
-</form>
+            <form id="MiseAJourInfos" method="post" action="/Modifier">
+                <label for="nom">Nom: </label>
+                <input type="text" name="nomModifie" id="nomModifie" value="<%= loginedUser.Nom %>">
+                <br>
+                <br>
+                <label for="prenom">Prénom: </label>
+                <input type="text" name="prenomModifie" id="prenomModifie" value="<%= loginedUser.Prenom %>">
+                <br>
+                <br>
+                <label for="telephoneModifie">Téléphone: </label>
+                <input type="tel" name="telephoneModifie" id="telephoneModifie" value="<%= loginedUser.Telephone %>" pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}">
+                <br>
+                <br>
+                <label for="email">Email: </label>
+                <input type="text" name="emailModifie" id="emailModifie" value="<%= loginedUser.Email %>">
+                <br>
+                <br>
+                <input type="submit" value="Mise à jour de vos informations">
+            
+            </form>
+            <br>
+            <hr>
+            <br>
+            <form method="post" action="/ModifierPhotoProfil" enctype="multipart/form-data" id="formModifPhoto">
+                <label for="photo">Photo: </label>
+                <input type="file" name="photoModifie" id="photoModifie" enctype="mult" accept="image/png, image/jpeg, image/png, image/jpg">
+                <br>
+                <br>
+                <input type="button" id="btnPhoto" value="Mis à jour votre photo de profil" onclick="submitPhoto()">
+                <p>Note: Il faut vous déconnecter pour afficher la nouveau photo de profil le format de votre photo est JPG</p>
+            </form>
+        </div>
+        <%- include ('../views/partials/footer.ejs') %>
+    </div>
+</body>
+
+
 <script>
     function submitPhoto(){
         if (document.getElementById('photoModifie').value){
@@ -63,12 +71,4 @@
     
 
 </script>
-
-
-
-</body>
-<footer class="f">
-    <p>Author: Mebarkia Mohamed / Mohamed Wafi / Zhi Bo / Omar Khoudair</p>
-    <img src="/Images/logo.png" class="logo">
-</footer>
 </html>

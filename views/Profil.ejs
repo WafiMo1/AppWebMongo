@@ -22,66 +22,64 @@
 </style>
 
 <body class="body">
-    <form action="profilUser" method="post">
-        <div class="wrapper">
-            <div class="gauche">
-                <img class="photoProfil" src="<%= loginedUser.Photo %>" alt="utilisateur" width="100">
-            </div>
-            <div class="droite">
-                <div class="infos">
-                    <h3>Informations</h3>
-
-                    <div class="infos_data">
-                        <label for="nom">Nom:</label>
-                        <!-- TRÈS IMPORTANT, IL FAUT FAIRE APPEL AU PROFIL (DÉCLARÉ DANS LE SERVEUR NODE JS) CAR ON VA UTILISER LES ATTRIBUTS qu'ils contient pour les afficher  -->
-                        <label for="nomSaisi">
-                            <%= loginedUser.Nom %>
-                        </label>
-                        <br>
-                        <br>
-                        <label for="prenom">Prénom:</label>
-                        <label for="prenomSaisi">
-                            <%= loginedUser.Prenom %>
-                        </label>
-                        <br>
-                        <br>
-                        <label for="telephone">Téléphone:</label>
-                        <label for="telephoneSaisi">
-                            <%= loginedUser.Telephone %>
-                        </label>
-                        <br>
-                        <br>
-                        <label for="email">Courriel:</label>
-                        <label for="emailSaisi">
-                            <%= loginedUser.Email %>
-                        </label>
-                        <br>
-                        <br>
-                        <label for="solde">Solde:</label>
-                        <label for="soldeSaisi">
-                            <%= loginedUser.Solde %>
-                        </label>
+    <div class="box">
+        <div class="section">
+            <form action="profilUser" method="post">
+                <div class="wrapper">
+                    <div class="gauche">
+                        <img class="photoProfil" src="<%= loginedUser.Photo %>" alt="utilisateur" width="100">
                     </div>
-                    <br>
-                    <br>
-
+                    <div class="droite">
+                        <div class="infos">
+                            <h3>Informations</h3>
+        
+                            <div class="infos_data">
+                                <label for="nom">Nom:</label>
+                                <!-- TRÈS IMPORTANT, IL FAUT FAIRE APPEL AU PROFIL (DÉCLARÉ DANS LE SERVEUR NODE JS) CAR ON VA UTILISER LES ATTRIBUTS qu'ils contient pour les afficher  -->
+                                <label for="nomSaisi">
+                                    <%= loginedUser.Nom %>
+                                </label>
+                                <br>
+                                <br>
+                                <label for="prenom">Prénom:</label>
+                                <label for="prenomSaisi">
+                                    <%= loginedUser.Prenom %>
+                                </label>
+                                <br>
+                                <br>
+                                <label for="telephone">Téléphone:</label>
+                                <label for="telephoneSaisi">
+                                    <%= loginedUser.Telephone %>
+                                </label>
+                                <br>
+                                <br>
+                                <label for="email">Courriel:</label>
+                                <label for="emailSaisi">
+                                    <%= loginedUser.Email %>
+                                </label>
+                                <br>
+                                <br>
+                                <label for="solde">Solde:</label>
+                                <label for="soldeSaisi">
+                                    <%= loginedUser.Solde %>
+                                </label>
+                            </div>
+                            <br>
+                            <br>
+        
+                        </div>
+                    </div>
                 </div>
-            </div>
+        
+        
+        
+                </div>
+        
+            </form>
         </div>
-
-
-
-        </div>
-
-    </form>
-
-
-
+        <%- include ('../views/partials/footer.ejs') %>
+    </div>
 
 </body>
-<footer class="f">
-    <p>Author: Mebarkia Mohamed / Mohamed Wafi / Zhi Bo / Omar Khoudair</p>
-    <img src="/Images/logo.png" class="logo">
-</footer>
 
 </html>

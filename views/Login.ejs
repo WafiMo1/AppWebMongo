@@ -8,7 +8,7 @@
         <title>SignIn/SignUp</title>
         <!--Ce code est inspiré par -->
         <!--https://www.florin-pop.com/blog/2019/03/double-slider-sign-in-up-form/-->
-        <link rel="stylesheet" href="/CSS/style.css">
+        <!-- <link rel="stylesheet" href="/CSS/style.css"> -->
         
 </head>
 
@@ -24,7 +24,7 @@
                 <input type="text" placeholder="Nom" class="input" id="signUpNom" name="signUpNom"/>
                 <input type="text" placeholder="Prenom" class="input" id="signUpPrenom" name="signUpPrenom"/>
                 <input type="tel" placeholder="Telephone" class="input" id="signUpTel" name="signUpTel" maxlength="10"/>
-                <button type="button" class="btn" id="signUp">Nouveau utilisateur</button>
+                <button type="button" class="btn" id="signUp" onclick="SignUp()">Nouveau utilisateur</button>
             </form>
         </div>
 
@@ -36,7 +36,7 @@
                 <input type="text" placeholder="Email" class="input" id="signInEmail" name="signInEmail"/>
                 <input type="password" placeholder="Mots de passe" class="input" id="signInPassword" name="signInPassword"/>
                 <a href="#" class="link">Mot de passe oublié?</a>
-                <button type="button" class="btn" id="signIn">Connecter</button>
+                <button type="button" class="btn" id="signIn" onclick="SignIn()">Connecter</button>
             </form>
         </div>
 
@@ -56,8 +56,6 @@
 
     <!-- script -->
     <script>
-        const signUpBtn = document.getElementById("signUp");
-        const signInBtn = document.getElementById("signIn");
         const haveAccountBtn = document.getElementById("haveAccount");
         const noAccountBtn = document.getElementById("noAccount");
         const signUpForm = document.getElementById("formSignUp");
@@ -76,7 +74,7 @@
         });
 
         //alert for pop up message signUp
-        signUpBtn.addEventListener("click",()=>{
+        function SignUp(){
             if (!reg_email.test(document.getElementById("signUpEmail").value)){
                 alert("Veillez saisir un email valide !!!");
                 return false;
@@ -98,11 +96,11 @@
                 return false;
             }else{
                 signUpForm.submit(); 
-            }           
-        })
+            } 
+        }
 
         //alert for pop up message signIn
-        signInBtn.addEventListener("click",()=>{
+        function SignIn(){
             if (!reg_email.test(document.getElementById("signInEmail").value)){
                 alert("Veillez saisir un email valide !!!")
                 return false
@@ -114,7 +112,13 @@
             else{
                 signInForm.submit();
             }
-        })
+        }
+
+        document.getElementById('signInPassword').onkeypress = function (event){
+            if(event.which === 13){
+                SignIn();
+            }
+        }
 
     </script>
 

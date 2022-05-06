@@ -913,7 +913,9 @@ app.get('/gestion/employees', async (req, res) => {
     }
 })
 
-
+app.get('/test', (req, res)=>{
+    res.render('test');
+})
 
 
 
