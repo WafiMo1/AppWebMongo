@@ -278,7 +278,6 @@ app.post('/ModifierPhotoProfil', urlencodeParser, (req, res) => {
 
 //MISE À JOUR DU MOT DE PASSE- MOHAMED WAFI
 app.get('/ModifierMotDePasse', (req, res) => {
-
     res.render('ModifierMotDePasse', { loginedUser: req.session.loginedUser })
 });
 
@@ -314,16 +313,6 @@ app.post('/ModifierMotDePasse', urlencodeParser, (req, res) => {
         res.redirect('ModifierMotDePasse');
         console.log("Le mdp saisi n'est pas l'ancien");
     }
-
-
-
-    Livres.find({}, function (err, livres) {
-        try {
-            res.render("Recherche", { livresTab: livres, loginedUser: loginedUser })
-        } catch (err) {
-            console.log(err);
-        }
-    });
 
 });
 
@@ -953,6 +942,26 @@ app.post('/gestion/supprimerUtilisateur', async(req,res) =>{
         res.redirect("/login")
     }
 })
+
+app.get('/gestion/utilisateur/:id', (req, res) => {
+    if (req.session.loginedUser) {
+        if (req.session.loginedUser.Droit_id == 99) {//only for admin
+            Utilisateurs.findById(req.params.id, function(err, utilisateur){
+                if (err) throw err;
+                Droits.find({}, function(err, droits){
+                    if(err) throw err;
+                    res.render('GestionUtilisateur', { loginedUser: req.session.loginedUser, utilisateur: utilisateur, droits: droits});
+                })
+                
+            })
+        } else {
+            res.status(403).end("vous n'avez pas le droit")
+        }
+    }else {
+        res.redirect("/login")
+    }
+})
+
 
 
 
