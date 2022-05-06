@@ -191,7 +191,12 @@ app.get('/logout', (req, res) => {
 // DÉBUT DE LA PARTIE DE MOHAMED WAFI
 //TROUVER LE PROFIL D'UN USER ET AFFICHER LES EMPRUNTS- MOHAMED WAFI
 
+app.get('/ajoutLivres', (req,res)=>{
 
+    if (req.session.loginedUser) {
+        
+    }
+})
 app.get('/HistoriqueDesEmprunts', (req, res) => {
 
     if (req.session.loginedUser) {
