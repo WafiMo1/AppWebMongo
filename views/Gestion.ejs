@@ -1,142 +1,119 @@
 <!DOCTYPE html>
 <html>
-
-<head>
-    <link rel="stylesheet" href="/CSS/style.css">
-</head>
-
-
-<body>
-
+    <head>
+        <link rel="stylesheet" href="/CSS/style.css">
+        <title>Gestion</title>
+    </head>
+    <body>
     <!-- <div style="background: url('/Images/logo.png') center center no-repeat; height: 100%; background-attachment: fixed;"> -->
-
-    <div class="box">
-        <div>
-            <%- include ('../views/partials/header.ejs') %>
-        </div>
-
+        <div class="box">
+            <div>
+                <%- include ('../views/partials/header.ejs') %>
+            </div>
+            <div class="section">
+                <section class="p-5">
+                    <div class="container">
+                        <div>
+                            <h1 class="fw-bold">Bonjour <br>
+                                <%=loginedUser.Prenom%>
+                                    <%=loginedUser.Nom%>
+                            </h1>
         
-        <div class="section">
-            <section class="p-5">
-                <div class="container">
-                    <div>
-                        <h1 class="fw-bold">Bonjour <br>
-                            <%=loginedUser.Prenom%>
-                                <%=loginedUser.Nom%>
-                        </h1>
-    
+                        </div>
                     </div>
-                </div>
-            </section>
-    
-                <!-- <div>
-            <h3>Choisir un option</h3>
-        </div> -->
-    
-            <section >
-                <div class="container">
-    
-                    
-                    <div class="row g-4">
-                        <!-- <div class="col-md-6">
-                            <div class="card bg-secondary text-light">
-                                <div class="card-body text-center">
-                                    <h4 class="card-title">
-                                        Modifier les informations du client
-                                    </h4>
-                                    <div class="card-text">
-                                        Cette page permet de modifier les informations du client en cherchant par leur numéro de téléphone
-                                    </div>
-                                    <a href="#" class="btn btn-primary btn-lg mt-2">Information</a>
-                                </div>                            
+                </section>
+                    <!-- <div>
+                <h3>Choisir un option</h3>
+            </div> -->
+                <section >
+                    <div class="container">
+                        <div class="row g-4">
+                            <!-- <div class="col-md-6">
+                                <div class="card bg-secondary text-light">
+                                    <div class="card-body text-center">
+                                        <h4 class="card-title">
+                                            Modifier les informations du client
+                                        </h4>
+                                        <div class="card-text">
+                                            Cette page permet de modifier les informations du client en cherchant par leur numéro de téléphone
+                                        </div>
+                                        <a href="#" class="btn btn-primary btn-lg mt-2">Information</a>
+                                    </div>                            
+                                </div>
+                            </div> -->
+                            <div class="col-md-6">
+                                <div class="card bg-secondary text-light">
+                                    <div class="card-body text-center">
+                                        <h4 class="card-title">
+                                            Gestion des réservations
+                                        </h4>
+                                        <div class="card-text">
+                                            Cette page permet de faire un réservation des livres ou annuler les réservations pour les clients
+                                        </div>
+                                        <a href="/gestion/reservation" class="btn btn-primary btn-lg mt-2">Réservations</a>
+                                    </div>                            
+                                </div>
                             </div>
-                        </div> -->
-    
-                        <div class="col-md-6">
-                            <div class="card bg-secondary text-light">
-                                <div class="card-body text-center">
-                                    <h4 class="card-title">
-                                        Gestion des réservations
-                                    </h4>
-                                    <div class="card-text">
-                                        Cette page permet de faire un réservation des livres ou annuler les réservations pour les clients
-                                    </div>
-                                    <a href="/gestion/reservation" class="btn btn-primary btn-lg mt-2">Réservations</a>
-                                </div>                            
+                            <div class="col-md-6">
+                                <div class="card bg-secondary text-light">
+                                    <div class="card-body text-center">
+                                        <h4 class="card-title">
+                                            Emprunt et Retour
+                                        </h4>
+                                        <div class="card-text">
+                                            Cette page permet de traiter les emprunts, les retours et les livres perdu pour les clients.
+                                        </div>
+                                        <a href="/gestion/empruntretour" class="btn btn-primary btn-lg mt-2">Emprunt et Retour</a>
+                                    </div>                            
+                                </div>
                             </div>
+                            <div class="col-md-6">
+                                <div class="card bg-secondary text-light">
+                                    <div class="card-body text-center">
+                                        <h4 class="card-title">
+                                            Gestion du livre
+                                        </h4>
+                                        <div class="card-text">
+                                            Cette page permet d'ajouter, modifier et supprimer les informations des livres de la bibliotheque
+                                        </div>
+                                        <a href="#" class="btn btn-primary btn-lg mt-2">Livres</a>
+                                    </div>                            
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card bg-secondary text-light">
+                                    <div class="card-body text-center">
+                                        <h4 class="card-title">
+                                            La caisse
+                                        </h4>
+                                        <div class="card-text">
+                                            Cette page permet de facturer, rembourser et recharger le compte de client
+                                        </div>
+                                        <a href="/gestion/caisse" class="btn btn-primary btn-lg mt-2">Caisse</a>
+                                    </div>                            
+                                </div>
+                            </div>
+                            <% if (loginedUser.Droit_id==99 ){ %>
+                            <div class="col-md-6">
+                                <div class="card bg-secondary text-light">
+                                    <div class="card-body text-center">
+                                        <h4 class="card-title">
+                                            Gestion des employées
+                                        </h4>
+                                        <div class="card-text">
+                                            Cette page permet de gérer les utilisateurs
+                                        </div>
+                                        <a href="/gestion/listUtilisateur" class="btn btn-primary btn-lg mt-2">Employées</a>
+                                    </div>                            
+                                </div>
+                            </div>
+                            <% } %>
                         </div>
-    
-                        <div class="col-md-6">
-                            <div class="card bg-secondary text-light">
-                                <div class="card-body text-center">
-                                    <h4 class="card-title">
-                                        Emprunt et Retour
-                                    </h4>
-                                    <div class="card-text">
-                                        Cette page permet de traiter les emprunts, les retours et les livres perdu pour les clients.
-                                    </div>
-                                    <a href="/gestion/empruntretour" class="btn btn-primary btn-lg mt-2">Emprunt et Retour</a>
-                                </div>                            
-                            </div>
-                        </div>
-    
-                        <div class="col-md-6">
-                            <div class="card bg-secondary text-light">
-                                <div class="card-body text-center">
-                                    <h4 class="card-title">
-                                        Gestion du livre
-                                    </h4>
-                                    <div class="card-text">
-                                        Cette page permet d'ajouter, modifier et supprimer les informations des livres de la bibliotheque
-                                    </div>
-                                    <a href="#" class="btn btn-primary btn-lg mt-2">Livres</a>
-                                </div>                            
-                            </div>
-                        </div>
-    
-                        <div class="col-md-6">
-                            <div class="card bg-secondary text-light">
-                                <div class="card-body text-center">
-                                    <h4 class="card-title">
-                                        La caisse
-                                    </h4>
-                                    <div class="card-text">
-                                        Cette page permet de facturer, rembourser et recharger le compte de client
-                                    </div>
-                                    <a href="/gestion/caisse" class="btn btn-primary btn-lg mt-2">Caisse</a>
-                                </div>                            
-                            </div>
-                        </div>
-    
-                        <% if (loginedUser.Droit_id==99 ){ %>
-                        <div class="col-md-6">
-                            <div class="card bg-secondary text-light">
-                                <div class="card-body text-center">
-                                    <h4 class="card-title">
-                                        Gestion des employées
-                                    </h4>
-                                    <div class="card-text">
-                                        Cette page permet de gérer les utilisateurs
-                                    </div>
-                                    <a href="/gestion/listUtilisateur" class="btn btn-primary btn-lg mt-2">Employées</a>
-                                </div>                            
-                            </div>
-                        </div>
-                        <% } %>
                     </div>
-                </div>
-    
-            </section>
-            
-        </div>    
-        
-
-
-        <%- include ('../views/partials/footer.ejs') %>
-
-    </div> 
-
-    <!-- </div> -->
-</body>
-
+                </section>
+            </div>    
+            <%- include ('../views/partials/footer.ejs') %>
+        </div> 
+        <!-- </div> -->
+    </body>
 </html>
