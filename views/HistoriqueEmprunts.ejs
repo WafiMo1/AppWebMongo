@@ -55,6 +55,7 @@
 <body>
     <div class="box">
         <div class="section">
+            
             <table id="tableauLivres" align="center">
                 <thead>
                     <th>ISBN</th>
@@ -102,9 +103,6 @@
                                 </tbody>
         
             </table>
-            </div>
-            </div>
-        
             <div class="bouttons" >
         
                 <button class='btn btn-primary' onclick="MontrerLivresEmpruntes()" type="button" id="livresEmpruntes">Livres
@@ -114,6 +112,10 @@
                 <button class='btn btn-primary' onclick="MontrerLivresNonRetournes()" type="button"
                     id="livresNonRetournes">Livres non-retournés</button>
             </div>
+            </div>
+            </div>
+        
+          
         </div>
         <%- include ('../views/partials/footer.ejs') %>
     </div>
