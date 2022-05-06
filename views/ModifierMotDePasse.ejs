@@ -8,31 +8,29 @@
     <body>
         <div class="box">
             <div class="section">
-                <a href="../public/Images"></a>
-                <br>
-                <br>
-                <br>
-                <br>
+                <div class="p-5">
+                    <div class="container">
+                        <section class="md-5">
+                            <form method="post" action="/ModifierMotDePasse" id="form">
+                                <div class="mb-3">
+                                    <label for="ancienMdp" class="form-label">Ancien mot de passe: </label>
+                                    <input type="password" name="ancienMdp" id="ancienMdp" class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="nouveauMdp" class="form-label">Nouveau mot de passe: </label>
+                                    <input type="password" name="nvxMdp" id="nvxMdp" class="form-control" required>  
+                                </div>
+                                <div class="mb-3">
+                                    <label for="nouveauMdpDeuxiemeFois" class="form-label">Nouveau mot de passe: </label>
+                                    <input type="password" name="nvxMdpDeuxiemeFois" id="nvxMdpDeuxiemeFois" class="form-control" required>
+                                </div>
+                                <input type="button" class="btn btn-lg btn-primary" value="Soumettre" onclick="btnsubmit()">
+        
+                        </section>
+                    </div>
+                </div>
+
                 
-                <br>
-                <br>
-
-                <form action="" method="post" action="/ModifierMotDePasse">
-                    <label for="ancienMdp">Ancien mot de passe: </label>
-                    <input type="password" name="ancienMdp" id="ancienMdp">
-                    <br>
-                    <br>
-                    <label for="nouveauMdp">Nouveau mot de passe: </label>
-                    <input type="password" name="nvxMdp" id="nvxMdp">
-                    <br>
-                    <br>
-                    <label for="nouveauMdpDeuxiemeFois">Nouveau mot de passe: </label>
-                    <input type="password" name="nvxMdpDeuxiemeFois" id="nvxMdpDeuxiemeFois">
-                    <br>
-                    <br>
-
-                    <input type="submit">
-
 
 
                 </form>
@@ -41,4 +39,19 @@
         </div>
         
     </body>
+    <script>
+        function btnsubmit(){
+            if (!document.getElementById('ancienMdp').value.trim()){
+                alert("Entrer votre ancien mot de passe")
+            } else if (!document.getElementById('nvxMdp').value.trim()){
+                alert("Entrer votre nouveau mot de passe")
+            }else if (!document.getElementById('nvxMdpDeuxiemeFois').value.trim()){
+                alert("Entrer votre confirmation de nouveau mot de passe")
+            }else if (document.getElementById('nvxMdp').value.trim() != document.getElementById('nvxMdpDeuxiemeFois').value.trim()){
+                alert("Vos nouveaux mot de passe ne sont pas identique")
+            } else{
+              form.submit()  
+            }
+        }
+    </script>
 </html>
