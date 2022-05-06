@@ -17,11 +17,11 @@ html, body{
 
 
 .section {
-    padding-bottom: 180px;
+    padding-bottom: 150px;
 }
 
 .footer {
-    height: 180px;
+    height: 150px;
     position: absolute;
     bottom: 0;
     width: 100%;

@@ -17,59 +17,61 @@
   <div class="box">
     <div class="section">
       <div class="livre" align="center">
-        <p>
+        <section class="p-5 text-primary">
         <h1>
           <%= livre[0].Titre %>
         </h1>
-        </p>
-        <div class="container">
-          <div class="row g-4">
-            <div class="col-md-2">
-              <img class="photolivre" width="95%" src="<%= livre[0].Photo %>">
-            </div>
-            <div class="col-md-10">
-              <table class="table table-hover" align="center" style="width: 60%;">
-                <thead class="text-primary">
-                  <th width="300px">Contenu</th>
-                  <th width="800px">Détails</th>
-                </thead>
-                <tbody class="text-primary">
-                  <tr>
-                    <td> Titre: </td>
-                    <td>
-                      <%= livre[0].Titre %>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td> Auteur: </td>
-                    <td>
-                      <%= livre[0].Auteur %>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td> Annee: </td>
-                    <td>
-                      <%= livre[0].DateParution %>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td> Description: </td>
-                    <td>
-                      <%= livre[0].Description %>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Nombre de copie disponible: </td>
-                    <td>
-                      <%= livre[0].NbDisponible %>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+        </section>
+        <section class="p-1">
+          <div class="container">
+            <div class="row g-4">
+              <div class="col-md-2">
+                <img class="photolivre" width="95%" src="<%= livre[0].Photo %>">
+              </div>
+              <div class="col-md-10">
+                <table class="table table-hover" align="center" style="width: 60%;">
+                  <thead class="text-primary">
+                    <th width="300px">Contenu</th>
+                    <th width="800px">Détails</th>
+                  </thead>
+                  <tbody class="text-primary">
+                    <tr>
+                      <td> Titre: </td>
+                      <td>
+                        <%= livre[0].Titre %>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td> Auteur: </td>
+                      <td>
+                        <%= livre[0].Auteur %>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td> Annee: </td>
+                      <td>
+                        <%= livre[0].DateParution %>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td> Description: </td>
+                      <td>
+                        <%= livre[0].Description %>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Nombre de copie disponible: </td>
+                      <td>
+                        <%= livre[0].NbDisponible %>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
-        </div>
-        <section style="align-items: center;">
+        </section> 
+        <section class="p-5 text-center" >
           <form action="#" method="post">
               <input type="button" class="btn btn-primary" value="Réserver le livre" id="btnReserver" onclick="reserver()">
               <input type="hidden" value="<%= livre[0].ISBN %>" name="livre_isbn" id="livre_isbn">
