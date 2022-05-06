@@ -1,106 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-      <%= livre[0].Titre %>
-    </title>
-      <link rel="stylesheet" href="/CSS/style.css">
-      <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-      <%- include ('../views/partials/header.ejs') %>
-  </head>
 
-  <body>
-    <div class="box">
-      <div class="section">
-        <div class="livre" align="center">
-          <table class="table">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>
+    <%= livre[0].Titre %>
+  </title>
+  <link rel="stylesheet" href="/CSS/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <%- include ('../views/partials/header.ejs') %>
+</head>
+
+<body>
+  <div class="livre" align="center">
+    <p>
+    <h1>
+      <%= livre[0].Titre %>
+    </h1>
+    </p>
+    <div class="container">
+      <div class="row g-4">
+
+        <div class="col-md-2">
+          <img class="photolivre" width="95%" src="<%= livre[0].Photo %>">
+        </div>
+        <div class="col-md-10">
+          <table class="table table-hover" align="center" style="width: 60%;">
+            <thead class="text-primary">
+              <th width="300px">Contenu</th>
+              <th width="800px">Détails</th>
+            </thead>
             <tbody class="text-primary">
               <tr>
-                <td align="center">
-                  <p><h1><%= livre[0].Titre %></h1></p>
+                <td> Titre: </td>
+                <td>
+                  <%= livre[0].Titre %>
                 </td>
               </tr>
               <tr>
-                <td align="center">
-                  <img class="photolivre" width="100%" src="<%= livre[0].Photo %>">
+                <td> Auteur: </td>
+                <td>
+                  <%= livre[0].Auteur %>
                 </td>
               </tr>
               <tr>
-                <div class="card" style="width: 18rem;">
-                  <div class="card-body">
-                    <table class="table table-hover" align="center" style="width: 60%;">
-                      <thead class="text-primary">
-                        <th width = "300px">Contenu</th>
-                        <th width = "800px">Détails</th>
-                      </thead>
-                      <tbody class="text-primary">
-                        <tr>
-                          <td> Titre: </td>
-                          <td><%= livre[0].Titre %></td>
-                        </tr>
-                        <tr>
-                          <td> Auteur: </td>
-                          <td><%= livre[0].Auteur %></td>
-                        </tr>
-                        <tr>
-                          <td> Annee: </td>
-                          <td><%= livre[0].DateParution %></td>
-                        </tr>
-                        <tr>
-                          <td> Description: </td>
-                          <td><%= livre[0].Description %></td>
-                        </tr>
-                        <tr>
-                          <td>Nombre de copie disponible: </td>
-                          <td><%= livre[0].NbDisponible %></td>
-                        </tr>
-                      </tbody>  
-                    </table>
-                  </div>
-                </div>
+                <td> Annee: </td>
+                <td>
+                  <%= livre[0].DateParution %>
+                </td>
               </tr>
               <tr>
-                <form action="#" method="post">
-                  <td>
-                    <input type="button" class="btn btn-primary" value="Réserver le livre" id="btnReserver" onclick="reserver()">
-                    <input type="hidden" value="<%= livre[0].ISBN %>" name="livre_isbn" id="livre_isbn">
-                    <input type="hidden" value="<%= livre[0].Titre %>" name="livre_Titre" id="livre_Titre">
-                    <input type="hidden" value="<%= livre[0].NbDisponible %>" name="livre_NbDisponible" id="livre_NbDisponible">
-                  </td>
-                </form>
+                <td> Description: </td>
+                <td>
+                  <%= livre[0].Description %>
+                </td>
+              </tr>
+              <tr>
+                <td>Nombre de copie disponible: </td>
+                <td>
+                  <%= livre[0].NbDisponible %>
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
-      <%- include ('../views/partials/footer.ejs') %>
     </div>
-        
-  </body>
-  
+    <section style="align-items: center;">
+      <form action="#" method="post">
+          <input type="button" class="btn btn-primary" value="Réserver le livre" id="btnReserver" onclick="reserver()">
+          <input type="hidden" value="<%= livre[0].ISBN %>" name="livre_isbn" id="livre_isbn">
+          <input type="hidden" value="<%= livre[0].Titre %>" name="livre_Titre" id="livre_Titre">
+          <input type="hidden" value="<%= livre[0].NbDisponible %>" name="livre_NbDisponible" id="livre_NbDisponible">
+      </form>
+    </section>
+  </div>
+</body>
+<%- include ('../views/partials/footer.ejs') %>
   <script>
-    if(document.getElementById("livre_NbDisponible").value == 0){
+    if (document.getElementById("livre_NbDisponible").value == 0) {
       document.getElementById("btnReserver").disabled = true;
-    }else document.getElementById("btnReserver").disabled = false;
+    } else document.getElementById("btnReserver").disabled = false;
 
     axios.defaults.baseURL = 'http://localhost:4000'
-    
-    function reserver(){
-      axios.post('/livres/:isbn', {   
+
+    function reserver() {
+      axios.post('/livres/:isbn', {
         isbn: document.getElementById('livre_isbn').value,
-      }).then(res=>{
+      }).then(res => {
         alert(res.data.message);
-        if (res.data.code == 10){
+        if (res.data.code == 10) {
           console.log('here')
-          window.location='/login';
-        }else{
+          window.location = '/login';
+        } else {
           location.reload();
         }
-        
+
       })
     }
-</script>
+  </script>
+
 </html>
