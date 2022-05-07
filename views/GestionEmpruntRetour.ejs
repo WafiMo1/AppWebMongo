@@ -168,7 +168,7 @@
 
                 
                 //AXIOS 
-                axios.post('/findCustomer', {                   
+                axios.post('/gestion/findCustomer', {                   
                         tel: document.getElementById("telClient").value.trim()
                 }).then(res=>{
                     if (res.data.message){

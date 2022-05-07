@@ -88,7 +88,7 @@
             document.getElementById('ListReservationClient').disabled = false;
             document.getElementById('btnReserver').disabled = false;
            if (document.getElementById("telClient").value.trim() != ""){                         
-               axios.post('/findCustomer', {                   
+               axios.post('/gestion/findCustomer', {                   
                        tel: document.getElementById("telClient").value.trim()
                }).then(res=>{
                    if (res.data.message){

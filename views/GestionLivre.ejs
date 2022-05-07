@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/CSS/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <%- include ('../views/partials/header.ejs') %>
+        <title>Ajout de livre</title>
+</head>
+
+<body>
+    <div class="box">
+        <div class="section">
+
+            <section class="p-3">
+                <div class="container">
+                    <div class="mb-3">
+                        <h2>Recherche un livre</h2>
+                        <label for="telClient" class="form-label">ISBN du Livre : </label>
+                        <input class="form-control" type="text" id="isbn" name="isbn" placeholder="ISBN du Livre :"
+                            onchange="isbnChange()" aria-describedby="isbnHelp">
+                        <div id="isbnHelp" class="form-text">Lorem ipsum dolor sit amet.</div>
+                    </div>
+                    <input type="text" id="idLivre" hidden>
+                    <div class="mb-3">
+                        <button class="btn btn-sm btn-primary" type="button" id="btnRechercheLivre"
+                            onclick="rechercheLivre()">Recherche</button>
+                    </div>
+                </div>
+            </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <form action="" method="post">
+                <h1>Ajout de livre</h1>
+                <label for="Auteur">Auteur: </label>
+                <input type="text" name="auteurLivre" id="auteurLivre" value="">
+                <br>
+                <br>
+                <label for="Titre">Titre: </label>
+                <input type="text" name="titreLivre" id="titreLivre" value="">
+                <br>
+                <br>
+                <label for="DateParution">Date de parution: </label>
+                <input type="date" name="dateParution" id="dateParution" value="">
+                <br>
+                <br>
+                <label for="nbrCopies">Nombre de copies: </label>
+                <input type="text" name="nbrCopies" id="nbrCopies" value="">
+                <br>
+                <br>
+                <label for="MaisonEdition">Maison d'édition: </label>
+                <input type="text" name="maisonEdition" id="maisonEdition" value="">
+                <br>
+                <br>
+                <label for="ISBNLivre">ISBN </label>
+                <input type="text" name="isbnLivre" id="isbnLivre" value="" maxlength="7" minlength="7">
+                <br>
+                <br>
+                <label for="cout">Coût </label>
+                <input type="number" name="coutLivre" id="coutLivre" min="0.01" step="0.01" max="2500" value="">
+                <br>
+                <br>
+                <label for="Description">Description </label>
+                <textarea id="descriptionLivre" name="descriptionLivre" rows="4" cols="50"></textarea>
+                <br>
+                <br>
+                <label for="photo">Photo </label>
+                <input type="file" id="photoLivre" name="photoLivre" value="">
+                <br>
+                <br>
+
+
+                <input type="submit">
+
+
+
+
+
+            </form>
+
+        </div>
+        <%- include ('../views/partials/footer.ejs') %>
+    </div>
+
+</body>
+
+<script>
+    axios.defaults.baseURL = 'http://localhost:4000'
+    function isbnChange(){
+            // document.getElementById('ListReservationClient').disabled = true;
+            //document.getElementById('btnReserver').disabled = true;
+    }
+
+    function rechercheLivre(){
+        
+    }
+
+
+
+</script>
+
+</html>
