@@ -8,43 +8,47 @@
 </head>
 <body class="recherche">
     <div class="box">   
-        <div class="section">
-            <form class="recherche" method="post" action="#">
-                <table class="tab">
-                    <td style="width:600px">
-                        <input type="text" class="SSS" placeholder="Search..." name="SearchInput" id="SearchInput">
-                        <input id="SearchBook" type="submit"  style="width:auto" value="Search">
-                    </td>
-                </table>
-            </form>
-            <br>
-            <div>
-                <table class="TabDesLivres">
-                    <% for(var i=0; i<livresTab.length; i++) {%>
-                        <% if (i % 5==0){%>
-                            <tr class="recherche">
-                                <% } %>
-                                <td>
-                                    <div id="Unlivre">
-                                        <table class="Unlivre">
-                                            <tr class="recherche" class="caseTabeLivre">
-                                                <a href='/livres/<%=livresTab[i].ISBN %>'>
-                                                    <image class="imgRecherche" src="<%=livresTab[i].Photo %>" aligne="middle">
-                                                </a>
-                                            </tr>
-                                            <td class="recherche"><a class="titreLivreRecherche"
-                                                    href='/livres/<%=livresTab[i].ISBN %>'>
-                                                    <%= livresTab[i].Titre %>
-                                                </a><br></td>
-                                        </table>
+        <div class="section ">
+            <section class="pt-5">
+                <div class="container ">
+                    <div class="row">
+                        <div class="col-2"></div>
+                        <div class="col-8">
+                            <form class="recherche" method="post" action="#">
+                                <div class="input-group mb-3"  >
+                                    <input type="text" class="form-control " placeholder="Search..." aria-label="Search..." aria-describedby="basic-addon2" name="SearchInput" id="SearchInput">
+                                    <div class="input-group-append">
+                                        <input class="btn btn-lg btn-primary" id="SearchBook" type="submit"  style="width:auto" value="Search">
                                     </div>
-                                </td>    
-                                    <% if (i % 5==4){%>
-                            </tr>
-                            <% } %>
-                                <% } %>
-                </table>
-            </div>
+                                </div>                    
+                            </form>
+                        </div>
+                        <div class="col-2"></div>
+                    </div>
+                    
+                </div>              
+            </section>
+            
+
+            <section class="p-3">
+                <div class="container">
+                    <div class="row">
+                        <% for(var i=0; i<livresTab.length; i++) {%>
+                            <div class="col">
+                                <a href='/livres/<%=livresTab[i].ISBN %>' style="text-decoration:none; color: black;">
+                                    <div class="card mb-3" style="width: 12rem;">
+                                        <img class="card-img-top" src="<%=livresTab[i].Photo%>" alt="Card image cap" style="height: 260px">
+                                        <div class="card-body">
+                                        <h5 class="card-title"><%= livresTab[i].Titre %></h5>
+                                        <p class="card-text" style="font-size: 14px;"><%= livresTab[i].Auteur %></p>
+                                        </div>
+                                    </div>
+                                </a>    
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            </section>
         <%- include ('../views/partials/footer.ejs') %>
     </div>
     
