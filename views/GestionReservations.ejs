@@ -17,7 +17,7 @@
             <div class="section">
                 <section class="pt-5">
                     <div class="container">
-                        <h1 id="title" class="fw">Gestion du reservation</h1>
+                        <h1 id="title" class="fw">Gestion des réservations</h1>
                     </div>           
                 </section>
                 
@@ -25,8 +25,8 @@
                     <div class="container">
                         <form id="formRechercheClient">
                             <div class="mb-3">
-                                <label for="telClient" class="form-label">Telephone du client : </label>
-                                <input class="form-control" type="tel" id="telClient" name="telClient" placeholder="Telephone du client" maxlength="10" onchange="telChange()" aria-describedby="telHelp">
+                                <label for="telClient" class="form-label">Téléphone du client : </label>
+                                <input class="form-control" type="tel" id="telClient" name="telClient" placeholder="Téléphone du client" maxlength="10" onchange="telChange()" aria-describedby="telHelp">
                                 <div id="telHelp" class="form-text">Lorem ipsum dolor sit amet.</div>
                             </div> 
                             <input type="text" id="idClient" hidden>    
@@ -50,7 +50,7 @@
                     </section>
                     <section class="p-3">
                         <div class="container">
-                            <button class="btn btn-sm btn-primary" type="button" id="ListReservationClient" onclick="ListReservationClient()">Voir Liste des reservations</button>
+                            <button class="btn btn-sm btn-primary" type="button" id="ListReservationClient" onclick="ListReservationClient()">Consulter la liste des réservations</button>
                         </div>
                     </section>
                     
@@ -61,7 +61,7 @@
                                 <div class="mb-3">
                                     <label for="isbnLivre" class="form-label">ISBN du livre :</label>
                                     <input class="form-control" type="text" id="isbnLivre" name="isbnLivre" placeholder="ISBN du Livre" aria-describedby="isbnHelp">
-                                    <div id="isbnHelp" class="form-text">ISBN se trouve près de code a bar de tous les livres</div>
+                                    <div id="isbnHelp" class="form-text">L'ISBN se trouve près du code barre de tous les livres</div>
                                 </div>
                                 <input type="text" hidden> 
                                 <button class="btn btn-sm btn-primary" type="button" id="btnReserver" onclick="Reserver()">Réserver</button>               
@@ -102,9 +102,9 @@
                        document.getElementById('divFindCustomer').hidden = true
                    }else{
                        document.getElementById('pName').innerHTML = "Utilisateur trouvé : " + res.data.client.Prenom + " " + res.data.client.Nom
-                       document.getElementById('pTel').innerHTML = "Telephone : " + res.data.client.Telephone
+                       document.getElementById('pTel').innerHTML = "Téléphone : " + res.data.client.Telephone
                        document.getElementById('pEmail').innerHTML = "Email : " + res.data.client.Email
-                       document.getElementById('pNbPret').innerHTML = "Nombre de pret : " + res.data.client.NbPret
+                       document.getElementById('pNbPret').innerHTML = "Nombre de prêts : " + res.data.client.NbPret
                        document.getElementById('pSolde').innerHTML = "Solde : " + res.data.client.Solde
                        document.getElementById('idClient').value = res.data.client._id;
                        document.getElementById('divFindCustomer').hidden = false

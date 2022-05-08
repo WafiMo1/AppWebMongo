@@ -29,7 +29,7 @@
                         <label for="telClient" class="form-label">ISBN du Livre : </label>
                         <input class="form-control" type="text" id="isbn" name="isbn" placeholder="ISBN du Livre :"
                             aria-describedby="isbnHelp" maxlength="13">
-                        <div id="isbnHelp" class="form-text">Lorem ipsum dolor sit amet.</div>
+                        <div id="isbnHelp" class="form-text">Doit contenir 13 caractères</div>
                     </div>
                     <input type="text" id="idLivre" hidden>
                     <div class="mb-3">
@@ -42,7 +42,7 @@
             <section class="p-5" id="sectionAjout" hidden>
                 <div class="container">
                     <div class="mb-3">
-                        <h2>Ajout de livre</h2>
+                        <h2>Ajouter un livre</h2>
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="auteurLivre">Auteur: </label>
@@ -86,7 +86,7 @@
                     </div>
                     <div class="mb-3">
                         <button class="btn btn-primary" id="ajoutLivre" onclick="ajoutLivre(this)" value="ajoutLivre">Création du livre</button>
-                        <button class="btn btn-success" id="updateLivre" onclick="updateLivre(this)" value="updateLivre">Mise a jour du livre</button>
+                        <button class="btn btn-success" id="updateLivre" onclick="updateLivre(this)" value="updateLivre">Mise à jour du livre</button>
                         <button class="btn btn-danger" id="deleteLivre" onclick="deleteLivre()">Supprimer le livre</button>
                         <button class="btn btn-info text-white" onclick="location.reload()">Annuler l'action</button>
                         

@@ -5,7 +5,7 @@
         <link rel="stylesheet" href="/CSS/style.css">
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
         <%- include ('../views/partials/header.ejs') %>
-        <title>Emprunt et Retour</title>
+        <title>Emprunts et retours</title>
         
     </head>
     <header>
@@ -25,12 +25,12 @@
                     <div class="container">
                         <form id="formRechercheClient" action="#" method="post">
                         <div class="mb-3">
-                            <label for="telClient" class="form-label">Telephone du client :</label>
+                            <label for="telClient" class="form-label">Téléphone du client :</label>
                             <input class="form-control" type="tel" id="telClient" name="telClient" placeholder="Telephone du client" maxlength="10" onchange="telChange()" aria-describedby="telHelp">
-                            <div id="telHelp" class="form-text">Lorem ipsum dolor sit amet.</div>
+                            <div id="telHelp" class="form-text"></div>
                         </div>
                         <input type="text" hidden>    
-                        <button class="btn btn-primary" type="button" id="btnRechercheClient" onclick="rechercheClient()">Recherche</button>
+                        <button class="btn btn-primary" type="button" id="btnRechercheClient" onclick="rechercheClient()">Rechercher</button>
                         </form>        
                     </div>
                 </section>
@@ -74,7 +74,7 @@
                             <div class="mb-3">
                                 <label for="telClient" class="form-label">ISBN du livre :</label>
                                 <input class="form-control" type="text" id="isbnLivre" name="isbnLivre" placeholder="ISBN du Livre" aria-describedby="isbnHelp">
-                                <div id="isbnHelp" class="form-text">ISBN se trouve près de code a bar de tous les livres</div>
+                                <div id="isbnHelp" class="form-text">L'ISBN se trouve près du code barre de tous les livres</div>
                             </div>
                             <input type="hidden" id="clientEmprunt" name="clientEmprunt" value="">  
                             <button class="btn btn-sm btn-primary" type="button" id="btnEmpruntRetour">Emprunt/Retour</button>
@@ -91,13 +91,13 @@
                     <div class="mb-3 container">
                         <div class="row g-4">
                             <div class="col-md">
-                                <button class="btn btn-sm btn-primary" id="btnHistorique">Historiques du pret</button>
+                                <button class="btn btn-sm btn-primary" id="btnHistorique">Livres empruntés</button>
                             </div>
                             <div class="col-md">
-                                <button class="btn btn-sm btn-primary" id="btnNonRetourne">Livres non retourné</button>
+                                <button class="btn btn-sm btn-primary" id="btnNonRetourne">Livres non-retournés</button>
                             </div>
                             <div class="col-md">
-                                <button class="btn btn-sm btn-primary" id="btnPerdu">Tous les livres perdu</button>
+                                <button class="btn btn-sm btn-primary" id="btnPerdu">Livres perdus</button>
                             </div>
                         </div>
                     </div>
@@ -183,9 +183,9 @@
                     }else{
                         // document.getElementById('labelMessageAxios').innerHTML = ''
                         document.getElementById('pName').innerHTML = "Utilisateur trouvé : " + res.data.client.Prenom + " " + res.data.client.Nom
-                        document.getElementById('pTel').innerHTML = "Telephone : " + res.data.client.Telephone
+                        document.getElementById('pTel').innerHTML = "Téléphone : " + res.data.client.Telephone
                         document.getElementById('pEmail').innerHTML = "Email : " + res.data.client.Email
-                        document.getElementById('pNbPret').innerHTML = "Nombre de pret : " + res.data.client.NbPret
+                        document.getElementById('pNbPret').innerHTML = "Nombre de prêts : " + res.data.client.NbPret
                         document.getElementById('pSolde').innerHTML = "Solde : " + res.data.client.Solde
                         document.getElementById('clientEmprunt').value = res.data.client._id
                         document.getElementById('divFindCustomer').hidden = false
@@ -204,7 +204,7 @@
                             divHistorique.removeChild(divHistorique.firstChild);
                         }
                         var title = document.createElement('h3')
-                        title.innerHTML = 'Historique du pret'
+                        title.innerHTML = 'Historique du prêt'
                         var tableHistorique = document.createElement('table') 
                         tableHistorique.setAttribute('class', 'table table-striped')                       
                         divHistorique.appendChild(title)
@@ -417,10 +417,10 @@
             if(document.getElementById('radioEmprunt').checked){
                 document.getElementById('title').innerHTML = "Emprunt du livre"
                 document.getElementById('btnEmpruntRetour').innerHTML = "Emprunt"
-                document.getElementById('noteEmprunt').innerHTML = "Chaque personne peut emprunter 5 livres maximum. <br>"+
-                                                                   "Un même livre ne peut pas prêter 2 copies à un personne. <br>" + 
-                                                                   "Une durée du prêt est 14 jours. <br>" +
-                                                                   "Le livre sera enlevé automatiquement de liste de réservation de ce client."
+                document.getElementById('noteEmprunt').innerHTML = "Chaque utilisateur peut emprunter au maximum cinq livres<br>"+
+                                                                   "Un utilisateur ne peut pas emprunter deux copies du même livre <br>" + 
+                                                                   "La durée d'un prêt est au maximum de 14 jours. <br>" +
+                                                                   "Une fois emprunté, le livre disparaît de la liste des réservations du client"
                                                                 
             }
         })
@@ -429,10 +429,10 @@
             if(document.getElementById('radioRetour').checked){
                 document.getElementById('title').innerHTML = "Retour du livre"
                 document.getElementById('btnEmpruntRetour').innerHTML = "Retour"
-                document.getElementById('noteEmprunt').innerHTML = "Lorsque un utilisateur retour un livre, On ajoute un frais automatiquement 0.5$ par jours.<br>"+
-                                                                   "Le maximum du frais en retard est 10$.<br>"+
-                                                                   "Le frais en retard sera déduit du compte d'utilisateur.<br>"+
-                                                                   "Les livres perdu doit entrer seulement dans l'option perdu."
+                document.getElementById('noteEmprunt').innerHTML = "Lorsqu'un utilisateur dépasse la date de retour prévue, des frais de 0.5$ sont ajoutés à son compte<br>"+
+                                                                   "Les frais de retard peuvent atteindre une valeur maximale de 10$<br>"+
+                                                                   "Le frais en retard seront déduits du compte de l'utilisateur.<br>"+
+                                                                   "Les livres perdus doivent être affichés dans la catégorie des livres perdus"
             }
         })
 
@@ -440,9 +440,8 @@
             if(document.getElementById('radioPerdu').checked){
                 document.getElementById('title').innerHTML = "Livre Perdu"
                 document.getElementById('btnEmpruntRetour').innerHTML = "Livre Perdu"
-                document.getElementById('noteEmprunt').innerHTML = "Utilisateur doit mentionner le livre perdu au employee.<br>"+
-                                                                   "Le frais en retard sera déduit du compte d'utilisateur.<br>"+
-                                                                   "Le cout du livre perdu sera déduit du compte d'utilisateur."
+                document.getElementById('noteEmprunt').innerHTML = "L'utilisateur doit signaler la perte d'un livre lorsque c'est le cas<br>"+
+                                                                   "Le frais de retard seront déduits du compte de l'utilisateur.<br>"
 
             }
         })
