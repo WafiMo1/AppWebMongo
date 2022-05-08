@@ -455,6 +455,17 @@ app.post('/annulerReservation', (req, res) => {
     }
 });
 
+app.get('/transactions', (req, res) => {
+    if (!req.session.loginedUser) return res.redirect("/login")
+    Transactions.find({ Utilisateur_id: req.session.loginedUser._id }).sort({ DateReservation: 'desc' }).exec(function (err, transactions) {
+        if (err) throw (err)
+            res.render("Transactions", { transactions: transactions, loginedUser: req.session.loginedUser })
+    });
+});
+
+
+
+
 //page gestion
 app.get('/gestion', async (req, res) => {
     if (req.session.loginedUser) {
@@ -660,8 +671,8 @@ app.post('/gestion/empruntretour', async (req, res) => {
                                                 Cout: fraisRetard,
                                                 Utilisateur_id: req.body.clientEmprunt,
                                                 EmployeeId: req.session.loginedUser._id,
-                                                Titre: "Retard : " + livre.Titre,
-                                                Commentaire: "Frais du retard pour le livre: " + livre.Titre + ", " + livre.Auteur + ", " + livre.ISBN
+                                                Titre: "Retard",
+                                                Commentaire: "Retard du livre: " + livre.Titre + ", " + livre.Auteur + ", " + livre.ISBN
                                             }, function (err) { if (err) throw err })
                                         }
                                         //charge le cout du livre
@@ -674,8 +685,8 @@ app.post('/gestion/empruntretour', async (req, res) => {
                                                 Cout: cout,
                                                 Utilisateur_id: req.body.clientEmprunt,
                                                 EmployeeId: req.session.loginedUser._id,
-                                                Titre: "Perte : " + livre.Titre,
-                                                Commentaire: "Frais pour la pert du livre: " + livre.Titre + ", " + livre.Auteur + ", " + livre.ISBN
+                                                Titre: "Perte",
+                                                Commentaire: "Pert du livre: " + livre.Titre + ", " + livre.Auteur + ", " + livre.ISBN
                                             }, function (err) { if (err) throw err })
                                         }
 
@@ -939,6 +950,19 @@ app.post('/gestion/utilisateurUpdate', async (req, res) => {
                     if (result._id != req.body.id) {
                         return res.send(JSON.stringify({ 'message': 'Email existe dans la base de données' }));
                     } else {
+                        Utilisateurs.findById(req.body.id, function (err, utilisateur){
+                            if (err) throw err;
+                            if (utilisateur.Solde != req.body.solde){
+                                Transactions.create({
+                                    DateTransaction: new Date(Date.now()),
+                                    Cout: (req.body.solde - utilisateur.Solde).toFixed(2),
+                                    Utilisateur_id: req.body.id,
+                                    EmployeeId: req.session.loginedUser._id,
+                                    Titre: "Ajustement",
+                                    Commentaire: "Solde du compte précedent: " + utilisateur.Solde + "\rNouveau solde du compte: " + req.body.solde 
+                                }, function (err) { if (err) throw err })
+                            }                          
+                        })
                         Utilisateurs.findByIdAndUpdate(req.body.id, {
                             Nom: req.body.nom,
                             Prenom: req.body.prenom,

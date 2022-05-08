@@ -151,7 +151,7 @@
             if(document.getElementById('radioRecharger').checked){
                 document.getElementById('divRechargerFacturer').hidden = false;
                 document.getElementById('divMethodePaiement').hidden = false;
-                document.getElementById('titre').value = "Recharger le compte";
+                document.getElementById('titre').value = "Recharger";
                 document.getElementById('commentaire').innerHTML = "Recharger le compte";
                 document.getElementById('btnRechargerFacturer').innerHTML = "Recharger le compte";
             }          
@@ -173,7 +173,7 @@
             if(document.getElementById('radioRemboursement').checked){
                 document.getElementById('divRechargerFacturer').hidden = false;
                 document.getElementById('divMethodePaiement').hidden = false;
-                document.getElementById('titre').value = "";
+                document.getElementById('titre').value = "Remboursement";
                 document.getElementById('titre').placeholder = "Entrer le sujet";
                 document.getElementById('btnRechargerFacturer').innerHTML = "";
                 document.getElementById('commentaire').placeholder = "Entrer la raison du remboursement";
@@ -201,7 +201,9 @@
                     Commentaire: document.getElementById('commentaire').value
                }).then(res=>{
                     alert(res.data.message);
+                    location.reload();
                     rechercheClient();
+                    
                })
             }
         }

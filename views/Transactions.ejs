@@ -1,12 +1,68 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transaction</title>
-</head>
-<body>
-    
-</body>
+<html>
+    <head>
+        <%- include ('../views/partials/header.ejs') %>
+        <link rel="stylesheet" href="/CSS/style.css">
+        <title>Transactions</title>
+    </head>
+    <body>
+        <div class="box">
+            <div class="section">
+                <section class="p-5">
+                    <div class="container" align="center">
+                        <h2>Transactions</h2> 
+                         <div>
+                            <table class="table table-hover">
+                                     <thead>
+                                       <tr align="center">
+                                         <th scope="col">Date de facturation</th>
+                                         <th scope="col">Sujet</th>
+                                         <th scope="col">Description</th>
+                                         <th scope="col">MethodePaiement</th>        
+                                         <th scope="col">Frais</th>
+                                         <th scope="col">Action</th>                         
+                                       </tr>
+                                     </thead>
+                                     <tbody>
+                                        <% transactions.forEach(transaction => { %>
+                                            <tr align="center">
+                                                <td>
+                                                    <% if(transaction.DateTransaction.getHours() < 10) { %>
+                                                        0<%=transaction.DateTransaction.getHours() %>:<%=transaction.DateTransaction.getMinutes() %>
+                                                        <%=transaction.DateTransaction.getDate()%>/<%=transaction.DateTransaction.getMonth()+1 %>/<%=transaction.DateTransaction.getFullYear() %>
+                                                    <% } else if(transaction.DateTransaction.getMinutes() < 10) {%>
+                                                        <%=transaction.DateTransaction.getHours() %>:0<%=transaction.DateTransaction.getMinutes() %>
+                                                        <%=transaction.DateTransaction.getDate()%>/<%=transaction.DateTransaction.getMonth()+1 %>/<%=transaction.DateTransaction.getFullYear() %>
+                                                    <% } else { %>
+                                                        <%=transaction.DateTransaction.getHours() %>:<%=transaction.DateTransaction.getMinutes() %>
+                                                        <%=transaction.DateTransaction.getDate()%>/<%=transaction.DateTransaction.getMonth()+1 %>/<%=transaction.DateTransaction.getFullYear() %>
+                                                    <% } %>
+                                                </td>
+
+
+                                                <td><%=transaction.Titre %></td>
+                                                <td><pre style="font-size:16px; font-family: Arial, Helvetica, sans-serif;"><%=transaction.Commentaire%></pre></td>
+                                                <td><%=transaction.MethodePaiement %></td>
+                                                <td><%=transaction.Cout %></td>                                                             
+                                                <td>
+                                                    <form action="/annulerReservation" method="post">
+                                                        <input type="submit" class="btn btn-info text-white" value="Voir la facture" id="btnAnnuler">
+                                                    </form>
+                                                </td>
+                                            </tr>
+
+                                        <% }) %>
+                                     </tbody>
+                            </table> 
+                        </div>
+                    </div>
+
+                </section>
+                
+            </div>
+            <%- include ('../views/partials/footer.ejs') %>
+        </div>
+
+    </body>
+
 </html>
