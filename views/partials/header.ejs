@@ -26,7 +26,7 @@
             </li>
             <% if (loginedUser){ %>
                 <li class="nav-item">
-                    <div class="nav-link"><a href="/reservations">Mes Réservations</a></div>
+                    <div class="nav-link"><a href="/reservations">Réservations</a></div>
                 </li>
                 <% if (loginedUser.Droit_id==99 || loginedUser.Droit_id==1){ %>
                     <li class="nav-item">
@@ -68,10 +68,10 @@
                         <!--Lorsque Modifier Profil est sélectionné-->
                         
                         <li id="profil"><a href="/profil">Profil</a></li>
-                        <li id="modifierProfil"><a href="/Modifier">Modifier les informations</a></li>
-                        <li id="modifierMotDePasse"><a href="/ModifierMotDePasse">Modifier le mot de passe</a></li>
+                        <li id="modifierProfil"><a href="/Modifier">Modifier vos informations</a></li>
+                        <li id="modifierMotDePasse"><a href="/ModifierMotDePasse">Modifier votre mot de passe</a></li>
                         <li id="historiqueEmprunts"><a href="/HistoriqueDesEmprunts">Historique des emprunts</a></li>
-                        <li id="transactions"><a href="/transactions">Mes transactions</a></li>
+                        <li id="transactions"><a href="/transactions">Transactions</a></li>
                         <li id="deconnection"><a href="/logout">Déconnexion</a></li>
 
                     <%} %>
