@@ -14,7 +14,7 @@
     <body>
         <div class="box">
             <div class="section">
-                <section class="p-3">
+                <section class="pt-5">
                     <div class="container">
                         <h1 id="title" class="fw">Gestion des utilisateurs et des employee</h1>
                     </div>           
@@ -91,7 +91,7 @@
                 axios.post('/gestion/supprimerUtilisateur', {                   
                     ID: id
                 }).then(res=>{
-                    alert(res.data.message);
+                    if (res.data.message) {alert(res.data.message)};                   
                     location.reload();
                 })
             } else{

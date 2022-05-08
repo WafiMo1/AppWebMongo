@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/CSS/style.css">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <%- include ('../views/partials/header.ejs') %>
         <title>Ajout de livre</title>
 </head>
@@ -17,11 +18,17 @@
 
             <section class="pt-5">
                 <div class="container">
+                    <h1>Recherche un livre</h1>
+                </div>
+            </section>
+
+            <section class="p-3">
+                <div class="container">
                     <div class="mb-3">
-                        <h2>Recherche un livre</h2>
+                        
                         <label for="telClient" class="form-label">ISBN du Livre : </label>
                         <input class="form-control" type="text" id="isbn" name="isbn" placeholder="ISBN du Livre :"
-                            onchange="isbnChange()" aria-describedby="isbnHelp" maxlength="13">
+                            aria-describedby="isbnHelp" maxlength="13">
                         <div id="isbnHelp" class="form-text">Lorem ipsum dolor sit amet.</div>
                     </div>
                     <input type="text" id="idLivre" hidden>
@@ -32,7 +39,7 @@
                 </div>
             </section>
 
-            <section class="p-5" id="sectionAjout">
+            <section class="p-5" id="sectionAjout" hidden>
                 <div class="container">
                     <div class="mb-3">
                         <h2>Ajout de livre</h2>
@@ -46,14 +53,16 @@
                         <input class="form-control" type="text" name="titreLivre" id="titreLivre" value="" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label" for="DateParution">Date de parution: </label>
-                        <input class="form-control" type="date" name="dateParution" id="dateParution" value="">
-                        <input class="form-control" type="number" min="1900" max="2099" step="1" value="2016">
-                        <input class="form-control" type="month" name="dateParution" id="dateParution" value="">                    
+                        <label class="form-label" for="dateParution">Date de parution: </label>
+                        <input class="form-control" type="number" id="dateParution" step="1">                 
                     </div>
                     <div class="mb-3">
                         <label class="form-label"for="nbrCopies">Nombre de copies: </label>
                         <input class="form-control" type="number" name="nbrCopies" id="nbrCopies" value="" required>
+                    </div>
+                    <div class="mb-3" id="divNbDisponible">
+                        <label class="form-label"for="NbDisponible">Nombre de copies disponible: </label>
+                        <input class="form-control" type="number" name="NbDisponible" id="NbDisponible" value="" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="MaisonEdition">Maison d'édition: </label>
@@ -68,7 +77,7 @@
                         <input class="form-control" type="number" name="coutLivre" id="coutLivre" min="0.01" step="0.01" value="" >
                     </div>
                     <div class="mb-3">
-                        <label class="form-label" for="Description">Description </label>
+                        <label class="form-label" for="descriptionLivre">Description </label>
                         <textarea class="form-control" id="descriptionLivre" name="descriptionLivre" rows="4" cols="50"></textarea>
                     </div>
                     <div class="mb-5">
@@ -76,9 +85,13 @@
                         <input class="form-control-file" type="file" id="photoLivre" name="photoLivre">
                     </div>
                     <div class="mb-3">
-                        <button class="btn btn-primary">Création du livre</button>
-                        <button class="btn btn-danger">Annuler la réation</button>
+                        <button class="btn btn-primary" id="ajoutLivre" onclick="ajoutLivre(this)" value="ajoutLivre">Création du livre</button>
+                        <button class="btn btn-success" id="updateLivre" onclick="updateLivre(this)" value="updateLivre">Mise a jour du livre</button>
+                        <button class="btn btn-danger" id="deleteLivre" onclick="deleteLivre()">Supprimer le livre</button>
+                        <button class="btn btn-info text-white" onclick="location.reload()">Annuler l'action</button>
+                        
                     </div>
+                    <input hidden id="path">
 
 
                     
@@ -96,46 +109,160 @@
 
 <script>
     axios.defaults.baseURL = 'http://localhost:4000'
-    function isbnChange(){
-            // document.getElementById('ListReservationClient').disabled = true;
-            //document.getElementById('btnReserver').disabled = true;
-    }
+
 
     function rechercheLivre(){
-        axios.post('/gestion/rechercheLivre', {                   
-                isbn: document.getElementById('isbn').value,
+        if(!document.getElementById('isbn').value){
+            alert("Il faut entrer ISBN du livre pour la recherche")
+        } else {        
+            axios.post('/gestion/rechercheLivre', {                   
+                    isbn: document.getElementById('isbn').value,
             }).then(res=>{
                 if (res.data.message){
-                    var confirmation = confirm(res.data.message);
-                    if (confirmation){
-                        alert('Action ajouter livre')
-                        document.getElementById("sectionAjout").hidden =false
-                        document.getElementById('isbnLivre').value = document.getElementById('isbn').value
-                         
+                    if (res.data.code == 10) {
+                        window.location = '/login'
                     }else{
-                        alert('Action annulé')
-                        document.getElementById('isbn').value=""
-                    }
-                }else{
-                    alert('Action modifier livre')
-                }
+                        var confirmation = confirm(res.data.message);
+                        if (confirmation){
+                            document.getElementById("sectionAjout").hidden =false
+                            document.getElementById('divNbDisponible').hidden = true;
+                            document.getElementById('isbnLivre').value = document.getElementById('isbn').value
 
+                            document.getElementById('ajoutLivre').hidden = false;
+                            document.getElementById('updateLivre').hidden = true;  
+                            document.getElementById('deleteLivre').hidden = true;      
+
+                        }else{
+                            alert('Action annulé')
+                            document.getElementById('isbn').value=""
+                        }
+                    }                                
+                }else{
+                    document.getElementById("sectionAjout").hidden =false
+                    document.getElementById('auteurLivre').value = res.data.Auteur
+                    document.getElementById('titreLivre').value = res.data.Titre
+                    document.getElementById('dateParution').value = res.data.DateParution
+                    document.getElementById('nbrCopies').value = res.data.NbCopies
+                    document.getElementById('NbDisponible').value = res.data.NbDisponible
+                    document.getElementById('divNbDisponible').hidden = false;
+                    document.getElementById('maisonEdition').value = res.data.MaisonEdition
+                    document.getElementById('isbnLivre').value = res.data.ISBN
+                    document.getElementById('coutLivre').value = res.data.Cout
+                    document.getElementById('descriptionLivre').value = res.data.Description
+                    document.getElementById('path').value = res.data.Photo
+
+                    document.getElementById('ajoutLivre').hidden = true;
+                    document.getElementById('updateLivre').hidden = false;  
+                    document.getElementById('deleteLivre').hidden = false;  
+                }
             })
-            
+        }    
+    }
+
+    function valideInfo(){
+        var valide = true;
+        if (!document.getElementById('titreLivre').value){
+            alert("Le titre du livre est obligatoire")
+            valide = false;
+        } else if(!document.getElementById('auteurLivre').value){
+            alert("L'auteur du livre est obligatoire")
+            valide = false;
+        }else if(!document.getElementById('coutLivre').value){
+            alert("Le coût du livre est obligatoire")
+            valide = false;
+        }else if(!document.getElementById('nbrCopies').value){
+            alert("Le nombre de copie du livre est obligatoire")
+            valide = false;
+        }
+        return valide
+    }
+
+    function valideInfoAdditionel(){
+        var valide = true;
+        if(!document.getElementById('NbDisponible').value){
+            alert("Le nombre de copie disponible du livre est obligatoire")
+            valide = false;
+        }else if(document.getElementById('NbDisponible').value > document.getElementById('nbrCopies').value){
+            alert("Le nombre de copie disponible du livre droit être inférieur au nombre de copie du livre")
+            valide = false;
+        }
+        return valide
     }
 
 
-    function uploadimg(){
-        const formData = new FormData();
-        const imagefile = document.querySelector('#file');
-        formData.append("image", imagefile.files[0]);
-        axios.post('upload_file', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
+    function ajoutLivre(obj){ 
+        if (valideInfo()){
+            //post img to server and get the path
+            const formData = new FormData();
+            const imagefile = document.getElementById('photoLivre');
+            formData.append("image", imagefile.files[0]);
+            formData.append('isbn', document.getElementById('isbnLivre').value);
+            axios.post('/gestion/livre/photo', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }).then(res=>{
+                //code 10 for login
+                if (res.data.message) { alert(res.data.message)}
+                if (res.data.code == 10) {
+                    window.location = '/login';
+                } else{
+                    axios.post('/gestion/' + obj.value, {
+                        Auteur: document.getElementById('auteurLivre').value.trim(),
+                        Titre: document.getElementById('titreLivre').value.trim(),
+                        DateParution: document.getElementById('dateParution').value,
+                        NbCopies: document.getElementById('nbrCopies').value,
+                        NbDisponible: document.getElementById('NbDisponible').value,
+                        MaisonEdition: document.getElementById('maisonEdition').value.trim(),
+                        ISBN: document.getElementById('isbnLivre').value,
+                        Cout: document.getElementById('coutLivre').value,
+                        Description: document.getElementById('descriptionLivre').value.trim(),
+                        Photo: res.data.path
+                    }).then(res=>{
+                        alert(res.data.message)
+                        location.reload();
+                    })
+                }
+            })
+        }
+    }
+
+    function updateLivre(obj){
+        if(document.getElementById('photoLivre').files[0]){
+            ajoutLivre(obj)
+        } else{
+            if (valideInfo()){
+                if(valideInfoAdditionel()){
+                    axios.post('/gestion/' + obj.value, {
+                        Auteur: document.getElementById('auteurLivre').value.trim(),
+                        Titre: document.getElementById('titreLivre').value.trim(),
+                        DateParution: document.getElementById('dateParution').value,
+                        NbCopies: document.getElementById('nbrCopies').value,
+                        NbDisponible: document.getElementById('nbrCopies').value,
+                        MaisonEdition: document.getElementById('maisonEdition').value.trim(),
+                        ISBN: document.getElementById('isbnLivre').value,
+                        Cout: document.getElementById('coutLivre').value,
+                        Description: document.getElementById('descriptionLivre').value.trim(),
+                        Photo: document.getElementById('path').value
+                    }).then(res=>{
+                        alert(res.data.message)
+                        location.reload();
+                    })
+                }
             }
-        })
+        }
+    }
 
-
+    function deleteLivre(){
+        var confirmation = confirm("Êtes-vous sûr de supprimer cette livre?")
+        if (confirmation){
+            axios.post('/gestion/livre/delete', {
+                ISBN: document.getElementById('isbnLivre').value,
+            }).then(res=>{
+                alert(res.data.message)
+                location.reload();
+            })
+        } 
     }
 
     

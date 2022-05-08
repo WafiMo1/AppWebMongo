@@ -1,12 +1,173 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transaction</title>
-</head>
-<body>
+<html>
+    <head>
+        <%- include ('../views/partials/header.ejs') %>
+        <script src="https://unpkg.com/jspdf-invoice-template@1.4.0/dist/index.js"></script>
+        <link rel="stylesheet" href="/CSS/style.css">
+        <title>Transactions</title>
+    </head>
+    <body>
+        <div class="box">
+            <div class="section">
+                <section class="p-5">
+                    <div class="container" align="center">
+                        <h2>Transactions</h2> 
+                         <div>
+                            <table class="table table-hover">
+                                     <thead>
+                                       <tr align="center">
+                                         <th scope="col">Date de facturation</th>
+                                         <th scope="col">Sujet</th>
+                                         <th scope="col">Description</th>
+                                         <th scope="col">MethodePaiement</th>        
+                                         <th scope="col">Frais</th>
+                                         <th scope="col">Action</th>                         
+                                       </tr>
+                                     </thead>
+                                     <tbody>
+                                        <% transactions.forEach(transaction => { %>
+                                            <tr align="center">
+                                                <td>
+                                                    <% if(transaction.DateTransaction.getHours() < 10) { %>
+                                                        0<%=transaction.DateTransaction.getHours() %>:<%=transaction.DateTransaction.getMinutes() %>
+                                                        <%=transaction.DateTransaction.getDate()%>/<%=transaction.DateTransaction.getMonth()+1 %>/<%=transaction.DateTransaction.getFullYear() %>
+                                                    <% } else if(transaction.DateTransaction.getMinutes() < 10) {%>
+                                                        <%=transaction.DateTransaction.getHours() %>:0<%=transaction.DateTransaction.getMinutes() %>
+                                                        <%=transaction.DateTransaction.getDate()%>/<%=transaction.DateTransaction.getMonth()+1 %>/<%=transaction.DateTransaction.getFullYear() %>
+                                                    <% } else { %>
+                                                        <%=transaction.DateTransaction.getHours() %>:<%=transaction.DateTransaction.getMinutes() %>
+                                                        <%=transaction.DateTransaction.getDate()%>/<%=transaction.DateTransaction.getMonth()+1 %>/<%=transaction.DateTransaction.getFullYear() %>
+                                                    <% } %>
+                                                </td>
+
+
+                                                <td><%=transaction.Titre %></td>
+                                                <td><pre style="font-size:16px; font-family: Arial, Helvetica, sans-serif;"><%=transaction.Commentaire%></pre></td>
+                                                <td><%=transaction.MethodePaiement %></td>
+                                                <td><%=transaction.Cout %></td>                                                             
+                                                <td>
+                                                    <button type="submit" class="btn btn-info text-white" id="btnAnnuler" onclick="generationPDF()">Voir la facture</button>
+                                                </td>
+                                            </tr>
+
+                                        <% }) %>
+                                     </tbody>
+                            </table> 
+                        </div>
+                    </div>
+
+                </section>
+                
+            </div>
+            <%- include ('../views/partials/footer.ejs') %>
+        </div>
+
+    </body>
+
+    <script>
     
-</body>
+        function generationPDF() {
+            var pdfObject = jsPDFInvoiceTemplate.default(props);
+    
+            console.log("Object created: ", facturePDF);
+        }
+        var props = {
+            outputType: jsPDFInvoiceTemplate.OutputType.Save,
+            returnJsPDFDocObject: true,
+            fileName: "FactureDePaiement",
+            orientationLandscape: false,
+            compress: true,
+            logo: {
+                src: "https://raw.githubusercontent.com/edisonneza/jspdf-invoice-template/demo/images/logo.png",
+                width: 53.33, //aspect ratio = width/height
+                height: 26.66,
+                margin: {
+                    top: 0, //negative or positive num, from the current position
+                    left: 0 //negative or positive num, from the current position
+                }
+            },
+            business: {
+                name: "Biblioclick",
+                phone: "(+355) 069 11 11 111",
+                email: "biblioclick@gmail.com",
+                email_1: "info.biblioclick@gmail.com",
+                website: "www.biblioclick.com",
+            },
+            contact: {
+                label: "Facture genere Pour:",
+                name: document.getElementById("name").innerHTML,
+                phone: "111222333",
+                email: "Emailduclient@gmail.com",
+            },
+            invoice: {
+                label: "Invoice #: ",
+                num: 19,
+                invDate: "Payment Date: 01/01/2021 18:12",
+                invGenDate: "Invoice Date: 02/02/2021 10:17",
+                headerBorder: false,
+                tableBodyBorder: false,
+                header: [
+                    {
+                        title: "#",
+                        style: {
+                            width: 10
+                        }
+                    },
+                    {
+                        title: "Title",
+                        style: {
+                            width: 30
+                        }
+                    },
+                    {
+                        title: "Description",
+                        style: {
+                            width: 80
+                        }
+                    },
+                    { title: "Price" },
+                    { title: "Quantity" },
+                    { title: "Unit" },
+                    { title: "Total" }
+                ],
+                table: Array.from(Array(1), (item, index) => ([
+                    index + 1,
+                    "There are many variations ",
+                    "Lorem Ipsum is simply dummy text dummy text ",
+                    200.5,
+                    4.5,
+                    "m2",
+                    400.5
+                ])),
+                invTotalLabel: "Total:",
+                invTotal: "145,250.50",
+                invCurrency: "ALL",
+                row1: {
+                    col1: 'VAT:',
+                    col2: '20',
+                    col3: '%',
+                    style: {
+                        fontSize: 10 //optional, default 12
+                    }
+                },
+                row2: {
+                    col1: 'SubTotal:',
+                    col2: '116,199.90',
+                    col3: 'ALL',
+                    style: {
+                        fontSize: 10 //optional, default 12
+                    }
+                },
+                invDescLabel: "Invoice Note",
+                invDesc: "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary.",
+            },
+            footer: {
+                text: "The invoice is created on a computer and is valid without the signature and stamp.",
+            },
+            pageEnable: true,
+            pageLabel: "Page ",
+        };
+    </script>
+
+
 </html>
