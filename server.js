@@ -439,7 +439,7 @@ app.get('/reservations', (req, res) => {
 app.post('/annulerReservation', (req, res) => {
     if (!req.session.loginedUser) return res.redirect("/login")
     else {
-        
+
         Reservations.findOneAndDelete({ Livre_id: req.body.livre_id, Utilisateur_id: req.body.user_id },
             function (err, livre) {
                 if (err) console.log(err)
@@ -872,13 +872,13 @@ app.get('/gestion/reservation/:telClient', (req, res) => {
 app.get('/gestion/listUtilisateur', async (req, res) => {
     if (req.session.loginedUser) {
         if (req.session.loginedUser.Droit_id == 99) {//only for admin 
-            Utilisateurs.find({},function(err, utilisateurs){
+            Utilisateurs.find({}, function (err, utilisateurs) {
                 if (err) throw err;
-                Droits.find({}, function(err, droits){
+                Droits.find({}, function (err, droits) {
                     if (err) throw err;
-                        res.render('GestionListUtilisateur', { loginedUser: req.session.loginedUser, utilisateurs: utilisateurs, droits: droits});
-                } )
-            })           
+                    res.render('GestionListUtilisateur', { loginedUser: req.session.loginedUser, utilisateurs: utilisateurs, droits: droits });
+                })
+            })
         } else {
             res.status(403).end("vous n'avez pas le droit")
         }
@@ -887,18 +887,18 @@ app.get('/gestion/listUtilisateur', async (req, res) => {
     }
 })
 
-app.post('/gestion/supprimerUtilisateur', async(req,res) =>{
+app.post('/gestion/supprimerUtilisateur', async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     if (req.session.loginedUser) {
         if (req.session.loginedUser.Droit_id == 99) {//only for admin
-            Utilisateurs.findByIdAndRemove(req.body.ID, function(err){
+            Utilisateurs.findByIdAndRemove(req.body.ID, function (err) {
                 if (err) throw err;
                 res.send(JSON.stringify({ 'message': 'Utilisateur supprimé' }))
             })
         } else {
             res.status(403).end("vous n'avez pas le droit")
         }
-    }else {
+    } else {
         res.redirect("/login")
     }
 })
@@ -906,23 +906,23 @@ app.post('/gestion/supprimerUtilisateur', async(req,res) =>{
 app.get('/gestion/utilisateur/:id', (req, res) => {
     if (req.session.loginedUser) {
         if (req.session.loginedUser.Droit_id == 99) {//only for admin
-            Utilisateurs.findById(req.params.id, function(err, utilisateur){
+            Utilisateurs.findById(req.params.id, function (err, utilisateur) {
                 if (err) throw err;
-                Droits.find({}, function(err, droits){
-                    if(err) throw err;
-                    res.render('GestionUtilisateur', { loginedUser: req.session.loginedUser, utilisateur: utilisateur, droits: droits});
+                Droits.find({}, function (err, droits) {
+                    if (err) throw err;
+                    res.render('GestionUtilisateur', { loginedUser: req.session.loginedUser, utilisateur: utilisateur, droits: droits });
                 })
-                
+
             })
         } else {
             res.status(403).end("vous n'avez pas le droit")
         }
-    }else {
+    } else {
         res.redirect("/login")
     }
 })
 
-app.post('/gestion/utilisateurUpdate', async(req, res) =>{
+app.post('/gestion/utilisateurUpdate', async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     if (req.session.loginedUser == null) {
         return res.send(JSON.stringify({ 'message': "Il faut se connecter pour utiliser cette fonction", 'code': 10 }));
@@ -930,13 +930,13 @@ app.post('/gestion/utilisateurUpdate', async(req, res) =>{
     if (req.session.loginedUser.Droit_id == 99) {//only for admin
 
         Utilisateurs.findOne({ Telephone: req.body.telephone }, function (err, result) {
-            if(err) throw err;
-            if (result._id != req.body.id){
+            if (err) throw err;
+            if (result._id != req.body.id) {
                 return res.send(JSON.stringify({ 'message': 'Le téléphone existe dans la base de données' }));
             } else {
                 Utilisateurs.findOne({ Email: req.body.email }, function (err, result) {
-                    if(err) throw err;
-                    if (result._id != req.body.id){
+                    if (err) throw err;
+                    if (result._id != req.body.id) {
                         return res.send(JSON.stringify({ 'message': 'Email existe dans la base de données' }));
                     } else {
                         Utilisateurs.findByIdAndUpdate(req.body.id, {
@@ -947,12 +947,12 @@ app.post('/gestion/utilisateurUpdate', async(req, res) =>{
                             MaxPret: req.body.MaxPret,
                             NbPret: req.body.NbPret,
                             Solde: req.body.solde,
-                            Droit_id: req.body.droit 
-                        },function(err){
+                            Droit_id: req.body.droit
+                        }, function (err) {
                             if (err) throw err;
                             res.send(JSON.stringify({ 'message': 'Utilisateur update' }));
-                        })          
-                        
+                        })
+
                     }
                 })
             }
@@ -963,30 +963,30 @@ app.post('/gestion/utilisateurUpdate', async(req, res) =>{
 
 })
 
-app.post('/gestion/resetPassword', async(req, res) =>{
+app.post('/gestion/resetPassword', async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     if (req.session.loginedUser == null) {
         return res.send(JSON.stringify({ 'message': "Il faut se connecter pour utiliser cette fonction", 'code': 10 }));
     }
     if (req.session.loginedUser.Droit_id == 99) {//only for admin
         var passwordtemp = Math.floor(1000 + Math.random() * 9000).toString().trim();
-        Utilisateurs.findByIdAndUpdate(req.body.id,{
+        Utilisateurs.findByIdAndUpdate(req.body.id, {
             Password: passwordtemp
-        }, function(err){
-           if (err) throw err;
-           return res.send(JSON.stringify({ 'message': "Le nouveau mot de passe est: " + passwordtemp}));
+        }, function (err) {
+            if (err) throw err;
+            return res.send(JSON.stringify({ 'message': "Le nouveau mot de passe est: " + passwordtemp }));
         })
-    
+
     } else {
         res.status(403).end("vous n'avez pas le droit")
     }
 
 })
 
-app.get('/gestion/livres', (req, res) => {  
+app.get('/gestion/livres', (req, res) => {
     if (req.session.loginedUser) {
         if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {//only for admin or staff
-            res.render('GestionLivre', { loginedUser: req.session.loginedUser})
+            res.render('GestionLivre', { loginedUser: req.session.loginedUser })
         } else {
             res.status(403).end("vous n'avez pas le droit")
         }
@@ -995,30 +995,52 @@ app.get('/gestion/livres', (req, res) => {
     }
 });
 
+app.post('/gestion/rechercheLivre', (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', '*');
+    if (req.session.loginedUser == null) {
+        return res.send(JSON.stringify({ 'message': "Il faut se connecter pour utiliser cette fonction", 'code': 10 }));
+    }
+    if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {
+        Livres.findOne({ ISBN: req.body.isbn }, function (err, livre) {
+            if (err) throw err;
+            if (livre){
+                res.send(JSON.stringify(livre))
+            }else{
+                res.send(JSON.stringify({ 'message': "Livre non trouvé. Voulez vous l'ajouté dans la bibliotique ?" }));
+            }         
+        })
+    } else {
+        res.status(403).end("Forbidden")
+    }
+
+})
+
+
 app.post('/gestion/ajoutLivre', (req, res) => {
 
-    var nouveauLivre=new Livres({
-        Auteur:req.body.auteurLivre ,
+    var nouveauLivre = new Livres({
+        Auteur: req.body.auteurLivre,
         Titre: req.body.titreLivre,
-        DateParution:req.body.dateParution ,
+        DateParution: req.body.dateParution,
         NbCopies: req.body.nbrCopies,
-        NbDisponible:req.body.nbrCopies ,
-        MaisonEdition:req.body.maisonEdition ,
-        ISBN:req.body.isbnLivre ,
-        Cout:req.body.coutLivre ,
-        Description:req.body.descriptionLivre,
+        NbDisponible: req.body.nbrCopies,
+        MaisonEdition: req.body.maisonEdition,
+        ISBN: req.body.isbnLivre,
+        Cout: req.body.coutLivre,
+        Description: req.body.descriptionLivre,
     })
 
     nouveauLivre.save(function (err, book) {
-       res.json("Le livre a été ajouté avec succès")
+        res.json("Le livre a été ajouté avec succès")
         if (err) return console.error(err);
-      });
+    });
 
 });
 
 
 
-app.get('/test', (req, res)=>{
+app.get('/test', (req, res) => {
     res.render('test');
 })
 

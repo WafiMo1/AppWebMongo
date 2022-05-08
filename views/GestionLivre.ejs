@@ -15,99 +15,78 @@
     <div class="box">
         <div class="section">
 
-            <section class="p-3">
+            <section class="pt-5">
                 <div class="container">
                     <div class="mb-3">
                         <h2>Recherche un livre</h2>
                         <label for="telClient" class="form-label">ISBN du Livre : </label>
                         <input class="form-control" type="text" id="isbn" name="isbn" placeholder="ISBN du Livre :"
-                            onchange="isbnChange()" aria-describedby="isbnHelp">
+                            onchange="isbnChange()" aria-describedby="isbnHelp" maxlength="13">
                         <div id="isbnHelp" class="form-text">Lorem ipsum dolor sit amet.</div>
                     </div>
                     <input type="text" id="idLivre" hidden>
                     <div class="mb-3">
-                        <button class="btn btn-sm btn-primary" type="button" id="btnRechercheLivre"
+                        <button class="btn btn-primary" type="button" id="btnRechercheLivre"
                             onclick="rechercheLivre()">Recherche</button>
                     </div>
                 </div>
             </section>
 
+            <section class="p-5" id="sectionAjout">
+                <div class="container">
+                    <div class="mb-3">
+                        <h2>Ajout de livre</h2>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="auteurLivre">Auteur: </label>
+                        <input class="form-control is_invalide" type="text" name="auteurLivre" id="auteurLivre" value="" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="titreLivre">Titre: </label>
+                        <input class="form-control" type="text" name="titreLivre" id="titreLivre" value="" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="DateParution">Date de parution: </label>
+                        <input class="form-control" type="date" name="dateParution" id="dateParution" value="">
+                        <input class="form-control" type="number" min="1900" max="2099" step="1" value="2016">
+                        <input class="form-control" type="month" name="dateParution" id="dateParution" value="">                    
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"for="nbrCopies">Nombre de copies: </label>
+                        <input class="form-control" type="number" name="nbrCopies" id="nbrCopies" value="" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="MaisonEdition">Maison d'édition: </label>
+                        <input class="form-control" type="text" name="maisonEdition" id="maisonEdition" value="">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="isbnLivre">ISBN</label>
+                        <input class="form-control" type="text" name="isbnLivre" id="isbnLivre" placeholder="ex:1234567890123" disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="coutLivre">Coût</label>
+                        <input class="form-control" type="number" name="coutLivre" id="coutLivre" min="0.01" step="0.01" value="" >
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="Description">Description </label>
+                        <textarea class="form-control" id="descriptionLivre" name="descriptionLivre" rows="4" cols="50"></textarea>
+                    </div>
+                    <div class="mb-5">
+                        <div><label class="form-label" for="photoLivre">Photo</label></div>
+                        <input class="form-control-file" type="file" id="photoLivre" name="photoLivre">
+                    </div>
+                    <div class="mb-3">
+                        <button class="btn btn-primary">Création du livre</button>
+                        <button class="btn btn-danger">Annuler la réation</button>
+                    </div>
 
 
+                    
+                </div>
 
 
+            </section>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            <form action="" method="post">
-                <h1>Ajout de livre</h1>
-                <label for="Auteur">Auteur: </label>
-                <input type="text" name="auteurLivre" id="auteurLivre" value="">
-                <br>
-                <br>
-                <label for="Titre">Titre: </label>
-                <input type="text" name="titreLivre" id="titreLivre" value="">
-                <br>
-                <br>
-                <label for="DateParution">Date de parution: </label>
-                <input type="date" name="dateParution" id="dateParution" value="">
-                <br>
-                <br>
-                <label for="nbrCopies">Nombre de copies: </label>
-                <input type="text" name="nbrCopies" id="nbrCopies" value="">
-                <br>
-                <br>
-                <label for="MaisonEdition">Maison d'édition: </label>
-                <input type="text" name="maisonEdition" id="maisonEdition" value="">
-                <br>
-                <br>
-                <label for="ISBNLivre">ISBN </label>
-                <input type="text" name="isbnLivre" id="isbnLivre" value="" maxlength="7" minlength="7">
-                <br>
-                <br>
-                <label for="cout">Coût </label>
-                <input type="number" name="coutLivre" id="coutLivre" min="0.01" step="0.01" max="2500" value="">
-                <br>
-                <br>
-                <label for="Description">Description </label>
-                <textarea id="descriptionLivre" name="descriptionLivre" rows="4" cols="50"></textarea>
-                <br>
-                <br>
-                <label for="photo">Photo </label>
-                <input type="file" id="photoLivre" name="photoLivre" value="">
-                <br>
-                <br>
-
-
-                <input type="submit">
-
-
-
-
-
-            </form>
 
         </div>
         <%- include ('../views/partials/footer.ejs') %>
@@ -123,8 +102,43 @@
     }
 
     function rechercheLivre(){
-        
+        axios.post('/gestion/rechercheLivre', {                   
+                isbn: document.getElementById('isbn').value,
+            }).then(res=>{
+                if (res.data.message){
+                    var confirmation = confirm(res.data.message);
+                    if (confirmation){
+                        alert('Action ajouter livre')
+                        document.getElementById("sectionAjout").hidden =false
+                        document.getElementById('isbnLivre').value = document.getElementById('isbn').value
+                         
+                    }else{
+                        alert('Action annulé')
+                        document.getElementById('isbn').value=""
+                    }
+                }else{
+                    alert('Action modifier livre')
+                }
+
+            })
+            
     }
+
+
+    function uploadimg(){
+        const formData = new FormData();
+        const imagefile = document.querySelector('#file');
+        formData.append("image", imagefile.files[0]);
+        axios.post('upload_file', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })
+
+
+    }
+
+    
 
 
 

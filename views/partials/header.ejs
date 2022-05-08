@@ -33,14 +33,12 @@
                         <div class="nav-link">
                             <a href="/gestion">Gestion</a>
                             <ul class="dropdown-menu">
-                                <li><a href="/gestion/ajoutLivre">Ajouter un livre</a></li>
-                                <li><a href="/gestion/ModificationClient">Modifier l'informations du client</a></li>
                                 <li><a href="/gestion/Reservation">Réserver et Annuler les livres</a></li>
                                 <li><a href="/gestion/empruntretour">Emprunt et Retour</a></li>
-                                <li><a href="/gestion/Livre">Gestion du livre</a></li>
+                                <li><a href="/gestion/livres">Gestion du livre</a></li>
                                 <li><a href="/gestion/caisse">La caisse</a></li>
                                 <% if (loginedUser.Droit_id==99 ){ %>
-                                    <li><a href="/gestion/listUtilisateur">Gestion des employées</a></li>
+                                    <li><a href="/gestion/listUtilisateur">Gestion des utilisateurs</a></li>
                                     <% } %>
                             </ul>
                         </div>
