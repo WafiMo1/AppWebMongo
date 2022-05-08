@@ -1044,6 +1044,32 @@ app.post('/gestion/ajoutLivre', (req, res) => {
     }    
 });
 
+app.post('/gestion/updateLivre', (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', '*');
+    if (req.session.loginedUser == null) {
+        return res.send(JSON.stringify({ 'message': "Il faut se connecter pour utiliser cette fonction", 'code': 10 }));
+    }
+    if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {
+        Livres.findOneAndUpdate({ISBN: req.body.ISBN},{
+            Auteur: req.body.Auteur,
+            Titre: req.body.Titre,
+            DateParution: req.body.DateParution,
+            NbCopies: req.body.NbCopies,
+            NbDisponible: req.body.NbDisponible,
+            MaisonEdition: req.body.MaisonEdition,
+            Cout: req.body.Cout,
+            Description: req.body.Description,
+            Photo: req.body.Photo
+        },function (err, book) {
+            if (err) return console.error(err);
+            res.send(JSON.stringify({ 'message': "Le livre a été mise à jour avec succès" }));
+        });
+    }else{
+        return res.send(JSON.stringify({ 'message': "Vous n'avez pas le droit pour utiliser cette fonction", 'code': 10 }));
+    }    
+});
+
 //Ajax, upload image and return path
 app.post('/gestion/livre/photo', urlencodeParser, (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -1065,7 +1091,6 @@ app.post('/gestion/livre/photo', urlencodeParser, (req, res) => {
                     res.send(JSON.stringify({"path": "/Images/Livres/" + newName, 'message': "Image Updated"}))
                 });
             } else{
-                console.log("no image found");
                 res.send(JSON.stringify({"path": "/Images/ImgNotFound.png"}))
             }            
         });
@@ -1074,6 +1099,22 @@ app.post('/gestion/livre/photo', urlencodeParser, (req, res) => {
     }
 });
 
+
+app.post('/gestion/livre/delete', (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', '*');
+    if (req.session.loginedUser == null) {
+        return res.send(JSON.stringify({ 'message': "Il faut se connecter pour utiliser cette fonction", 'code': 10 }));
+    }
+    if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {
+        Livres.findOneAndDelete({ISBN: req.body.ISBN},function (err, book) {
+            if (err) return console.error(err);
+            res.send(JSON.stringify({ 'message': "Le livre a été supprimé" }));
+        });
+    }else{
+        return res.send(JSON.stringify({ 'message': "Vous n'avez pas le droit pour utiliser cette fonction", 'code': 10 }));
+    }    
+});
 
 
 app.get('/test', (req, res) => {
