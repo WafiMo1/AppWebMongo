@@ -1031,7 +1031,7 @@ app.post('/gestion/ajoutLivre', (req, res) => {
         Description: req.body.descriptionLivre,
     })
 
-    nouveauLivre.save(function (err, book) {
+    nouveauLivre.save(function (err, nouveauLivre) {
         res.json("Le livre a été ajouté avec succès")
         if (err) return console.error(err);
     });
