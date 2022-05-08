@@ -15,22 +15,22 @@
                         <div class="mb-3">
                             <label for="nom" class="form-label">Nom: </label>
                             <input type="text" class="form-control" name="nomModifie" id="nomModifie" value="<%= loginedUser.Nom %>" required aria-describedby="nomHelp">
-                            <div id="nomHelp" class="form-text">Cette partie ne peut pas être vide</div>
+                            <div id="nomHelp" class="form-text">Ce champ est obligatoire</div>
                         </div>
                         <div class="mb-3">
                             <label for="prenom" class="form-label">Prénom: </label>
                             <input type="text" class="form-control" name="prenomModifie" id="prenomModifie" value="<%= loginedUser.Prenom %>" required aria-describedby="prenomHelp">
-                            <div id="prenomHelp" class="form-text">Cette partie ne peut pas être vide</div>
+                            <div id="prenomHelp" class="form-text">Ce champ est obligatoire</div>
                         </div>
                         <div class="mb-3">
                             <label for="telephoneModifie" class="form-label">Téléphone: </label>
                             <input type="tel" class="form-control" name="telephoneModifie" id="telephoneModifie" value="<%= loginedUser.Telephone %>" pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}" required aria-describedby="telHelp">
-                            <div id="telHelp" class="form-text">Le téléphone doit être 10 chiffres</div>
+                            <div id="telHelp" class="form-text">Le téléphone doit contenir 10 chiffres</div>
                         </div>
                         <div class="mb-3">
-                            <label for="email" class="form-label">Téléphone: </label>
+                            <label for="email" class="form-label">Courriel: </label>
                             <input type="text" class="form-control"name="emailModifie" id="emailModifie" value="<%= loginedUser.Email %>" required aria-describedby="emailHelp">
-                            <div id="emailHelp" class="form-text">Cette partie ne peut pas être vide</div>
+                            <div id="emailHelp" class="form-text">Ce champ est obligatoire</div>
                         </div>
                         <div class="mb-3">
                         <input class="btn btn-sm btn-primary" type="submit" value="Mise à jour de vos informations">
@@ -48,7 +48,7 @@
                         </div>
                         <div class="mb-3 ">
                             <input type="button" class="btn btn-sm btn-primary" id="btnPhoto" value="Mis à jour votre photo de profil" onclick="submitPhoto()" aria-describedby="imgHelp">
-                            <div id="imgHelp" class="form-text">Note: Il faut vous déconnecter pour afficher la nouveau photo de profil pour le format JPG</div>
+                            <div id="imgHelp" class="form-text">Note: Il faut vous déconnecter pour afficher la nouvelle photo de profil pour le format JPG</div>
                         </div>
 
                     </form>
