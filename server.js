@@ -1018,24 +1018,60 @@ app.post('/gestion/rechercheLivre', (req, res) => {
 
 
 app.post('/gestion/ajoutLivre', (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', '*');
+    if (req.session.loginedUser == null) {
+        return res.send(JSON.stringify({ 'message': "Il faut se connecter pour utiliser cette fonction", 'code': 10 }));
+    }
+    if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {
+        Livres.create({
+            Auteur: req.body.Auteur,
+            Titre: req.body.Titre,
+            DateParution: req.body.DateParution,
+            NbCopies: req.body.NbCopies,
+            NbDisponible: req.body.NbDisponible,
+            MaisonEdition: req.body.MaisonEdition,
+            ISBN: req.body.ISBN,
+            Cout: req.body.Cout,
+            Description: req.body.Description,
+            Photo: req.body.Photo
+        },function (err, book) {
+            if (err) return console.error(err);
+            res.send(JSON.stringify({ 'message': "Le livre a été ajouté avec succès" }));
+        });
+    }else{
+        return res.send(JSON.stringify({ 'message': "Vous n'avez pas le droit pour utiliser cette fonction", 'code': 10 }));
+    }    
+});
 
-    var nouveauLivre = new Livres({
-        Auteur: req.body.auteurLivre,
-        Titre: req.body.titreLivre,
-        DateParution: req.body.dateParution,
-        NbCopies: req.body.nbrCopies,
-        NbDisponible: req.body.nbrCopies,
-        MaisonEdition: req.body.maisonEdition,
-        ISBN: req.body.isbnLivre,
-        Cout: req.body.coutLivre,
-        Description: req.body.descriptionLivre,
-    })
-
-    nouveauLivre.save(function (err, book) {
-        res.json("Le livre a été ajouté avec succès")
-        if (err) return console.error(err);
-    });
-
+//Ajax, upload image and return path
+app.post('/gestion/livre/photo', urlencodeParser, (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', '*');
+    if (req.session.loginedUser == null) {
+        return res.send(JSON.stringify({ 'message': "Il faut se connecter pour utiliser cette fonction", 'code': 10 }));
+    }
+    if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {
+        var uploadPhotoPath = "./public/Images/Livres/";
+        var form = new formidable.IncomingForm();
+        form.parse(req, function (err, fields, files) {
+            if (err) throw err
+            if (files.image){
+                var oldPath = files.image.filepath;
+                var newName = fields.isbn + path.extname(files.image.originalFilename);
+                var newPath = uploadPhotoPath + newName;
+                fs.rename(oldPath, newPath, function (err) {
+                    if (err) throw err;
+                    res.send(JSON.stringify({"path": "/Images/Livres/" + newName, 'message': "Image Updated"}))
+                });
+            } else{
+                console.log("no image found");
+                res.send(JSON.stringify({"path": "/Images/ImgNotFound.png"}))
+            }            
+        });
+    }else{
+        return res.send(JSON.stringify({ 'message': "Vous n'avez pas le droit pour utiliser cette fonction", 'code': 10 }));
+    }
 });
 
 

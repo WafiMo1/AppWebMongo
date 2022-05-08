@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/CSS/style.css">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <%- include ('../views/partials/header.ejs') %>
         <title>Ajout de livre</title>
 </head>
@@ -17,8 +18,14 @@
 
             <section class="pt-5">
                 <div class="container">
+                    <h1>Recherche un livre</h1>
+                </div>
+            </section>
+
+            <section class="p-3">
+                <div class="container">
                     <div class="mb-3">
-                        <h2>Recherche un livre</h2>
+                        
                         <label for="telClient" class="form-label">ISBN du Livre : </label>
                         <input class="form-control" type="text" id="isbn" name="isbn" placeholder="ISBN du Livre :"
                             onchange="isbnChange()" aria-describedby="isbnHelp" maxlength="13">
@@ -32,7 +39,7 @@
                 </div>
             </section>
 
-            <section class="p-5" id="sectionAjout">
+            <section class="p-5" id="sectionAjout" hidden>
                 <div class="container">
                     <div class="mb-3">
                         <h2>Ajout de livre</h2>
@@ -46,10 +53,8 @@
                         <input class="form-control" type="text" name="titreLivre" id="titreLivre" value="" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label" for="DateParution">Date de parution: </label>
-                        <input class="form-control" type="date" name="dateParution" id="dateParution" value="">
-                        <input class="form-control" type="number" min="1900" max="2099" step="1" value="2016">
-                        <input class="form-control" type="month" name="dateParution" id="dateParution" value="">                    
+                        <label class="form-label" for="dateParution">Date de parution: </label>
+                        <input class="form-control" type="number" id="dateParution" step="1">                 
                     </div>
                     <div class="mb-3">
                         <label class="form-label"for="nbrCopies">Nombre de copies: </label>
@@ -68,7 +73,7 @@
                         <input class="form-control" type="number" name="coutLivre" id="coutLivre" min="0.01" step="0.01" value="" >
                     </div>
                     <div class="mb-3">
-                        <label class="form-label" for="Description">Description </label>
+                        <label class="form-label" for="descriptionLivre">Description </label>
                         <textarea class="form-control" id="descriptionLivre" name="descriptionLivre" rows="4" cols="50"></textarea>
                     </div>
                     <div class="mb-5">
@@ -76,8 +81,8 @@
                         <input class="form-control-file" type="file" id="photoLivre" name="photoLivre">
                     </div>
                     <div class="mb-3">
-                        <button class="btn btn-primary">Création du livre</button>
-                        <button class="btn btn-danger">Annuler la réation</button>
+                        <button class="btn btn-primary" onclick="creationLivre()">Création du livre</button>
+                        <button class="btn btn-danger" onclick="location.reload()">Annuler la réation</button>
                     </div>
 
 
@@ -106,16 +111,18 @@
                 isbn: document.getElementById('isbn').value,
             }).then(res=>{
                 if (res.data.message){
-                    var confirmation = confirm(res.data.message);
-                    if (confirmation){
-                        alert('Action ajouter livre')
-                        document.getElementById("sectionAjout").hidden =false
-                        document.getElementById('isbnLivre').value = document.getElementById('isbn').value
-                         
+                    if (res.data.code == 10) {
+                        window.location = '/login'
                     }else{
-                        alert('Action annulé')
-                        document.getElementById('isbn').value=""
-                    }
+                        var confirmation = confirm(res.data.message);
+                        if (confirmation){
+                            document.getElementById("sectionAjout").hidden =false
+                            document.getElementById('isbnLivre').value = document.getElementById('isbn').value                          
+                        }else{
+                            alert('Action annulé')
+                            document.getElementById('isbn').value=""
+                        }
+                    }                                
                 }else{
                     alert('Action modifier livre')
                 }
@@ -125,17 +132,41 @@
     }
 
 
-    function uploadimg(){
+    function creationLivre(){       
+        //post img to server and get the path
         const formData = new FormData();
-        const imagefile = document.querySelector('#file');
+        const imagefile = document.getElementById('photoLivre');
         formData.append("image", imagefile.files[0]);
-        axios.post('upload_file', formData, {
+        formData.append('isbn', document.getElementById('isbnLivre').value);
+        axios.post('/gestion/livre/photo', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
+        }).then(res=>{
+            //code 10 for login
+            if (res.data.message) { alert(res.data.message)}
+            if (res.data.code == 10) {
+                window.location = '/login';
+            } else{
+                axios.post('/gestion/ajoutLivre', {
+                    Auteur: document.getElementById('auteurLivre').value.trim(),
+                    Titre: document.getElementById('titreLivre').value.trim(),
+                    DateParution: document.getElementById('dateParution').value,
+                    NbCopies: document.getElementById('nbrCopies').value,
+                    NbDisponible: document.getElementById('nbrCopies').value,
+                    MaisonEdition: document.getElementById('maisonEdition').value.trim(),
+                    ISBN: document.getElementById('isbnLivre').value,
+                    Cout: document.getElementById('coutLivre').value,
+                    Description: document.getElementById('descriptionLivre').value.trim(),
+                    Photo: res.data.path
+                }).then(res=>{
+                    alert(res.data.message)
+                    location.reload();
+                })
+
+            }
+            
         })
-
-
     }
 
     
