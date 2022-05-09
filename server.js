@@ -1140,6 +1140,17 @@ app.post('/gestion/livre/delete', (req, res) => {
     }    
 });
 
+app.get('/gestion/transaction', (req, res) => {
+    if (req.session.loginedUser) {
+        if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {//only for admin or staff
+            res.render('GestionTransaction', { loginedUser: req.session.loginedUser })
+        } else {
+            res.status(403).end("vous n'avez pas le droit")
+        }
+    } else {
+        res.redirect("/login")
+    }
+});
 
 app.get('/test', (req, res) => {
     res.render('test');

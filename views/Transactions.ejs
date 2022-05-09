@@ -24,7 +24,6 @@
                                             <th scope="col">MethodePaiement</th>        
                                             <th scope="col">Montant</th>
                                             <th scope="col">Action</th>
-                                            <th hidden>Discription Original</th>
                                        </tr>
                                      </thead>
                                      <tbody>
@@ -45,7 +44,6 @@
                                                 <td>
                                                     <button type="submit" class="btn btn-info text-white" id="btnAnnuler" onclick="generationPDF(this)">Voir la facture</button>
                                                 </td>
-                                                <td hidden><%=transaction.Commentaire%></td>
                                             </tr>
 
                                         <% }) %>
@@ -78,7 +76,7 @@
             var id = $(obj).parents('tr').children('td')[0].innerHTML
             var date = $(obj).parents('tr').children('td')[1].innerHTML.trim()
             var sujet = $(obj).parents('tr').children('td')[2].innerHTML
-            var description= $(obj).parents('tr').children('td')[7].innerHTML
+            var description= $(obj).parents('tr').children('td')[3].getElementsByTagName('pre')[0].innerHTML
             var methodePaiement= $(obj).parents('tr').children('td')[4].innerHTML
             var montant = $(obj).parents('tr').children('td')[5].innerHTML
 
