@@ -457,7 +457,7 @@ app.post('/annulerReservation', (req, res) => {
 
 app.get('/transactions', (req, res) => {
     if (!req.session.loginedUser) return res.redirect("/login")
-    Transactions.find({ Utilisateur_id: req.session.loginedUser._id }).sort({ DateReservation: 'desc' }).exec(function (err, transactions) {
+    Transactions.find({ Utilisateur_id: req.session.loginedUser._id }).sort({ DateTransaction: 'desc' }).exec(function (err, transactions) {
         if (err) throw (err)
             res.render("Transactions", { transactions: transactions, loginedUser: req.session.loginedUser })
     });
@@ -1140,10 +1140,27 @@ app.post('/gestion/livre/delete', (req, res) => {
     }    
 });
 
-app.get('/gestion/transaction', (req, res) => {
+app.all('/gestion/transaction', (req, res) => {
     if (req.session.loginedUser) {
         if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {//only for admin or staff
-            res.render('GestionTransaction', { loginedUser: req.session.loginedUser })
+            Utilisateurs.find({}, function(err, utilisateurs){
+               if(err) throw err;
+                Transactions.find({}).sort({ DateTransaction: 'desc' }).exec(function(err, transactions){
+                    if(err) throw err;
+                    var start, end
+                    if (req.body.start){
+                        start = req.body.start
+                    } else {
+                        start = new Date(0)
+                    }
+                    if (req.body.end){
+                        end = req.body.end
+                    } else {
+                        end = Date.now()
+                    }
+                    res.render('GestionTransaction', { loginedUser: req.session.loginedUser, utilisateurs: utilisateurs, transactions: transactions, start: start, end: end})
+                })
+            }); 
         } else {
             res.status(403).end("vous n'avez pas le droit")
         }
@@ -1151,6 +1168,9 @@ app.get('/gestion/transaction', (req, res) => {
         res.redirect("/login")
     }
 });
+
+
+
 
 app.get('/test', (req, res) => {
     res.render('test');
