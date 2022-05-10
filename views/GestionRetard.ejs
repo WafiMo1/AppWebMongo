@@ -80,7 +80,7 @@
                                                                                         
                                                 <% }) %>
                                                 <% if (compteur == 0){ %>
-                                                    <td>utilisateur supprimé</td>
+                                                    <td><strong>Utilisateur supprimé</strong></td>
                                                 <% } %>
                                                 <td hidden><%= Math.floor((now - emprunt.DateRetourPrevu)/1000/60/60/24*0.5)%></td>
                                                 <td><%= emprunt.DatePret.toDateString() %></td>
@@ -114,7 +114,6 @@
                 var livre_Titre = $(obj).parents('tr').children('td')[4].innerHTML
                 var livre_Auteur = $(obj).parents('tr').children('td')[5].innerHTML
                 var livre_Cout = $(obj).parents('tr').children('td')[6].innerHTML
-                var livre_NbDisponible = $(obj).parents('tr').children('td')[7].innerHTML
                 var client_id = $(obj).parents('tr').children('td')[8].innerHTML
                 var client_Solde = $(obj).parents('tr').children('td')[9].innerHTML
                 var client_NbPret = $(obj).parents('tr').children('td')[10].innerHTML
@@ -126,7 +125,6 @@
                     livre_Titre: livre_Titre,
                     livre_Auteur: livre_Auteur,
                     livre_Cout: livre_Cout,
-                    livre_NbDisponible: livre_NbDisponible,
                     client_id:  client_id,
                     client_Solde: client_Solde,
                     client_NbPret: client_NbPret,
