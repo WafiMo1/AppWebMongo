@@ -81,6 +81,37 @@
                                     </div>                            
                                 </div>
                             </div>
+
+                            <div class="col-md-6">
+                                <div class="card bg-secondary text-light">
+                                    <div class="card-body text-center">
+                                        <h4 class="card-title">
+                                            Gestion transaction
+                                        </h4>
+                                        <div class="card-text">
+                                            Cette page permet de modifier les informations du client en cherchant par leur numéro de téléphone
+                                        </div>
+                                        <a href="/gestion/transaction" class="btn btn-primary btn-lg mt-2">Information</a>
+                                    </div>                            
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="card bg-secondary text-light">
+                                    <div class="card-body text-center">
+                                        <h4 class="card-title">
+                                            Livres en retard de plus que deux semaines
+                                        </h4>
+                                        <div class="card-text">
+                                            Cette page permet de traiter les livres en retard de plus que deux semaines comme des livres perdus
+                                        </div>
+                                        <a href="/gestion/retard" class="btn btn-primary btn-lg mt-2">Retard</a>
+                                    </div>                            
+                                </div>
+                            </div> 
+
+                            
+                            
                             <% if (loginedUser.Droit_id==99 ){ %>
                             <div class="col-md-6">
                                 <div class="card bg-secondary text-light">
@@ -95,20 +126,6 @@
                                     </div>                            
                                 </div>
                             </div>
-
-                            <!-- <div class="col-md-6">
-                                <div class="card bg-secondary text-light">
-                                    <div class="card-body text-center">
-                                        <h4 class="card-title">
-                                            Gestion des droits
-                                        </h4>
-                                        <div class="card-text">
-                                            Cette page permet de modifier les informations du client en cherchant par leur numéro de téléphone
-                                        </div>
-                                        <a href="#" class="btn btn-primary btn-lg mt-2">Information</a>
-                                    </div>                            
-                                </div>
-                            </div> -->
                             <% } %>
                         </div>
                     </div>

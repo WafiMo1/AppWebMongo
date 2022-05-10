@@ -457,7 +457,7 @@ app.post('/annulerReservation', (req, res) => {
 
 app.get('/transactions', (req, res) => {
     if (!req.session.loginedUser) return res.redirect("/login")
-    Transactions.find({ Utilisateur_id: req.session.loginedUser._id }).sort({ DateReservation: 'desc' }).exec(function (err, transactions) {
+    Transactions.find({ Utilisateur_id: req.session.loginedUser._id }).sort({ DateTransaction: 'desc' }).exec(function (err, transactions) {
         if (err) throw (err)
             res.render("Transactions", { transactions: transactions, loginedUser: req.session.loginedUser })
     });
@@ -736,6 +736,76 @@ app.post('/gestion/empruntretour', async (req, res) => {
         return res.redirect("/login")
     }
 })
+
+app.get('/gestion/retard', async (req, res) => {
+    if (req.session.loginedUser) {
+        if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {
+            Utilisateurs.find({}, function (err, utilisateurs) {
+                if (err) throw err;
+                Livres.find({}, function (err, livres) {
+                    if (err) throw err;
+                    Emprunts.find({}, function (err, emprunts) {
+                        if (err) throw err;
+                        res.render('GestionRetard', { loginedUser: req.session.loginedUser, utilisateurs: utilisateurs, livres: livres,  emprunts: emprunts, now: new Date(Date.now())});
+                    })
+                })
+            })
+        } else {
+            res.status(403).end("vous n'avez pas le droit")
+        }
+    } else {
+        res.redirect("/login")
+    }
+})
+
+app.post('/gestion/perdu', async (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    if (req.session.loginedUser) {
+        if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {
+            //calcule frais du retard
+            var fraisRetard = req.body.frais_Retard
+            if (fraisRetard > 10) {fraisRetard = 10}
+            Transactions.create({
+                DateTransaction: new Date(Date.now()),
+                MethodePaiement: null,
+                Cout: -fraisRetard,
+                Utilisateur_id: req.body.client_id,
+                EmployeeId: req.session.loginedUser._id,
+                Titre: "Retard",
+                Commentaire: "Retard du livre: " + req.body.livre_Titre + ", " + req.body.livre_Auteur + ", " + req.body.livre_ISBN
+            }, function (err) { if (err) throw err })
+            //charger le prix du livre perdu
+            Transactions.create({
+                DateTransaction: new Date(Date.now()),
+                MethodePaiement: null,
+                Cout: (-req.body.livre_Cout),
+                Utilisateur_id: req.body.client_id,
+                EmployeeId: req.session.loginedUser._id,
+                Titre: "Perte",
+                Commentaire: "Pert du livre: " + req.body.livre_Titre + ", " + req.body.livre_Auteur + ", " + req.body.livre_ISBN
+            }, function (err) { if (err) throw err })
+            //update utilisateur 
+            Utilisateurs.findByIdAndUpdate(req.body.client_id,{
+                Solde: (req.body.client_Solde - req.body.livre_Cout -fraisRetard),
+                NbPret: (req.body.client_NbPret - 1)
+            }, function (err) {
+                if (err) throw err;
+            })
+            //update inv livre
+            Livres.findByIdAndUpdate(req.body.livre_id,{
+                NbDisponible: (livre_NbDisponible + 1)
+            }, function (err) {
+                if (err) throw err;
+            })
+            res.send(JSON.stringify({ 'message': 'Livre perdu traité' }));
+        } else {
+            res.status(403).end("vous n'avez pas le droit")
+        }
+    } else {
+        res.redirect("/login")
+    }
+})
+
 
 //ajax axios
 app.post('/gestion/findCustomer', (req, res) => {
@@ -1139,6 +1209,54 @@ app.post('/gestion/livre/delete', (req, res) => {
         return res.send(JSON.stringify({ 'message': "Vous n'avez pas le droit pour utiliser cette fonction", 'code': 10 }));
     }    
 });
+
+app.all('/gestion/transaction', (req, res) => {
+    if (req.session.loginedUser) {
+        if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {//only for admin or staff
+            var start, end
+            if (req.body.start){
+                start = new Date(req.body.start).getTime()
+            } else {
+                start = new Date(0).getTime()
+            }
+            if (req.body.end){
+                end = new Date(req.body.end).getTime()
+            } else {
+                end = new Date (Date.now()).getTime()
+            }
+            if (req.body.tel){
+                Utilisateurs.find({}, function(err, utilisateurs){
+                    if(err) throw err;
+                    Utilisateurs.findOne({Telephone: req.body.tel}, function(err, client){
+                        if(err) throw err;
+                        if (client){
+                            Transactions.find({Utilisateur_id: client._id}).sort({ DateTransaction: 'desc' }).exec(function(err, transactions){
+                                if(err) throw err;
+                                res.render('GestionTransaction', { loginedUser: req.session.loginedUser, utilisateurs: utilisateurs, transactions: transactions, start: start, end: end})
+                            })
+                        } else {
+                            res.render('GestionTransaction', { loginedUser: req.session.loginedUser, utilisateurs: utilisateurs, transactions: null, start: start, end: end})
+                        }    
+                    })
+                 });
+            } else{
+                Utilisateurs.find({}, function(err, utilisateurs){
+                    if(err) throw err;
+                     Transactions.find({}).sort({ DateTransaction: 'desc' }).exec(function(err, transactions){
+                         if(err) throw err;
+                         res.render('GestionTransaction', { loginedUser: req.session.loginedUser, utilisateurs: utilisateurs, transactions: transactions, start: start, end: end})
+                     })
+                 });
+            }
+        } else {
+            res.status(403).end("vous n'avez pas le droit")
+        }
+    } else {
+        res.redirect("/login")
+    }
+});
+
+
 
 
 app.get('/test', (req, res) => {

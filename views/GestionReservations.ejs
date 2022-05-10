@@ -83,6 +83,11 @@
             document.getElementById('ListReservationClient').disabled = true;
             document.getElementById('btnReserver').disabled = true;
         }
+        document.getElementById('telClient').onkeypress = function (event){
+            if(event.which === 13){
+                rechercheClient();
+            }
+        }
 
         function rechercheClient(){
             document.getElementById('ListReservationClient').disabled = false;
