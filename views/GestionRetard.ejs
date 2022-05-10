@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="/CSS/style.css">
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <%- include ('../views/partials/header.ejs') %>
+        <title>Livres en retard de plus que deux semaines</title>
+    </head>
+    <header>
+        
+    </header>
+
+    <body>
+        <div class="box">
+            <div class="section">
+                <section class="pt-5">
+                    <div class="container">
+                        <h1 id="title" class="fw">Livres en retard de plus que deux semaines</h1>
+                    </div>           
+                </section>
+
+                <section class="p-3">
+                    <div class="container">
+                        <table class="table table-hover">
+                            <thead>
+                              <tr>
+                                <th scope="col" hidden>Emprunt ID</th>
+                                <th scope="col" hidden>Livre ID</th>
+                                <th scope="col">ISBN</th>
+                                <th scope="col">Info Livre</th>
+                                <th scope="col" hidden>Livre Titre</th>
+                                <th scope="col" hidden>Livre Auteur</th>                                
+                                <th scope="col" hidden>Livre coût</th>
+                                <th scope="col" hidden>NbDisponible</th>
+                                <th scope="col" hidden>Client ID</th>
+                                <th scope="col" hidden>Client Solde</th>
+                                <th scope="col" hidden>Client NbPret</th>
+                                <th scope="col">Info Client</th>
+                                <th scope="col" hidden>Frais de retard</th>  
+                                <th scope="col">Date de pret</th>                       
+                                <th scope="col">Date de retour prévu</th>
+                                <th scope="col">Action</th>                                
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <% emprunts.forEach(emprunt => { %>
+                                    <% if (!emprunt.DateRetour) { %>
+                                        <% if (now - emprunt.DateRetourPrevu >= 1000*60*60*24*14) { %>
+                                            <tr>
+                                                <td hidden><%= emprunt._id %></td>
+
+                                                <% livres.forEach(livre =>{ %>
+                                                    <% if (livre._id.toString() == emprunt.Livre_id.toString()){ %>
+                                                        <td hidden><%= livre._id %></td>
+                                                        <td><%=livre.ISBN%></td>
+                                                        <td>
+                                                            <span style="font-weight:bold;"><%=livre.Titre%></span><br/>
+                                                            <span style="font-size:15px;"><%=livre.Auteur%></span>
+                                                        </td>
+                                                        <td hidden><%= livre.Titre %></td>
+                                                        <td hidden><%= livre.Auteur %></td>
+                                                        <td hidden><%= livre.Cout %></td>
+                                                        <td hidden><%= livre.NbDisponible %></td>
+                                                    <% } %>
+                                                <% }) %>
+
+                                                <%var compteur =  0 %>  
+                                                <% utilisateurs.forEach(utilisateur =>  { %>                              
+                                                    <% if(emprunt.Utilisateur_id.toString() == utilisateur._id.toString() ){ %>
+                                                        <% compteur++ %>
+                                                        <td hidden><%= utilisateur._id %></td>
+                                                        <td hidden><%= utilisateur.Solde %></td>
+                                                        <td hidden><%= utilisateur.NbPret %></td>
+                                                        <td>
+                                                            <span style="font-weight:bold;"><%=utilisateur.Nom%>, <%=utilisateur.Prenom%></span><br/>
+                                                            <span style="font-size:15px;"><%=utilisateur.Telephone%></span>
+                                                        </td>
+                                                    <% } %>
+                                                                                        
+                                                <% }) %>
+                                                <% if (compteur == 0){ %>
+                                                    <td>utilisateur supprimé</td>
+                                                <% } %>
+                                                <td hidden><%= Math.floor((now - emprunt.DateRetourPrevu)/1000/60/60/24*0.5)%></td>
+                                                <td><%= emprunt.DatePret.toDateString() %></td>
+                                                <td><%= emprunt.DateRetourPrevu.toDateString() %></td>                                        
+                                                <td>
+                                                    <button class="btn btn-info text-white" onclick="perdu(this)">Perdu</button>
+                                                </td>
+                                            </tr>
+                                        <% } %>
+                                    <% } %>                               
+                                <% }) %>
+                              
+                            </tbody>
+                          </table>
+        
+                    </div>           
+                </section>
+            </div>
+            <%- include ('../views/partials/footer.ejs') %>
+        </div>
+    </body>
+    <script>
+
+        axios.defaults.baseURL = 'http://localhost:4000' 
+        function perdu(obj){
+            var confirmation = confirm("Êtes-vous sûr de marquer cette livre perdu?");
+            if (confirmation){
+                var emprunt_id = $(obj).parents('tr').children('td')[0].innerHTML
+                var livre_id = $(obj).parents('tr').children('td')[1].innerHTML
+                var livre_ISBN = $(obj).parents('tr').children('td')[2].innerHTML
+                var livre_Titre = $(obj).parents('tr').children('td')[4].innerHTML
+                var livre_Auteur = $(obj).parents('tr').children('td')[5].innerHTML
+                var livre_Cout = $(obj).parents('tr').children('td')[6].innerHTML
+                var livre_NbDisponible = $(obj).parents('tr').children('td')[7].innerHTML
+                var client_id = $(obj).parents('tr').children('td')[8].innerHTML
+                var client_Solde = $(obj).parents('tr').children('td')[9].innerHTML
+                var client_NbPret = $(obj).parents('tr').children('td')[10].innerHTML
+                var frais_Retard = $(obj).parents('tr').children('td')[12].innerHTML
+                axios.post('/gestion/perdu', {                   
+                    emprunt_id: emprunt_id,
+                    livre_id:   livre_id,
+                    livre_ISBN: livre_ISBN,
+                    livre_Titre: livre_Titre,
+                    livre_Auteur: livre_Auteur,
+                    livre_Cout: livre_Cout,
+                    livre_NbDisponible: livre_NbDisponible,
+                    client_id:  client_id,
+                    client_Solde: client_Solde,
+                    client_NbPret: client_NbPret,
+                    frais_Retard: frais_Retard
+                }).then(res=>{
+                    if (res.data.message) {alert(res.data.message)};                   
+                    location.reload();
+                })
+            } else{
+                alert('Action annulé')
+            }
+        }     
+       
+    </script>
+
+</html>
