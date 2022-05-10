@@ -110,6 +110,12 @@
 <script>
     axios.defaults.baseURL = 'http://localhost:4000'
 
+    document.getElementById('isbn').onkeypress = function (event){
+            if(event.which === 13){
+                rechercheLivre();
+            }
+        }
+
 
     function rechercheLivre(){
         if(!document.getElementById('isbn').value){

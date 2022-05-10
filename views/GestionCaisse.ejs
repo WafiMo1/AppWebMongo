@@ -117,6 +117,12 @@
            document.getElementById('btnRechargerFacturer').disabled = true;
         }
 
+        document.getElementById('telClient').onkeypress = function (event){
+            if(event.which === 13){
+                rechercheClient();
+            }
+        }
+
         function rechercheClient(){
            document.getElementById('btnRechargerFacturer').disabled = false;
            if (document.getElementById("telClient").value.trim() != ""){                         
