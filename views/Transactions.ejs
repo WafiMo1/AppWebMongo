@@ -27,16 +27,12 @@
                                        </tr>
                                      </thead>
                                      <tbody>
-                                        <% transactions.forEach(transaction => { %>
-                                            
+                                        <% transactions.forEach(transaction => { %>                                
                                             <tr align="center">
                                                 <td hidden><%=transaction._id%></td>
                                                 <td>
-                                                    <%=transaction.DateTransaction.getDate()%>/<%=transaction.DateTransaction.getMonth()+1 %>/<%=transaction.DateTransaction.getFullYear() %>
-                            
+                                                    <%=transaction.DateTransaction.getDate()%>/<%=transaction.DateTransaction.getMonth()+1 %>/<%=transaction.DateTransaction.getFullYear() %>                     
                                                 </td>
-
-
                                                 <td><%=transaction.Titre %></td>
                                                 <td><pre style="font-size:16px; font-family: Arial, Helvetica, sans-serif;"><%=transaction.Commentaire%></pre></td>
                                                 <td><%=transaction.MethodePaiement %></td>
@@ -45,7 +41,6 @@
                                                     <button type="submit" class="btn btn-info text-white" id="btnAnnuler" onclick="generationPDF(this)">Voir la facture</button>
                                                 </td>
                                             </tr>
-
                                         <% }) %>
                                      </tbody>
                             </table> 
