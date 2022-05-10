@@ -61,10 +61,11 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
-// var loginedUser = null;
+app.listen(port, function (err) {
+    if (err) console.log(err);
+    console.log("Server listening on PORT", port);
 
-
-
+});
 
 //page Acceuil
 app.get('/', (req, res) => {
@@ -79,7 +80,6 @@ app.get('/login', async (req, res) => {
 
 app.post('/login', async (req, res) => {
     const dataReceived = req.body
-    //console.log(dataReceived);
 
     //register
     if (dataReceived.option == "signUp") {
@@ -129,7 +129,6 @@ app.post('/login', async (req, res) => {
         }, function (err, newUser) {
             if (err) throw err;
             req.session.loginedUser = newUser
-            console.log('Utilisateur cree')
             res.redirect('/');
         })
     }//End of register  
@@ -191,6 +190,7 @@ app.get('/logout', (req, res) => {
 // DÉBUT DE LA PARTIE DE MOHAMED WAFI
 //TROUVER LE PROFIL D'UN USER ET AFFICHER LES EMPRUNTS- MOHAMED WAFI
 
+// ce code permet d'afficher les historique des emprunts de l'utilisateur connecté
 app.get('/HistoriqueDesEmprunts', (req, res) => {
     if (req.session.loginedUser) {
         Emprunts.find({ Utilisateur_id: req.session.loginedUser }).sort({ DatePret: 'desc' }).exec(function (err, livresEmpruntes) {
@@ -210,6 +210,7 @@ app.get('/HistoriqueDesEmprunts', (req, res) => {
     }
 })
 
+// affiche le profil de l'utilisateur connecté
 app.get('/profil', (req, res) => {
     if (req.session.loginedUser) {
         res.render('Profil.ejs', { loginedUser: req.session.loginedUser })
@@ -220,11 +221,8 @@ app.get('/profil', (req, res) => {
 });
 
 
-//MISE À JOUR DES INFORMATIONS- MOHAMED WAFI
+//MISE À JOUR DES INFORMATIONS DE L'UTILISATEUR CONNECTÉ- MOHAMED WAFI
 app.get('/Modifier', (req, res) => {
-    //Correspond à l'ID de l'utilisateur connecté
-    // idUserActuel = loginedUser._id;
-
     if (req.session.loginedUser) {
         res.render('ModifierProfil.ejs', { loginedUser: req.session.loginedUser })
     } else {
@@ -233,10 +231,9 @@ app.get('/Modifier', (req, res) => {
 
 });
 
+//Lorsque le client finit de remplir le formulaire, il fait un post. Ce post va prendre les informations que le client a saisi
+//puis faire la mise à jour du compte utilisateur dans la BD mongo
 app.post('/Modifier', urlencodeParser, (req, res) => {
-    //Lorsque le client finit de remplir le formulaire, il fait un post. Ce post va prendre les informations que le client a saisi
-    //puis faire la mise à jour du compte utilisateur dans la BD mongo
-
     Utilisateurs.findOneAndUpdate({ _id: req.session.loginedUser }, {
         Nom: req.body.nomModifie,
         Prenom: req.body.prenomModifie,
@@ -245,12 +242,10 @@ app.post('/Modifier', urlencodeParser, (req, res) => {
     }, function (err, result) {
         if (err) { console(err) }
     });
-    console.log("Utilisateur mis à jour")
     res.redirect('/')
-
 });
 
-
+//Modifier image de profil
 app.post('/ModifierPhotoProfil', urlencodeParser, (req, res) => {
     var uploadProfilPhotoPath = "./public/Images/Profil/";
     var form = new formidable.IncomingForm();
@@ -261,7 +256,6 @@ app.post('/ModifierPhotoProfil', urlencodeParser, (req, res) => {
         var newPath = uploadProfilPhotoPath + newName;
         fs.rename(oldPath, newPath, function (err) {
             if (err) throw err;
-            console.log("photo updated");
             //update database
             Utilisateurs.findOneAndUpdate({ _id: req.session.loginedUser }, {
                 Photo: "/Images/Profil/" + newName
@@ -278,6 +272,7 @@ app.get('/ModifierMotDePasse', (req, res) => {
     res.render('ModifierMotDePasse', { loginedUser: req.session.loginedUser })
 });
 
+//Modification du mot de passe
 app.post('/ModifierMotDePasse', urlencodeParser, (req, res) => {
     //Ce bout de code va permettre de savoir si le mot de passe "ancien" saisi par le client est bel
     //et bien celui du user connecté
@@ -285,93 +280,43 @@ app.post('/ModifierMotDePasse', urlencodeParser, (req, res) => {
         req.body.ancienMdp,
         req.session.loginedUser.Password
     )
-    console.log("Voici l'ancien mot de passe du user" + req.session.loginedUser.Password);
     if (ancienMotDepasseSaisi) {
-        console.log("Le mdp saisi est bel et bien l'ancien")
         if (req.body.nvxMdp == req.body.nvxMdpDeuxiemeFois) {
-            console.log("les deux nouveaux mots de passe concordent ");
-
-
             Utilisateurs.findOneAndUpdate({ _id: req.session.loginedUser._id }, {
                 Password: req.body.nvxMdp
             }, function (err, result) {
                 if (err) { console(err) }
             });
+            return res.send(JSON.stringify({ 'message': "le mot de passe a été mis à jour", 'code': 20 }))
 
-            console.log("le mot de passe a été mis à jour")
-            console.log("Nouveau mot de passe : " + req.session.loginedUser.Password);
-
-            res.json("Le mot de passe a été mis à jour")
         } else if (req.body.nvxMdp != req.body.nvxMdpDeuxiemeFois) {
-            console.log("les deux nouveaux mots de passe ne sont pas les mêmes ");
+            return res.send(JSON.stringify({ 'message': "les deux nouveaux mots de passe ne sont pas les mêmes " }))
         }
 
     } else if (!ancienMotDepasseSaisi) {
-        res.redirect('ModifierMotDePasse');
-        console.log("Le mdp saisi n'est pas l'ancien");
+        return res.send(JSON.stringify({ 'message': "Le mdp saisi n'est pas l'ancien" }))
     }
 
 });
 
 // FIN DE LA PARTIE DE MOHAMED WAFI
+// ce code permet d'afficher tout les livres dans la bibliotheque
 app.get('/recherche', (req, res) => {
     Livres.find({}, function (err, livres) {
-        try {
-            //console.log("Livre:", livres);
-            res.render("Recherche", { livresTab: livres, loginedUser: req.session.loginedUser })
-        } catch (err) {
-            console.log(err);
-        }
+        if (err) throw err;
+        res.render("Recherche", { livresTab: livres, loginedUser: req.session.loginedUser })
     });
 });
 
+// ce code permet d'afficher tout les livres recherchés dans la bibliotheque
 app.post('/recherche', async (req, res) => {
-    //Livres.find({Titre: {$regex: recherche}}, function(err,livres){
     Livres.find({ Titre: new RegExp(req.body.SearchInput, "i") }, function (err, livres) {
         if (err) throw err;
-        console.log(livres)
-        res.render("Recherche", { livresTab: livres, loginedUser: req.session.loginedUser })
-    });
-});//end of post
-
-/* app.post('/recherche', async (req, res) => {
-    var recherche =  {$regex:req.body.SearchInput};
-     Titre.toLowerCase(); 
-    //Titre = Titre.toLowerCase();
-    //recherche = recherche.toLowerCase();
-//Livres.find({Titre: {$regex : {$regex:req.body.SearchInput} }}, function(err,livres){
-    Livres.find({Titre: {$regex:recherche}}, function(err,livres){
-        try{
-             if(Livres.Titre.localeCompare(recherche, { sensitivity: 'accent' }))
-            { 
-            console.log(livres)
-            res.render("Recherche", {livresTab:livres})
-             } 
-        }catch(err){
-            console.log(err);
-        }
-    });
-   
-   
-});//end of post */
-
-
-
-app.get('/HistoriqueDesEmprunts', (req, res) => {
-
-    res.render('HistoriqueEmprunts');
-});
-
-
-app.get('/recherche', (req, res) => {
-
-    Livres.find({}, function (err, livres) {
-        if (err) throw err;
         res.render("Recherche", { livresTab: livres, loginedUser: req.session.loginedUser })
     });
 });
 
-//livre
+//affiche les info d'un livre avec le isbn
 app.get('/livres/:isbn', (req, res) => {
     Livres.find({ ISBN: req.params.isbn }, function (err, donneesLivre) {
         if (err) throw err;
@@ -379,7 +324,7 @@ app.get('/livres/:isbn', (req, res) => {
     });
 });
 
-
+// reserver un livre a partir de la page du livre
 app.post('/livres/:isbn', (req, res) => {
     if (req.session.loginedUser == null) {
         return res.send(JSON.stringify({ 'message': "Il faut se connecter pour utiliser cette fonction", 'code': 10 }));
@@ -408,7 +353,6 @@ app.post('/livres/:isbn', (req, res) => {
                         livreReservee.save(function (err) {
                             if (err) console.log(err)
                             return res.send(JSON.stringify({ 'message': "Le livre: " + livre.Titre + " a ete reserve par l'user " + req.session.loginedUser.Nom }));
-                            //console.log("Le livre: " + req.body.livre_Titre + " a ete reserve par l'user " + loginedUser.Nom)
                         });
                         Livres.findByIdAndUpdate(livre._id, { NbDisponible: nbDisponible - 1 },
                             function (err, livre) {
@@ -417,7 +361,6 @@ app.post('/livres/:isbn', (req, res) => {
                                 }
                             })
                     } else return res.send(JSON.stringify({ 'message': "Le livre: " + livre.Titre + " ne peut pas etre reserve" }));
-                    //else console.log("Le livre: " + req.body.livre_Titre + " ne peut pas etre reserve")
                 })
             }
         })
@@ -425,6 +368,7 @@ app.post('/livres/:isbn', (req, res) => {
 });
 
 
+// montre la reservation fait par l'utilisateur connecté
 app.get('/reservations', (req, res) => {
     if (!req.session.loginedUser) return res.redirect("/login")
     Reservations.find({ Utilisateur_id: req.session.loginedUser._id }).sort({ DateReservation: 'desc' }).exec(function (err, lesRes) {
@@ -436,37 +380,37 @@ app.get('/reservations', (req, res) => {
     });
 });
 
+// annule un reservation choisi par l'utilisateur connecté
 app.post('/annulerReservation', (req, res) => {
     if (!req.session.loginedUser) return res.redirect("/login")
     else {
-
         Reservations.findOneAndDelete({ Livre_id: req.body.livre_id, Utilisateur_id: req.body.user_id },
             function (err, livre) {
                 if (err) console.log(err)
-                console.log("La reservation pour le livre " + req.body.livre_titre + " a ete annuler par l'user " + req.session.loginedUser.Nom);
-
                 Livres.findByIdAndUpdate(req.body.livre_id, { NbDisponible: parseInt(req.body.livre_NbDisponible) + 1 },
                     function (err, livre) {
                         if (err) console.log(err)
-                        else console.log("Le nombre de copies disponible pour le livre " + req.body.livre_titre + " a ete mise a jour par l'user " + req.session.loginedUser.Nom);
                     })
             })
         res.redirect(req.headers.referer)
     }
 });
 
+// permet d'afficher les transaction de l'utilisateur connecté et de le telecharger la facture en format pdf
 app.get('/transactions', (req, res) => {
     if (!req.session.loginedUser) return res.redirect("/login")
     Transactions.find({ Utilisateur_id: req.session.loginedUser._id }).sort({ DateTransaction: 'desc' }).exec(function (err, transactions) {
         if (err) throw (err)
-            res.render("Transactions", { transactions: transactions, loginedUser: req.session.loginedUser })
+        res.render("Transactions", { transactions: transactions, loginedUser: req.session.loginedUser })
     });
 });
 
 
+// *** TOUT LES FONCTIONNALITÉS DANS LA PARTIE QUI SUIT ET QUI CONTIENT LE MOT GESTION ***
+// *** PEUT SEULEMENT ETRE EFFECTUÉ PAR UN ADMIN OU UN EMPLOYÉES *************************
 
 
-//page gestion
+//affiche la page de gestion et les fonctionnalité qui vient avec
 app.get('/gestion', async (req, res) => {
     if (req.session.loginedUser) {
         if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {//only for admin or staff
@@ -477,37 +421,9 @@ app.get('/gestion', async (req, res) => {
     } else {
         res.redirect("/login")
     }
-
-
-
-
-
-    // console.log(req.signedCookies.ID)
-    // Utilisateurs.findById(req.signedCookies.ID, function (err, utilisateur) {
-    //     if (err) throw err;
-    //     if (utilisateur != null) {
-    //         if (utilisateur.Droit_id == 99 || utilisateur.Droit_id == 1) {//only for admin or staff
-    //             res.render('Gestion', { loginedUser: utilisateur });
-    //         } else {
-    //             res.status(403).end("vous n'avez pas le droit")
-    //         }
-    //     } else {
-    //         res.redirect("/login")
-    //     }
-    // })
-
-    // if (loginedUser != null) {
-    //     if (loginedUser.Droit_id == 99 || loginedUser.Droit_id == 1) {//only for admin or staff
-    //         res.render('Gestion', { loginedUser: loginedUser });
-    //     } else {
-    //         res.status(403).end("vous n'avez pas le droit")
-    //     }
-    // } else {
-    //     res.redirect("/login")
-    // }
 });
 
-//emprunt du livre
+// affiche la page d'emprunt d'un livre
 app.get('/gestion/empruntretour', (req, res) => {
     if (req.session.loginedUser) {
         if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {//only for admin or staff
@@ -520,30 +436,18 @@ app.get('/gestion/empruntretour', (req, res) => {
     }
 })
 
+// effectue l'emprunt, le retour et la perte d'un livre
+// par la suite, si necessaire il le charge au client
+
 app.post('/gestion/empruntretour', async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Headers', '*');
     if (req.session.loginedUser) {
         if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {//only for admin or staff
-            // if (req.body.option == "RechercheClient") {//button clicked = RechercheClient
-            //     Utilisateurs.find({ Telephone: req.body.telClient }, function (err, client) {
-            //         if (err) throw err;
-            //         Emprunts.find({ Utilisateur_id: client[0]._id }, function (err, historique) {
-            //             if (err) throw err;
-            //             Livres.find({}, function (err, livres) {
-            //                 if (err) throw err;
-            //                 res.render('EmpruntRetour', { loginedUser: req.session.loginedUser, client: client, emprunts: historique, livres: livres })
-            //             })
-            //         })
-            //     });
-            // }
-
-            //if (req.body.option == "EmpruntRetour") {//button clicked = EmpruntLivre
             Livres.findOne({ ISBN: req.body.isbnLivre }, function (err, livre) {
                 if (err) throw err;
                 if (livre == null) {
                     return res.send(JSON.stringify({ 'message': 'Livre non existe' }));
-                    //return res.status(403).end("Livre non existe")
                 } else {
                     Emprunts.find({
                         Livre_id: livre._id,
@@ -557,55 +461,49 @@ app.post('/gestion/empruntretour', async (req, res) => {
                                     islivreRetour = false;
                                 }
                             })
-                            if (!islivreRetour) {//user already borrowed this book
-                                //return res.status(403).end("user already borrowed this book")
-                                return res.send(JSON.stringify({ 'message': 'user already borrowed this book' }));
+                            if (!islivreRetour) {
+                                return res.send(JSON.stringify({ 'message': 'le livre a déjà été emorunté par ce client' }));
                             } else {
                                 Utilisateurs.findOne({ _id: req.body.clientEmprunt }, function (err, utilisateur) {
                                     if (err) throw err;
                                     if (utilisateur.NbPret >= utilisateur.MaxPret) {
-                                        //return res.status(403).end("client attend au maximun du pret ")
-                                        return res.send(JSON.stringify({ 'message': 'client attend au maximun du pret' }));
+                                        return res.send(JSON.stringify({ 'message': 'le client à déjà atteint le nombre de prêt maximal' }));
                                     } else {
                                         //mis a jour le nombre de livre
                                         var livreNbDisponible = livre.NbDisponible;
 
-                                        //verify if the book is already in reservation
+                                        //verfie si le livre est deja reservé
                                         Reservations.findOneAndDelete({
                                             Livre_id: livre._id,
                                             Utilisateur_id: req.body.clientEmprunt
                                         }, function (err) {
                                             if (err) throw err;
 
-                                            //console.log(livre.NbDisponible + 'before reservation')
                                             livreNbDisponible++;
-                                            livre.updateOne({ //update nombre disponible du livre apres annuler le reservation
+                                            livre.updateOne({ //met a jour le nombre disponible d'un livre apres l'annulation d'un reservation, mais seulement si elle existe
                                                 NbDisponible: livreNbDisponible
                                             }, function (err) {
                                                 if (err) throw err;
-                                                //console.log(livre.NbDisponible + 'after reservation')
                                             })
                                         })
 
                                         if (livre.NbDisponible <= 0) {
-                                            //res.status(403).end("livre non disponible")
                                             return res.send(JSON.stringify({ 'message': 'livre non disponible' }));
                                         } else {
 
-                                            utilisateur.updateOne({ //update nombre de pret du utilisateur
+                                            utilisateur.updateOne({ //met a jour le nombre de pret de l'utilisateur
                                                 NbPret: utilisateur.NbPret + 1
                                             }, function (err) {
                                                 if (err) throw err;
                                             })
                                             livreNbDisponible--;
-                                            livre.updateOne({ //update nombre disponible du livre
+                                            livre.updateOne({ //met a jour le nombre disponible du livre
                                                 NbDisponible: livreNbDisponible
                                             }, function (err) {
                                                 if (err) throw err;
-                                                // return res.status(403).end("reussi")
                                             })
 
-                                            //put information into database               
+                                            // insert les informations dans la bd             
                                             Emprunts.create({
                                                 DatePret: new Date(Date.now()),
                                                 DateRetourPrevu: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
@@ -614,24 +512,20 @@ app.post('/gestion/empruntretour', async (req, res) => {
                                                 Utilisateur_id: req.body.clientEmprunt
                                             }, function (err) {
                                                 if (err) throw err;
-                                                // return res.status(403).end("reussi")
-                                                //res.redirect("/gestion/empruntretour")
-
-                                                //return res.send(JSON.stringify({'message' : 'Emprunt reussi'}));
                                             })
                                             return res.send(JSON.stringify({ 'message': 'Emprunt reussi' }));
                                         }
                                     }
                                 })
                             }
-                        }//end of radioEmprunt
+                        }//fin de radioEmprunt
 
                         if (req.body.choix == "radioRetour" || req.body.choix == "radioPerdu") {
                             var compte = 0;
                             emprunts.forEach(emprunt => {
                                 if (emprunt.DateRetour == null) {
                                     compte++;
-                                    //supose d'avoir un seule resultat (Un même livre ne peut pas prêter 2 copies à un personne. )
+                                    //suppose d'avoir un seule resultat (Un même livre ne peut pas être prêté 2 fois à la même personne. )
                                     if (req.body.choix == "radioPerdu") {
                                         emprunt.updateOne({
                                             EstPerdu: true
@@ -646,7 +540,7 @@ app.post('/gestion/empruntretour', async (req, res) => {
                                         if (err) throw err;
 
                                         if (req.body.choix == "radioRetour") {
-                                            //modification du livre disponible
+                                            //modification de nombre du livre disponible
                                             var livreNbDisponible = livre.NbDisponible;
                                             livre.updateOne({
                                                 NbDisponible: livreNbDisponible + 1
@@ -664,7 +558,7 @@ app.post('/gestion/empruntretour', async (req, res) => {
                                             if (fraisRetard > 10) {
                                                 fraisRetard = 10;//maximum 10$ pour le retard
                                             }
-                                            fraisRetard = -fraisRetard; //Tous les charge du clients sont au negative                                            
+                                            fraisRetard = -fraisRetard; //Toutes les charges du clients sont au negative                                            
                                             Transactions.create({
                                                 DateTransaction: new Date(Date.now()),
                                                 MethodePaiement: null,
@@ -690,7 +584,7 @@ app.post('/gestion/empruntretour', async (req, res) => {
                                             }, function (err) { if (err) throw err })
                                         }
 
-                                        //modification nombre pret d'utilisateur
+                                        //modification du nombre de pret d'utilisateur
                                         Utilisateurs.findOne({ _id: req.body.clientEmprunt }, function (err, utilisateur) {
                                             if (err) throw err;
                                             var nbpret = utilisateur.NbPret
@@ -708,27 +602,24 @@ app.post('/gestion/empruntretour', async (req, res) => {
                                         if (req.body.choix == "radioPerdu") {
                                             return res.send(JSON.stringify({ 'message': 'Livre perdu traité' }));
                                         }
-                                        //res.redirect("/gestion/empruntretour")
                                     })
                                 }
 
-                            })//end foreach
+                            })//fin du loop
                             if (compte == 0) {
-                                //res.status(403).end("Pas de enrigistement")
                                 return res.send(JSON.stringify({ 'message': 'Pas de enrigistement' }));
                             }
 
-                        }//end of radioRetour and radioPerdu
+                        }//fin de radioRetour et radioPerdu
 
-                    })// end of emprunt
+                    })// fin de la collection d'emprunt
 
 
-                }//end of if livre existe
+                }//fin du livre s'il existe
 
 
             });
 
-            //}
         } else {
             return res.status(403).end("vous n'avez pas le droit")
         }
@@ -737,6 +628,7 @@ app.post('/gestion/empruntretour', async (req, res) => {
     }
 })
 
+// Cette page permet d'afficher le livres en retard de plus que deux semaines
 app.get('/gestion/retard', async (req, res) => {
     if (req.session.loginedUser) {
         if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {
@@ -746,7 +638,7 @@ app.get('/gestion/retard', async (req, res) => {
                     if (err) throw err;
                     Emprunts.find({}).sort({ DateRetourPrevu: 'asc' }).exec(function (err, emprunts) {
                         if (err) throw err;
-                        res.render('GestionRetard', { loginedUser: req.session.loginedUser, utilisateurs: utilisateurs, livres: livres,  emprunts: emprunts, now: new Date(Date.now())});
+                        res.render('GestionRetard', { loginedUser: req.session.loginedUser, utilisateurs: utilisateurs, livres: livres, emprunts: emprunts, now: new Date(Date.now()) });
                     })
                 })
             })
@@ -758,13 +650,14 @@ app.get('/gestion/retard', async (req, res) => {
     }
 })
 
+// Cette page permet de traiter les livres en retard de plus que deux semaines comme des livres perdus
 app.post('/gestion/perdu', async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     if (req.session.loginedUser) {
         if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {
             //calcule frais du retard
             var fraisRetard = req.body.frais_Retard
-            if (fraisRetard > 10) {fraisRetard = 10}
+            if (fraisRetard > 10) { fraisRetard = 10 }
             Transactions.create({
                 DateTransaction: new Date(Date.now()),
                 MethodePaiement: null,
@@ -774,7 +667,7 @@ app.post('/gestion/perdu', async (req, res) => {
                 Titre: "Retard",
                 Commentaire: "Retard du livre: " + req.body.livre_Titre + ", " + req.body.livre_Auteur + ", " + req.body.livre_ISBN
             }, function (err) { if (err) throw err })
-            //charger le prix du livre perdu
+            //charge le prix du livre perdu
             Transactions.create({
                 DateTransaction: new Date(Date.now()),
                 MethodePaiement: null,
@@ -784,21 +677,15 @@ app.post('/gestion/perdu', async (req, res) => {
                 Titre: "Perte",
                 Commentaire: "Pert du livre: " + req.body.livre_Titre + ", " + req.body.livre_Auteur + ", " + req.body.livre_ISBN
             }, function (err) { if (err) throw err })
-            //update utilisateur 
-            Utilisateurs.findByIdAndUpdate(req.body.client_id,{
-                Solde: (req.body.client_Solde - req.body.livre_Cout -fraisRetard),
+            //met a jour l'utilisateur 
+            Utilisateurs.findByIdAndUpdate(req.body.client_id, {
+                Solde: (req.body.client_Solde - req.body.livre_Cout - fraisRetard),
                 NbPret: (req.body.client_NbPret - 1)
             }, function (err) {
                 if (err) throw err;
             })
-            // //update inv livre
-            // Livres.findByIdAndUpdate(req.body.livre_id,{
-            //     NbDisponible: (req.body.livre_NbDisponible + 1)
-            // }, function (err) {
-            //     if (err) throw err;
-            // })
-            //Marquer perdu dans emprunt
-            Emprunts.findByIdAndUpdate(req.body.emprunt_id,{
+            //Marque le livre comme etant perdu dans la collection des emprunts
+            Emprunts.findByIdAndUpdate(req.body.emprunt_id, {
                 DateRetour: new Date(Date.now()),
                 EstPerdu: true
             }, function (err) {
@@ -815,7 +702,8 @@ app.post('/gestion/perdu', async (req, res) => {
 })
 
 
-//ajax axios
+// ajax axios
+// recherche le client par son numero de telephone et le retourne
 app.post('/gestion/findCustomer', (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Headers', '*');
@@ -849,18 +737,7 @@ app.post('/gestion/findCustomer', (req, res) => {
 
 })
 
-
-// app.post('/findCustomer', (req, res) => {
-//     res.setHeader('Access-Control-Allow-Origin', '*');
-//     res.setHeader('Access-Control-Allow-Headers', '*');//option,all
-
-//     Utilisateurs.find({ Telephone: req.body.telClient }, function (err, client) {
-//         if (err) throw err;
-//         res.render('EmpruntRetour', { client: client })
-//     })
-
-// })
-
+// Cette page permet de facturer, rembourser et recharger le compte des clients
 app.get('/gestion/caisse', (req, res) => {
     if (req.session.loginedUser) {
         if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {//only for admin or staff
@@ -873,6 +750,7 @@ app.get('/gestion/caisse', (req, res) => {
     }
 })
 
+// Cette page permet d'effectuer les fonctionnalités suivants: facturer, rembourser et recharger le compte des clients
 app.post('/gestion/caisse', (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Headers', '*');//option,all
@@ -887,7 +765,7 @@ app.post('/gestion/caisse', (req, res) => {
                 Titre: req.body.Titre,
                 Commentaire: req.body.Commentaire
             }, function (err) { if (err) throw err })
-            if (req.body.MethodePaiement == 'Remboursement au Compte'){
+            if (req.body.MethodePaiement == 'Remboursement au Compte') {
                 Utilisateurs.findOne({ _id: req.body.Utilisateur_id }, function (err, client) {
                     if (err) throw err
                     var newSolde = client.Solde + req.body.Cout;
@@ -895,7 +773,7 @@ app.post('/gestion/caisse', (req, res) => {
                         Solde: newSolde.toFixed(2)
                     }, function (err) { if (err) throw err })
                 })
-            }           
+            }
             res.send(JSON.stringify({ 'message': 'Transaction réussie' }))
         } else {
             res.status(403).end("vous n'avez pas le droit")
@@ -906,27 +784,7 @@ app.post('/gestion/caisse', (req, res) => {
 })
 
 
-app.get('/profil/facture', async (req, res) => {
-    if (req.session.loginedUser) {
-        res.render('PaiementFacture', { loginedUser: req.session.loginedUser });
-    } else {
-        res.redirect('/login');
-    }
-});
-
-app.get('/gestion/client', (req, res) => {
-    if (req.session.loginedUser) {
-        if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {//only for admin or staff
-            let client = null;
-            res.render('GestionClient', { loginedUser: req.session.loginedUser, client: client })
-        } else {
-            res.status(403).end("vous n'avez pas le droit")
-        }
-    } else {
-        res.redirect("/login")
-    }
-})
-
+// afficher la page et effectue une reservation pour un utilisateur
 app.get('/gestion/reservation', async (req, res) => {
     if (req.session.loginedUser) {
         if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {//only for admin or staff
@@ -939,6 +797,7 @@ app.get('/gestion/reservation', async (req, res) => {
     }
 })
 
+// affiche les reservations d'un utilisateur par son telephone
 app.get('/gestion/reservation/:telClient', (req, res) => {
     if (!req.session.loginedUser) return res.redirect("/login")
     else {
@@ -959,6 +818,205 @@ app.get('/gestion/reservation/:telClient', (req, res) => {
     }
 });
 
+// Cette methode d'afficher la page qui permet de faire la gestion des livres (ajout, suppression, modification)
+app.get('/gestion/livres', (req, res) => {
+    if (req.session.loginedUser) {
+        if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {//only for admin or staff
+            res.render('GestionLivre', { loginedUser: req.session.loginedUser })
+        } else {
+            res.status(403).end("vous n'avez pas le droit")
+        }
+    } else {
+        res.redirect("/login")
+    }
+});
+
+// Cette methode permet de rechercher un livre par son isbn et l'afficher
+app.post('/gestion/rechercheLivre', (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', '*');
+    if (req.session.loginedUser == null) {
+        return res.send(JSON.stringify({ 'message': "Il faut se connecter pour utiliser cette fonction", 'code': 10 }));
+    }
+    if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {
+        Livres.findOne({ ISBN: req.body.isbn }, function (err, livre) {
+            if (err) throw err;
+            if (livre) {
+                res.send(JSON.stringify(livre))
+            } else {
+                res.send(JSON.stringify({ 'message': "Livre non trouvé. Voulez vous l'ajouté dans la bibliotique ?" }));
+            }
+        })
+    } else {
+        res.status(403).end("Forbidden")
+    }
+
+})
+
+// Cette methode permet de faire l'ajout d'un livre
+app.post('/gestion/ajoutLivre', (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', '*');
+    if (req.session.loginedUser == null) {
+        return res.send(JSON.stringify({ 'message': "Il faut se connecter pour utiliser cette fonction", 'code': 10 }));
+    }
+    if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {
+        Livres.findOne({ ISBN: req.body.ISBN }, function (err, livre) {
+            if (err) throw err;
+            if (livre) {
+                return res.send(JSON.stringify({ 'message': "ISBN existe déjà dans la base de données" }));
+            } else {
+
+                Livres.create({
+                    Auteur: req.body.Auteur,
+                    Titre: req.body.Titre,
+                    DateParution: req.body.DateParution,
+                    NbCopies: req.body.NbCopies,
+                    NbDisponible: req.body.NbDisponible,
+                    MaisonEdition: req.body.MaisonEdition,
+                    ISBN: req.body.ISBN,
+                    Cout: req.body.Cout,
+                    Description: req.body.Description,
+                    Photo: req.body.Photo
+                }, function (err, book) {
+                    if (err) return console.error(err);
+                    res.send(JSON.stringify({ 'message': "Le livre a été ajouté avec succès" }));
+                });
+            }
+        })
+    } else {
+        return res.send(JSON.stringify({ 'message': "Vous n'avez pas le droit pour utiliser cette fonction", 'code': 10 }));
+    }
+});
+
+// Cette methode permet de mettre a jour les informations d'un livre
+app.post('/gestion/updateLivre', (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', '*');
+    if (req.session.loginedUser == null) {
+        return res.send(JSON.stringify({ 'message': "Il faut se connecter pour utiliser cette fonction", 'code': 10 }));
+    }
+    if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {
+        Livres.findOneAndUpdate({ ISBN: req.body.ISBN }, {
+            Auteur: req.body.Auteur,
+            Titre: req.body.Titre,
+            DateParution: req.body.DateParution,
+            NbCopies: req.body.NbCopies,
+            NbDisponible: req.body.NbDisponible,
+            MaisonEdition: req.body.MaisonEdition,
+            Cout: req.body.Cout,
+            Description: req.body.Description,
+            Photo: req.body.Photo
+        }, function (err, book) {
+            if (err) return console.error(err);
+            res.send(JSON.stringify({ 'message': "Le livre a été mise à jour avec succès" }));
+        });
+    } else {
+        return res.send(JSON.stringify({ 'message': "Vous n'avez pas le droit pour utiliser cette fonction", 'code': 10 }));
+    }
+});
+
+// Ajax
+// Cette methode permet televerser une image et de retourner son chemin
+app.post('/gestion/livre/photo', urlencodeParser, (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', '*');
+    if (req.session.loginedUser == null) {
+        return res.send(JSON.stringify({ 'message': "Il faut se connecter pour utiliser cette fonction", 'code': 10 }));
+    }
+    if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {
+        var uploadPhotoPath = "./public/Images/Livres/";
+        var form = new formidable.IncomingForm();
+        form.parse(req, function (err, fields, files) {
+            if (err) throw err
+            if (files.image) {
+                var oldPath = files.image.filepath;
+                var newName = fields.isbn + path.extname(files.image.originalFilename);
+                var newPath = uploadPhotoPath + newName;
+                fs.rename(oldPath, newPath, function (err) {
+                    if (err) throw err;
+                    res.send(JSON.stringify({ "path": "/Images/Livres/" + newName, 'message': "Image Updated" }))
+                });
+            } else {
+                res.send(JSON.stringify({ "path": "/Images/ImgNotFound.png" }))
+            }
+        });
+    } else {
+        return res.send(JSON.stringify({ 'message': "Vous n'avez pas le droit pour utiliser cette fonction", 'code': 10 }));
+    }
+});
+
+
+// Cette methode permet de suprrimer un livre
+app.post('/gestion/livre/delete', (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', '*');
+    if (req.session.loginedUser == null) {
+        return res.send(JSON.stringify({ 'message': "Il faut se connecter pour utiliser cette fonction", 'code': 10 }));
+    }
+    if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {
+        Livres.findOneAndDelete({ ISBN: req.body.ISBN }, function (err, book) {
+            if (err) return console.error(err);
+            res.send(JSON.stringify({ 'message': "Le livre a été supprimé" }));
+        });
+    } else {
+        return res.send(JSON.stringify({ 'message': "Vous n'avez pas le droit pour utiliser cette fonction", 'code': 10 }));
+    }
+});
+
+// Cette methode fait la recherche et l'affichage de toutes les transactions de tous les utilisateurs
+app.all('/gestion/transaction', (req, res) => {
+    if (req.session.loginedUser) {
+        if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {//only for admin or staff
+            var start, end
+            if (req.body.start) {
+                start = new Date(req.body.start).getTime()
+            } else {
+                start = new Date(0).getTime()
+            }
+            if (req.body.end) {
+                end = new Date(req.body.end).getTime()
+            } else {
+                end = new Date(Date.now()).getTime()
+            }
+            if (req.body.tel) {
+                Utilisateurs.find({}, function (err, utilisateurs) {
+                    if (err) throw err;
+                    Utilisateurs.findOne({ Telephone: req.body.tel }, function (err, client) {
+                        if (err) throw err;
+                        if (client) {
+                            Transactions.find({ Utilisateur_id: client._id }).sort({ DateTransaction: 'desc' }).exec(function (err, transactions) {
+                                if (err) throw err;
+                                res.render('GestionTransaction', { loginedUser: req.session.loginedUser, utilisateurs: utilisateurs, transactions: transactions, start: start, end: end })
+                            })
+                        } else {
+                            res.render('GestionTransaction', { loginedUser: req.session.loginedUser, utilisateurs: utilisateurs, transactions: null, start: start, end: end })
+                        }
+                    })
+                });
+            } else {
+                Utilisateurs.find({}, function (err, utilisateurs) {
+                    if (err) throw err;
+                    Transactions.find({}).sort({ DateTransaction: 'desc' }).exec(function (err, transactions) {
+                        if (err) throw err;
+                        res.render('GestionTransaction', { loginedUser: req.session.loginedUser, utilisateurs: utilisateurs, transactions: transactions, start: start, end: end })
+                    })
+                });
+            }
+        } else {
+            res.status(403).end("vous n'avez pas le droit")
+        }
+    } else {
+        res.redirect("/login")
+    }
+});
+
+
+// *** TOUT LES FONCTIONNALITÉS DANS LA PARTIE QUI SUIT  ***
+// *** PEUT SEULEMENT ETRE EFFECTUÉ PAR UN ADMIN ***********
+
+
+// affiche la liste de tous les utilisateurs
 app.get('/gestion/listUtilisateur', async (req, res) => {
     if (req.session.loginedUser) {
         if (req.session.loginedUser.Droit_id == 99) {//only for admin 
@@ -977,6 +1035,7 @@ app.get('/gestion/listUtilisateur', async (req, res) => {
     }
 })
 
+// cette methode permet de supprimer un utilisateur
 app.post('/gestion/supprimerUtilisateur', async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     if (req.session.loginedUser) {
@@ -993,6 +1052,7 @@ app.post('/gestion/supprimerUtilisateur', async (req, res) => {
     }
 })
 
+// affiche les information d'un utilisateur avant les modifications
 app.get('/gestion/utilisateur/:id', (req, res) => {
     if (req.session.loginedUser) {
         if (req.session.loginedUser.Droit_id == 99) {//only for admin
@@ -1012,6 +1072,7 @@ app.get('/gestion/utilisateur/:id', (req, res) => {
     }
 })
 
+// modifie les information d'un utilisateur
 app.post('/gestion/utilisateurUpdate', async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     if (req.session.loginedUser == null) {
@@ -1029,18 +1090,18 @@ app.post('/gestion/utilisateurUpdate', async (req, res) => {
                     if (result._id != req.body.id) {
                         return res.send(JSON.stringify({ 'message': 'Email existe dans la base de données' }));
                     } else {
-                        Utilisateurs.findById(req.body.id, function (err, utilisateur){
+                        Utilisateurs.findById(req.body.id, function (err, utilisateur) {
                             if (err) throw err;
-                            if (utilisateur.Solde != req.body.solde){
+                            if (utilisateur.Solde != req.body.solde) {
                                 Transactions.create({
                                     DateTransaction: new Date(Date.now()),
                                     Cout: (req.body.solde - utilisateur.Solde).toFixed(2),
                                     Utilisateur_id: req.body.id,
                                     EmployeeId: req.session.loginedUser._id,
                                     Titre: "Ajustement",
-                                    Commentaire: "Solde du compte précedent: " + utilisateur.Solde + "\rNouveau solde du compte: " + req.body.solde 
+                                    Commentaire: "Solde du compte précedent: " + utilisateur.Solde + "\rNouveau solde du compte: " + req.body.solde
                                 }, function (err) { if (err) throw err })
-                            }                          
+                            }
                         })
                         Utilisateurs.findByIdAndUpdate(req.body.id, {
                             Nom: req.body.nom,
@@ -1066,6 +1127,7 @@ app.post('/gestion/utilisateurUpdate', async (req, res) => {
 
 })
 
+// cette méthode permet de reinitialiser le mot de passe par un qui est temporaire
 app.post('/gestion/resetPassword', async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     if (req.session.loginedUser == null) {
@@ -1083,199 +1145,18 @@ app.post('/gestion/resetPassword', async (req, res) => {
     } else {
         res.status(403).end("vous n'avez pas le droit")
     }
-
-})
-
-app.get('/gestion/livres', (req, res) => {
-    if (req.session.loginedUser) {
-        if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {//only for admin or staff
-            res.render('GestionLivre', { loginedUser: req.session.loginedUser })
-        } else {
-            res.status(403).end("vous n'avez pas le droit")
-        }
-    } else {
-        res.redirect("/login")
-    }
-});
-
-app.post('/gestion/rechercheLivre', (req, res) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Headers', '*');
-    if (req.session.loginedUser == null) {
-        return res.send(JSON.stringify({ 'message': "Il faut se connecter pour utiliser cette fonction", 'code': 10 }));
-    }
-    if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {
-        Livres.findOne({ ISBN: req.body.isbn }, function (err, livre) {
-            if (err) throw err;
-            if (livre){
-                res.send(JSON.stringify(livre))
-            }else{
-                res.send(JSON.stringify({ 'message': "Livre non trouvé. Voulez vous l'ajouté dans la bibliotique ?" }));
-            }         
-        })
-    } else {
-        res.status(403).end("Forbidden")
-    }
-
 })
 
 
-app.post('/gestion/ajoutLivre', (req, res) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Headers', '*');
-    if (req.session.loginedUser == null) {
-        return res.send(JSON.stringify({ 'message': "Il faut se connecter pour utiliser cette fonction", 'code': 10 }));
-    }
-    if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {
-        Livres.create({
-            Auteur: req.body.Auteur,
-            Titre: req.body.Titre,
-            DateParution: req.body.DateParution,
-            NbCopies: req.body.NbCopies,
-            NbDisponible: req.body.NbDisponible,
-            MaisonEdition: req.body.MaisonEdition,
-            ISBN: req.body.ISBN,
-            Cout: req.body.Cout,
-            Description: req.body.Description,
-            Photo: req.body.Photo
-        },function (err, book) {
-            if (err) return console.error(err);
-            res.send(JSON.stringify({ 'message': "Le livre a été ajouté avec succès" }));
-        });
-    }else{
-        return res.send(JSON.stringify({ 'message': "Vous n'avez pas le droit pour utiliser cette fonction", 'code': 10 }));
-    }    
-});
+// ********************* TEMPORAIRE *********************
+// app.get('/test', (req, res) => {
+//     res.render('test');
+// })
 
-app.post('/gestion/updateLivre', (req, res) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Headers', '*');
-    if (req.session.loginedUser == null) {
-        return res.send(JSON.stringify({ 'message': "Il faut se connecter pour utiliser cette fonction", 'code': 10 }));
-    }
-    if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {
-        Livres.findOneAndUpdate({ISBN: req.body.ISBN},{
-            Auteur: req.body.Auteur,
-            Titre: req.body.Titre,
-            DateParution: req.body.DateParution,
-            NbCopies: req.body.NbCopies,
-            NbDisponible: req.body.NbDisponible,
-            MaisonEdition: req.body.MaisonEdition,
-            Cout: req.body.Cout,
-            Description: req.body.Description,
-            Photo: req.body.Photo
-        },function (err, book) {
-            if (err) return console.error(err);
-            res.send(JSON.stringify({ 'message': "Le livre a été mise à jour avec succès" }));
-        });
-    }else{
-        return res.send(JSON.stringify({ 'message': "Vous n'avez pas le droit pour utiliser cette fonction", 'code': 10 }));
-    }    
-});
-
-//Ajax, upload image and return path
-app.post('/gestion/livre/photo', urlencodeParser, (req, res) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Headers', '*');
-    if (req.session.loginedUser == null) {
-        return res.send(JSON.stringify({ 'message': "Il faut se connecter pour utiliser cette fonction", 'code': 10 }));
-    }
-    if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {
-        var uploadPhotoPath = "./public/Images/Livres/";
-        var form = new formidable.IncomingForm();
-        form.parse(req, function (err, fields, files) {
-            if (err) throw err
-            if (files.image){
-                var oldPath = files.image.filepath;
-                var newName = fields.isbn + path.extname(files.image.originalFilename);
-                var newPath = uploadPhotoPath + newName;
-                fs.rename(oldPath, newPath, function (err) {
-                    if (err) throw err;
-                    res.send(JSON.stringify({"path": "/Images/Livres/" + newName, 'message': "Image Updated"}))
-                });
-            } else{
-                res.send(JSON.stringify({"path": "/Images/ImgNotFound.png"}))
-            }            
-        });
-    }else{
-        return res.send(JSON.stringify({ 'message': "Vous n'avez pas le droit pour utiliser cette fonction", 'code': 10 }));
-    }
-});
-
-
-app.post('/gestion/livre/delete', (req, res) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Headers', '*');
-    if (req.session.loginedUser == null) {
-        return res.send(JSON.stringify({ 'message': "Il faut se connecter pour utiliser cette fonction", 'code': 10 }));
-    }
-    if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {
-        Livres.findOneAndDelete({ISBN: req.body.ISBN},function (err, book) {
-            if (err) return console.error(err);
-            res.send(JSON.stringify({ 'message': "Le livre a été supprimé" }));
-        });
-    }else{
-        return res.send(JSON.stringify({ 'message': "Vous n'avez pas le droit pour utiliser cette fonction", 'code': 10 }));
-    }    
-});
-
-app.all('/gestion/transaction', (req, res) => {
-    if (req.session.loginedUser) {
-        if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {//only for admin or staff
-            var start, end
-            if (req.body.start){
-                start = new Date(req.body.start).getTime()
-            } else {
-                start = new Date(0).getTime()
-            }
-            if (req.body.end){
-                end = new Date(req.body.end).getTime()
-            } else {
-                end = new Date (Date.now()).getTime()
-            }
-            if (req.body.tel){
-                Utilisateurs.find({}, function(err, utilisateurs){
-                    if(err) throw err;
-                    Utilisateurs.findOne({Telephone: req.body.tel}, function(err, client){
-                        if(err) throw err;
-                        if (client){
-                            Transactions.find({Utilisateur_id: client._id}).sort({ DateTransaction: 'desc' }).exec(function(err, transactions){
-                                if(err) throw err;
-                                res.render('GestionTransaction', { loginedUser: req.session.loginedUser, utilisateurs: utilisateurs, transactions: transactions, start: start, end: end})
-                            })
-                        } else {
-                            res.render('GestionTransaction', { loginedUser: req.session.loginedUser, utilisateurs: utilisateurs, transactions: null, start: start, end: end})
-                        }    
-                    })
-                 });
-            } else{
-                Utilisateurs.find({}, function(err, utilisateurs){
-                    if(err) throw err;
-                     Transactions.find({}).sort({ DateTransaction: 'desc' }).exec(function(err, transactions){
-                         if(err) throw err;
-                         res.render('GestionTransaction', { loginedUser: req.session.loginedUser, utilisateurs: utilisateurs, transactions: transactions, start: start, end: end})
-                     })
-                 });
-            }
-        } else {
-            res.status(403).end("vous n'avez pas le droit")
-        }
-    } else {
-        res.redirect("/login")
-    }
-});
-
-
-
-
-app.get('/test', (req, res) => {
-    res.render('test');
-})
-
-
-
-app.listen(port, function (err) {
-    if (err) console.log(err);
-    console.log("Server listening on PORT", port);
-
-});
+// app.get('/profil/facture', async (req, res) => {
+//     if (req.session.loginedUser) {
+//         res.render('PaiementFacture', { loginedUser: req.session.loginedUser });
+//     } else {
+//         res.redirect('/login');
+//     }
+// });

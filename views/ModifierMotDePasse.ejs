@@ -3,6 +3,7 @@
     <head>
         <%- include ('../views/partials/header.ejs') %>
         <link rel="stylesheet" href="/CSS/style.css">
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
         <title>Modifier le mot de passe</title>
     </head>
 
@@ -18,11 +19,11 @@
                                     <input type="password" name="ancienMdp" id="ancienMdp" class="form-control" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="nouveauMdp" class="form-label">Nouveau mot de passe: </label>
+                                    <label for="nvxMdp" class="form-label">Nouveau mot de passe: </label>
                                     <input type="password" name="nvxMdp" id="nvxMdp" class="form-control" required>  
                                 </div>
                                 <div class="mb-4">
-                                    <label for="nouveauMdpDeuxiemeFois" class="form-label">Nouveau mot de passe: </label>
+                                    <label for="nvxMdpDeuxiemeFois" class="form-label">Nouveau mot de passe: </label>
                                     <input type="password" name="nvxMdpDeuxiemeFois" id="nvxMdpDeuxiemeFois" class="form-control" required>
                                 </div>
                                 <div class="mb-3">
@@ -42,6 +43,8 @@
         
     </body>
     <script>
+        axios.defaults.baseURL = 'http://localhost:4000'
+
         function btnsubmit(){
             if (!document.getElementById('ancienMdp').value.trim()){
                 alert("Entrer votre ancien mot de passe")
@@ -52,8 +55,25 @@
             }else if (document.getElementById('nvxMdp').value.trim() != document.getElementById('nvxMdpDeuxiemeFois').value.trim()){
                 alert("Vos nouveaux mot de passe ne sont pas identique")
             } else{
-              form.submit()  
+                axios.post('/ModifierMotDePasse', {                   
+                    ancienMdp: document.getElementById('ancienMdp').value,
+                    nvxMdp: document.getElementById('nvxMdp').value,
+                    nvxMdpDeuxiemeFois: document.getElementById('nvxMdpDeuxiemeFois').value
+               }).then(res=>{
+                    alert(res.data.message);
+                    if (res.data.code == 20){
+                        location.replace("/profil")
+                    }else{
+                        location.reload();
+                    }
+               })
+
+
             }
         }
+
+        
+
+
     </script>
 </html>
