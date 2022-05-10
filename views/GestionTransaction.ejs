@@ -2,10 +2,6 @@
 <html>
     <head>
         <%- include ('../views/partials/header.ejs') %>
-         <!-- The momentjs library -->
-        <script src="js/moment-with-locales.js"></script>
-        <!-- Your javascript -->
-        <script src="js/my-custom-script.js"></script>
         <link rel="stylesheet" href="/CSS/style.css">
         <title>Gestion Transaction</title>
     </head>
@@ -50,10 +46,9 @@
                               </tr>
                             </thead>
                             <tbody>
+                                
                                 <% transactions.forEach(transaction =>  { %>
-                                    <% console.log(transaction._id) %>
-                                    <% console.log(typeof transaction.DateTransaction) %>
-                                    <% if (transaction.DateTransaction >= start ){ %>
+                                    <% if (start <= transaction.DateTransaction && transaction.DateTransaction <= end){ %>
 
                                         <tr>
                                             <td><%=transaction.DateTransaction%></td>
@@ -92,6 +87,7 @@
                           </table>
                     </div>
                 </section>
+
             </div>
             <%- include ('../views/partials/footer.ejs') %>
         </div>
@@ -100,16 +96,9 @@
     <script>
         function recherche(){
             if (!document.getElementById('end').value) {
-                console.log('here')
                 document.getElementById('end').value = Date.now()
-            }
-            console.log(Date.parse(document.getElementById('start').value))
-            console.log(Date.parse(document.getElementById('end').value))
-            if (document.getElementById('start').value > document.getElementById('end').value){
-                alert("erreur")
-            } else{
-                document.getElementById('form').submit();
-            }
+            }       
+            document.getElementById('form').submit();
         }
     </script>
 

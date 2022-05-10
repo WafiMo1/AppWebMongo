@@ -1149,14 +1149,14 @@ app.all('/gestion/transaction', (req, res) => {
                     if(err) throw err;
                     var start, end
                     if (req.body.start){
-                        start = req.body.start
+                        start = new Date(req.body.start).getTime()
                     } else {
-                        start = new Date(0)
+                        start = new Date(0).getTime()
                     }
                     if (req.body.end){
-                        end = req.body.end
+                        end = new Date(req.body.end).getTime()
                     } else {
-                        end = Date.now()
+                        end = new Date (Date.now()).getTime()
                     }
                     res.render('GestionTransaction', { loginedUser: req.session.loginedUser, utilisateurs: utilisateurs, transactions: transactions, start: start, end: end})
                 })
