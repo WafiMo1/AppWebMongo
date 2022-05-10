@@ -25,6 +25,10 @@
                                 <input type="date" id="end" name="end" class="form-control">
                             </div>
                             <div class="mb-3">
+                                <label class="form-label">Téléphone du client</label>
+                                <input type="tel" id="tel" name="tel" class="form-control">
+                            </div>
+                            <div class="mb-3">
                                 <button class="btn btn-primary" onclick="recherche()">Rechercher</button>
                             </div>
                         </form>
@@ -47,42 +51,45 @@
                             </thead>
                             <tbody>
                                 
-                                <% transactions.forEach(transaction =>  { %>
-                                    <% if (start <= transaction.DateTransaction && transaction.DateTransaction <= end){ %>
+                                <% if (transactions) { %>
+                                    <%transactions.forEach(transaction =>  { %>
+                                        <% if (start <= transaction.DateTransaction && transaction.DateTransaction <= end){ %>
 
-                                        <tr>
-                                            <td><%=transaction.DateTransaction%></td>
-                                            <%var compteur =  0 %>  
-                                            <% utilisateurs.forEach(utilisateur =>  { %>                              
-                                                <% if(transaction.Utilisateur_id.toString() == utilisateur._id.toString() ){ %>
-                                                    <% compteur++ %>
-                                                    <td>
-                                                        <span style="font-weight:bold;"><%=utilisateur.Nom%>, <%=utilisateur.Prenom%></span><br/>
-                                                        <span style="font-size:15px;"><%=utilisateur.Telephone%></span>
-                                                    </td>
-                                                <% } %>
-                                                                             
-                                            <% }) %>
-                                            <% if (compteur == 0){ %>
-                                                <td>utilisateur supprimé</td>
-                                            <% } %>  
-                                            <td><%=transaction.Titre%></td>
-                                            <td><%=transaction.Commentaire%></td>
-                                            <td><%=transaction.MethodePaiement%></td>
-                                            <td><%=transaction.Cout%></td>
-                                            <%var compteur =  0 %>
-                                            <% utilisateurs.forEach(utilisateur =>  { %>
-                                                <% if(transaction.EmployeeId.toString() == utilisateur._id.toString() ){ %>
-                                                    <% compteur++ %>
-                                                    <td><%=utilisateur.Nom%>, <%=utilisateur.Prenom%></td>
-                                                <% } %>                                   
-                                            <% }) %>
-                                            <% if (compteur == 0){ %>
-                                                <td>Employee supprimé</td>
-                                            <% } %> 
-                                        </tr>
-                                    <% } %>
-                                <% }) %>
+                                            <tr>
+                                                <% var date = transaction.DateTransaction.toString().split('GMT') %>
+                                                <td><%=date[0]%></td>
+                                                <%var compteur =  0 %>  
+                                                <% utilisateurs.forEach(utilisateur =>  { %>                              
+                                                    <% if(transaction.Utilisateur_id.toString() == utilisateur._id.toString() ){ %>
+                                                        <% compteur++ %>
+                                                        <td>
+                                                            <span style="font-weight:bold;"><%=utilisateur.Nom%>, <%=utilisateur.Prenom%></span><br/>
+                                                            <span style="font-size:15px;"><%=utilisateur.Telephone%></span>
+                                                        </td>
+                                                    <% } %>
+                                                                                
+                                                <% }) %>
+                                                <% if (compteur == 0){ %>
+                                                    <td>utilisateur supprimé</td>
+                                                <% } %>  
+                                                <td><%=transaction.Titre%></td>
+                                                <td><%=transaction.Commentaire%></td>
+                                                <td><%=transaction.MethodePaiement%></td>
+                                                <td><%=transaction.Cout%></td>
+                                                <%var compteur =  0 %>
+                                                <% utilisateurs.forEach(utilisateur =>  { %>
+                                                    <% if(transaction.EmployeeId.toString() == utilisateur._id.toString() ){ %>
+                                                        <% compteur++ %>
+                                                        <td><%=utilisateur.Nom%>, <%=utilisateur.Prenom%></td>
+                                                    <% } %>                                   
+                                                <% }) %>
+                                                <% if (compteur == 0){ %>
+                                                    <td>Employee supprimé</td>
+                                                <% } %> 
+                                            </tr>
+                                        <% } %>
+                                    <% }) %>
+                                <% } %>
                             </tbody>
                           </table>
                     </div>

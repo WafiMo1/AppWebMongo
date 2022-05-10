@@ -1143,24 +1143,41 @@ app.post('/gestion/livre/delete', (req, res) => {
 app.all('/gestion/transaction', (req, res) => {
     if (req.session.loginedUser) {
         if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {//only for admin or staff
-            Utilisateurs.find({}, function(err, utilisateurs){
-               if(err) throw err;
-                Transactions.find({}).sort({ DateTransaction: 'desc' }).exec(function(err, transactions){
+            var start, end
+            if (req.body.start){
+                start = new Date(req.body.start).getTime()
+            } else {
+                start = new Date(0).getTime()
+            }
+            if (req.body.end){
+                end = new Date(req.body.end).getTime()
+            } else {
+                end = new Date (Date.now()).getTime()
+            }
+            if (req.body.tel){
+                Utilisateurs.find({}, function(err, utilisateurs){
                     if(err) throw err;
-                    var start, end
-                    if (req.body.start){
-                        start = new Date(req.body.start).getTime()
-                    } else {
-                        start = new Date(0).getTime()
-                    }
-                    if (req.body.end){
-                        end = new Date(req.body.end).getTime()
-                    } else {
-                        end = new Date (Date.now()).getTime()
-                    }
-                    res.render('GestionTransaction', { loginedUser: req.session.loginedUser, utilisateurs: utilisateurs, transactions: transactions, start: start, end: end})
-                })
-            }); 
+                    Utilisateurs.findOne({Telephone: req.body.tel}, function(err, client){
+                        if(err) throw err;
+                        if (client){
+                            Transactions.find({Utilisateur_id: client._id}).sort({ DateTransaction: 'desc' }).exec(function(err, transactions){
+                                if(err) throw err;
+                                res.render('GestionTransaction', { loginedUser: req.session.loginedUser, utilisateurs: utilisateurs, transactions: transactions, start: start, end: end})
+                            })
+                        } else {
+                            res.render('GestionTransaction', { loginedUser: req.session.loginedUser, utilisateurs: utilisateurs, transactions: null, start: start, end: end})
+                        }    
+                    })
+                 });
+            } else{
+                Utilisateurs.find({}, function(err, utilisateurs){
+                    if(err) throw err;
+                     Transactions.find({}).sort({ DateTransaction: 'desc' }).exec(function(err, transactions){
+                         if(err) throw err;
+                         res.render('GestionTransaction', { loginedUser: req.session.loginedUser, utilisateurs: utilisateurs, transactions: transactions, start: start, end: end})
+                     })
+                 });
+            }
         } else {
             res.status(403).end("vous n'avez pas le droit")
         }
