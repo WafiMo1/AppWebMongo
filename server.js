@@ -744,7 +744,7 @@ app.get('/gestion/retard', async (req, res) => {
                 if (err) throw err;
                 Livres.find({}, function (err, livres) {
                     if (err) throw err;
-                    Emprunts.find({}, function (err, emprunts) {
+                    Emprunts.find({}).sort({ DateRetourPrevu: 'asc' }).exec(function (err, emprunts) {
                         if (err) throw err;
                         res.render('GestionRetard', { loginedUser: req.session.loginedUser, utilisateurs: utilisateurs, livres: livres,  emprunts: emprunts, now: new Date(Date.now())});
                     })
@@ -791,12 +791,20 @@ app.post('/gestion/perdu', async (req, res) => {
             }, function (err) {
                 if (err) throw err;
             })
-            //update inv livre
-            Livres.findByIdAndUpdate(req.body.livre_id,{
-                NbDisponible: (livre_NbDisponible + 1)
+            // //update inv livre
+            // Livres.findByIdAndUpdate(req.body.livre_id,{
+            //     NbDisponible: (req.body.livre_NbDisponible + 1)
+            // }, function (err) {
+            //     if (err) throw err;
+            // })
+            //Marquer perdu dans emprunt
+            Emprunts.findByIdAndUpdate(req.body.emprunt_id,{
+                DateRetour: new Date(Date.now()),
+                EstPerdu: true
             }, function (err) {
                 if (err) throw err;
             })
+
             res.send(JSON.stringify({ 'message': 'Livre perdu traité' }));
         } else {
             res.status(403).end("vous n'avez pas le droit")
@@ -879,14 +887,15 @@ app.post('/gestion/caisse', (req, res) => {
                 Titre: req.body.Titre,
                 Commentaire: req.body.Commentaire
             }, function (err) { if (err) throw err })
-
-            Utilisateurs.findOne({ _id: req.body.Utilisateur_id }, function (err, client) {
-                if (err) throw err
-                var newSolde = client.Solde + req.body.Cout;
-                client.updateOne({
-                    Solde: newSolde.toFixed(2)
-                }, function (err) { if (err) throw err })
-            })
+            if (req.body.MethodePaiement == 'Remboursement au Compte'){
+                Utilisateurs.findOne({ _id: req.body.Utilisateur_id }, function (err, client) {
+                    if (err) throw err
+                    var newSolde = client.Solde + req.body.Cout;
+                    client.updateOne({
+                        Solde: newSolde.toFixed(2)
+                    }, function (err) { if (err) throw err })
+                })
+            }           
             res.send(JSON.stringify({ 'message': 'Transaction réussie' }))
         } else {
             res.status(403).end("vous n'avez pas le droit")
