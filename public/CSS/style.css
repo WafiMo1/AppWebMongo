@@ -138,7 +138,7 @@ nav ul li:hover ul li {
     height: 120px;
 }
 
-.rrrr {
+/* .rrrr {
 
     padding-left: 20%;
     padding-top: 140px;
@@ -203,7 +203,7 @@ img.accImg {
     width: 1200px;
     height: 650px;
 
-}
+} */
 
 /* .slides {
     width: 3600px;
@@ -250,7 +250,7 @@ img.accImg {
 
 } */
 
-h1.pagetitre {
+/* h1.pagetitre {
     color: rgb(76, 157, 235);
     text-align: center;
 }
@@ -319,4 +319,4 @@ body.acceuil {
 Input.SSS
     {
         text-transform: lowercase;
-    }
+    } */
