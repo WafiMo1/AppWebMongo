@@ -388,7 +388,7 @@ app.post('/annulerReservation', (req, res) => {
         if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {
             user_id = req.body.user_id
         } else {
-            user_id = req.session._id;
+            user_id = req.session.loginedUser._id;
         }
         if (req.body.reservation_id) {
             Reservations.findByIdAndDelete(req.body.reservation_id, function (err) {
@@ -407,7 +407,6 @@ app.post('/annulerReservation', (req, res) => {
                 }
             })
         }
-
         res.redirect(req.headers.referer)
     }
 });
