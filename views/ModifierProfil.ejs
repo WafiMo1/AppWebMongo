@@ -24,7 +24,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="telephoneModifie" class="form-label">Téléphone: </label>
-                            <input type="tel" class="form-control" name="telephoneModifie" id="telephoneModifie" value="<%= loginedUser.Telephone %>" pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}" required aria-describedby="telHelp">
+                            <input type="tel" class="form-control" name="telephoneModifie" id="telephoneModifie" value="<%= loginedUser.Telephone %>" pattern="[0-9]{10}"  maxlength="10" required aria-describedby="telHelp">
                             <div id="telHelp" class="form-text">Le téléphone doit contenir 10 chiffres</div>
                         </div>
                         <div class="mb-3">

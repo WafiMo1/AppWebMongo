@@ -234,15 +234,72 @@ app.get('/Modifier', (req, res) => {
 //Lorsque le client finit de remplir le formulaire, il fait un post. Ce post va prendre les informations que le client a saisi
 //puis faire la mise à jour du compte utilisateur dans la BD mongo
 app.post('/Modifier', urlencodeParser, (req, res) => {
-    Utilisateurs.findOneAndUpdate({ _id: req.session.loginedUser }, {
-        Nom: req.body.nomModifie,
-        Prenom: req.body.prenomModifie,
-        Telephone: req.body.telephoneModifie,
-        Email: req.body.emailModifie,
-    }, function (err, result) {
-        if (err) { console(err) }
-    });
-    res.redirect('/')
+    Utilisateurs.findOne({Telephone: req.body.telephoneModifie}, function(err, utilisateurtel){
+        if (err) throw err;
+        if (utilisateurtel){
+            if (utilisateurtel._id != req.session.loginedUser._id){
+                return res.status(403).end("Numero de teiephone deja existant")
+            } else {
+                Utilisateurs.findOne({Email: req.body.emailModifie}, function(err, utilisateureml){
+                    if (err) throw err;
+                    if (utilisateureml){
+                        if (utilisateureml._id != req.session.loginedUser._id){
+                            return res.status(403).end("Email deja existant")
+                        } else{
+                            Utilisateurs.findOneAndUpdate({ _id: req.session.loginedUser }, {
+                                Nom: req.body.nomModifie,
+                                Prenom: req.body.prenomModifie,
+                                Telephone: req.body.telephoneModifie,
+                                Email: req.body.emailModifie,
+                            }, function (err) {
+                                if (err) { throw (err) }
+                            });
+                            res.redirect('/')
+                        }
+                    } else{
+                        Utilisateurs.findOneAndUpdate({ _id: req.session.loginedUser }, {
+                            Nom: req.body.nomModifie,
+                            Prenom: req.body.prenomModifie,
+                            Telephone: req.body.telephoneModifie,
+                            Email: req.body.emailModifie,
+                        }, function (err) {
+                            if (err) { throw (err) }
+                        });
+                        res.redirect('/')
+                    }
+                })
+            }
+        } else {
+            Utilisateurs.findOne({Email: req.body.emailModifie}, function(err, utilisateureml){
+                if (err) throw err;
+                if (utilisateureml){
+                    if (utilisateureml._id != req.session.loginedUser._id){
+                        return res.status(403).end("Email déjà existant")
+                    } else{
+                        Utilisateurs.findOneAndUpdate({ _id: req.session.loginedUser }, {
+                            Nom: req.body.nomModifie,
+                            Prenom: req.body.prenomModifie,
+                            Telephone: req.body.telephoneModifie,
+                            Email: req.body.emailModifie,
+                        }, function (err) {
+                            if (err) { throw (err) }
+                        });
+                        res.redirect('/')
+                    }
+                } else{
+                    Utilisateurs.findOneAndUpdate({ _id: req.session.loginedUser }, {
+                        Nom: req.body.nomModifie,
+                        Prenom: req.body.prenomModifie,
+                        Telephone: req.body.telephoneModifie,
+                        Email: req.body.emailModifie,
+                    }, function (err) {
+                        if (err) { throw (err) }
+                    });
+                    res.redirect('/')
+                }
+            })
+        }
+    })  
 });
 
 //Modifier image de profil
@@ -260,7 +317,7 @@ app.post('/ModifierPhotoProfil', urlencodeParser, (req, res) => {
             Utilisateurs.findOneAndUpdate({ _id: req.session.loginedUser }, {
                 Photo: "/Images/Profil/" + newName
             }, function (err) {
-                if (err) { console(err) }
+                if (err) { throw(err) }
             });
             res.redirect('/Modifier');
         });
@@ -285,7 +342,7 @@ app.post('/ModifierMotDePasse', urlencodeParser, (req, res) => {
             Utilisateurs.findOneAndUpdate({ _id: req.session.loginedUser._id }, {
                 Password: req.body.nvxMdp
             }, function (err, result) {
-                if (err) { console(err) }
+                if (err) { throw(err) }
             });
             return res.send(JSON.stringify({ 'message': "le mot de passe a été mis à jour", 'code': 20 }))
 
@@ -357,7 +414,7 @@ app.post('/livres/:isbn', (req, res) => {
                         Livres.findByIdAndUpdate(livre._id, { NbDisponible: nbDisponible - 1 },
                             function (err, livre) {
                                 if (err) {
-                                    console.log(err);
+                                    throw err
                                 }
                             })
                     } else return res.send(JSON.stringify({ 'message': "Le livre: " + livre.Titre + " ne peut pas etre reserve" }));
@@ -488,36 +545,39 @@ app.post('/gestion/empruntretour', async (req, res) => {
                                         var livreNbDisponible = livre.NbDisponible;
 
                                         //verfie si le livre est deja reservé
+                                        console.log(livreNbDisponible + " avant reservatiion")
+                                        var temp = livre.NbDisponible + 1;
                                         Reservations.findOneAndDelete({
                                             Livre_id: livre._id,
                                             Utilisateur_id: req.body.clientEmprunt
                                         }, function (err) {
                                             if (err) throw err;
-
-                                            livreNbDisponible++;
                                             livre.updateOne({ //met a jour le nombre disponible d'un livre apres l'annulation d'un reservation, mais seulement si elle existe
-                                                NbDisponible: livreNbDisponible
+                                                NbDisponible: temp
                                             }, function (err) {
                                                 if (err) throw err;
                                             })
                                         })
+                                        console.log(livreNbDisponible + " apres reservatiion")
 
                                         if (livre.NbDisponible <= 0) {
                                             return res.send(JSON.stringify({ 'message': 'livre non disponible' }));
                                         } else {
 
+                                            console.log(livreNbDisponible + " avant emprunt")
+                                            var temp = livre.NbDisponible - 1;
                                             utilisateur.updateOne({ //met a jour le nombre de pret de l'utilisateur
                                                 NbPret: utilisateur.NbPret + 1
                                             }, function (err) {
                                                 if (err) throw err;
+                                                livre.updateOne({ //met a jour le nombre disponible du livre
+                                                    NbDisponible: temp
+                                                }, function (err, apple) {
+                                                    if (err) throw err;
+                                                })
+    
                                             })
-                                            livreNbDisponible--;
-                                            livre.updateOne({ //met a jour le nombre disponible du livre
-                                                NbDisponible: livreNbDisponible
-                                            }, function (err) {
-                                                if (err) throw err;
-                                            })
-
+            
                                             // insert les informations dans la bd             
                                             Emprunts.create({
                                                 DatePret: new Date(Date.now()),
@@ -530,6 +590,7 @@ app.post('/gestion/empruntretour', async (req, res) => {
                                             })
                                             return res.send(JSON.stringify({ 'message': 'Emprunt reussi' }));
                                         }
+                                        
                                     }
                                 })
                             }
@@ -934,7 +995,7 @@ app.post('/gestion/ajoutLivre', (req, res) => {
                     Description: req.body.Description,
                     Photo: req.body.Photo
                 }, function (err, book) {
-                    if (err) return console.error(err);
+                    if (err) throw (err);
                     res.send(JSON.stringify({ 'message': "Le livre a été ajouté avec succès" }));
                 });
             }
@@ -963,7 +1024,7 @@ app.post('/gestion/updateLivre', (req, res) => {
             Description: req.body.Description,
             Photo: req.body.Photo
         }, function (err, book) {
-            if (err) return console.error(err);
+            if (err) throw (err);
             res.send(JSON.stringify({ 'message': "Le livre a été mise à jour avec succès" }));
         });
     } else {
@@ -1011,7 +1072,7 @@ app.post('/gestion/livre/delete', (req, res) => {
     }
     if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {
         Livres.findOneAndDelete({ ISBN: req.body.ISBN }, function (err, book) {
-            if (err) return console.error(err);
+            if (err) throw (err);
             res.send(JSON.stringify({ 'message': "Le livre a été supprimé" }));
         });
     } else {
