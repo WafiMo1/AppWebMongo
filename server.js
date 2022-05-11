@@ -318,7 +318,7 @@ app.post('/recherche', async (req, res) => {
 
 //affiche les info d'un livre avec le isbn
 app.get('/livres/:isbn', (req, res) => {
-    Livres.find({ ISBN: req.params.isbn }, function (err, donneesLivre) {
+    Livres.findOne({ ISBN: req.params.isbn }, function (err, donneesLivre) {
         if (err) throw err;
         res.render("Livres", { livre: donneesLivre, loginedUser: req.session.loginedUser })
     });

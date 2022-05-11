@@ -5,8 +5,9 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <%console.log(livre.Titre) %>
   <title>
-    <%= livre[0].Titre %>
+    <%= livre.Titre %>
   </title>
   <link rel="stylesheet" href="/CSS/style.css">
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -19,14 +20,14 @@
       <div class="livre" align="center">
         <section class="p-5 text-primary">
         <h1>
-          <%= livre[0].Titre %>
+          <%= livre.Titre %>
         </h1>
         </section>
         <section class="p-1">
           <div class="container">
             <div class="row g-4">
               <div class="col-md-2">
-                <img class="photolivre" width="95%" src="<%= livre[0].Photo %>">
+                <img class="photolivre" width="95%" src="<%= livre.Photo %>">
               </div>
               <div class="col-md-10">
                 <table class="table table-hover" align="center" style="width: 60%;">
@@ -38,31 +39,31 @@
                     <tr>
                       <td> Titre: </td>
                       <td>
-                        <%= livre[0].Titre %>
+                        <%= livre.Titre %>
                       </td>
                     </tr>
                     <tr>
                       <td> Auteur: </td>
                       <td>
-                        <%= livre[0].Auteur %>
+                        <%= livre.Auteur %>
                       </td>
                     </tr>
                     <tr>
                       <td> Annee: </td>
                       <td>
-                        <%= livre[0].DateParution %>
+                        <%= livre.DateParution %>
                       </td>
                     </tr>
                     <tr>
                       <td> Description: </td>
                       <td>
-                        <%= livre[0].Description %>
+                        <%= livre.Description %>
                       </td>
                     </tr>
                     <tr>
                       <td>Nombre de copie disponible: </td>
                       <td>
-                        <%= livre[0].NbDisponible %>
+                        <%= livre.NbDisponible %>
                       </td>
                     </tr>
                   </tbody>
@@ -74,9 +75,9 @@
         <section class="p-5 text-center" >
           <form action="#" method="post">
               <input type="button" class="btn btn-primary" value="Réserver le livre" id="btnReserver" onclick="reserver()">
-              <input type="hidden" value="<%= livre[0].ISBN %>" name="livre_isbn" id="livre_isbn">
-              <input type="hidden" value="<%= livre[0].Titre %>" name="livre_Titre" id="livre_Titre">
-              <input type="hidden" value="<%= livre[0].NbDisponible %>" name="livre_NbDisponible" id="livre_NbDisponible">
+              <input type="hidden" value="<%= livre.ISBN %>" name="livre_isbn" id="livre_isbn">
+              <input type="hidden" value="<%= livre.Titre %>" name="livre_Titre" id="livre_Titre">
+              <input type="hidden" value="<%= livre.NbDisponible %>" name="livre_NbDisponible" id="livre_NbDisponible">
           </form>
         </section>
       </div>
