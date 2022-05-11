@@ -33,6 +33,20 @@
                                 <div class="card bg-secondary text-light">
                                     <div class="card-body text-center">
                                         <h4 class="card-title">
+                                            Liste des réservations
+                                        </h4>
+                                        <div class="card-text">
+                                            Cette page permet de consulter toutes la liste de réservations et la filter par les utilisateur
+                                        </div>
+                                        <a href="/gestion/listReservation" class="btn btn-primary btn-lg mt-2">Accéder</a>
+                                    </div>                            
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="card bg-secondary text-light">
+                                    <div class="card-body text-center">
+                                        <h4 class="card-title">
                                             Gestion des réservations
                                         </h4>
                                         <div class="card-text">
@@ -42,6 +56,22 @@
                                     </div>                            
                                 </div>
                             </div>
+                            
+                            <div class="col-md-6">
+                                <div class="card bg-secondary text-light">
+                                    <div class="card-body text-center">
+                                        <h4 class="card-title">
+                                            Liste des livres en retard 
+                                        </h4>
+                                        <div class="card-text">
+                                            Cette page permet de traiter les livres en retard de plus que deux semaines tel que les livres perdus
+                                        </div>
+                                        <a href="/gestion/retard" class="btn btn-primary btn-lg mt-2">Accéder</a>
+                                    </div>                            
+                                </div>
+                            </div> 
+
+
                             <div class="col-md-6">
                                 <div class="card bg-secondary text-light">
                                     <div class="card-body text-center">
@@ -55,24 +85,12 @@
                                     </div>                            
                                 </div>
                             </div>
+                            
                             <div class="col-md-6">
                                 <div class="card bg-secondary text-light">
                                     <div class="card-body text-center">
                                         <h4 class="card-title">
-                                            Gestion des livres
-                                        </h4>
-                                        <div class="card-text">
-                                            Cette page permet d'ajouter, modifier ou supprimer les informations des livres de la bibliothèque
-                                        </div>
-                                        <a href="/gestion/livres" class="btn btn-primary btn-lg mt-2">Accéder</a>
-                                    </div>                            
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="card bg-secondary text-light">
-                                    <div class="card-body text-center">
-                                        <h4 class="card-title">
-                                            Caisse
+                                            La caisse
                                         </h4>
                                         <div class="card-text">
                                             Cette page permet de facturer, rembourser et recharger le compte des clients
@@ -86,32 +104,30 @@
                                 <div class="card bg-secondary text-light">
                                     <div class="card-body text-center">
                                         <h4 class="card-title">
-                                            Gestion des transactions
+                                            Liste des transactions
                                         </h4>
                                         <div class="card-text">
-                                            Cette page permet de modifier les informations du client en faisant une recherche à partir de leur numéro de téléphone
+                                            Cette page permet d'afficher la liste des transactions et le filer par les dates et les utilisateur
                                         </div>
                                         <a href="/gestion/transaction" class="btn btn-primary btn-lg mt-2">Accéder</a>
                                     </div>                            
                                 </div>
                             </div>
-                            
+
                             <div class="col-md-6">
                                 <div class="card bg-secondary text-light">
                                     <div class="card-body text-center">
                                         <h4 class="card-title">
-                                           Gestion des livres perdus
+                                            Gestion des livres
                                         </h4>
                                         <div class="card-text">
-                                            Cette page permet de traiter les livres en retard de plus que deux semaines tel que les livres perdus
+                                            Cette page permet d'ajouter, modifier ou supprimer les informations des livres de la bibliothèque
                                         </div>
-                                        <a href="/gestion/retard" class="btn btn-primary btn-lg mt-2">Accéder</a>
+                                        <a href="/gestion/livres" class="btn btn-primary btn-lg mt-2">Accéder</a>
                                     </div>                            
                                 </div>
-                            </div> 
-
-                            
-                            
+                            </div>
+                                   
                             <% if (loginedUser.Droit_id==99 ){ %>
                             <div class="col-md-6">
                                 <div class="card bg-secondary text-light">
@@ -120,7 +136,7 @@
                                             Gestion des utilisateurs
                                         </h4>
                                         <div class="card-text">
-                                            Cette page permet de gérer les utilisateurs
+                                            Cette page permet de modifier ou supprimer les informations des utilisateur ainsi initialiser le mot de passe
                                         </div>
                                         <a href="/gestion/listUtilisateur" class="btn btn-primary btn-lg mt-2">Accéder</a>
                                     </div>                            

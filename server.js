@@ -384,14 +384,30 @@ app.get('/reservations', (req, res) => {
 app.post('/annulerReservation', (req, res) => {
     if (!req.session.loginedUser) return res.redirect("/login")
     else {
-        Reservations.findOneAndDelete({ Livre_id: req.body.livre_id, Utilisateur_id: req.body.user_id },
-            function (err, livre) {
+        var user_id;
+        if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {
+            user_id = req.body.user_id
+        } else {
+            user_id = req.session._id;
+        }
+        if (req.body.reservation_id) {
+            Reservations.findByIdAndDelete(req.body.reservation_id, function (err) {
                 if (err) console.log(err)
-                Livres.findByIdAndUpdate(req.body.livre_id, { NbDisponible: parseInt(req.body.livre_NbDisponible) + 1 },
-                    function (err, livre) {
+            })
+            Livres.findByIdAndUpdate(req.body.livre_id, { NbDisponible: parseInt(req.body.livre_NbDisponible) + 1 }, function (err) {
+                if (err) console.log(err)
+            })
+        } else {
+            Reservations.findOneAndDelete({ Livre_id: req.body.livre_id, Utilisateur_id: user_id }, function (err, livre) {
+                if (err) console.log(err)
+                if (livre) {
+                    Livres.findByIdAndUpdate(req.body.livre_id, { NbDisponible: parseInt(req.body.livre_NbDisponible) + 1 }, function (err) {
                         if (err) console.log(err)
                     })
+                }
             })
+        }
+
         res.redirect(req.headers.referer)
     }
 });
@@ -789,6 +805,44 @@ app.get('/gestion/reservation', async (req, res) => {
     if (req.session.loginedUser) {
         if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {//only for admin or staff
             res.render('GestionReservations', { loginedUser: req.session.loginedUser });
+        } else {
+            res.status(403).end("vous n'avez pas le droit")
+        }
+    } else {
+        res.redirect("/login")
+    }
+})
+
+app.all('/gestion/listReservation', async (req, res) => {
+    if (req.session.loginedUser) {
+        if (req.session.loginedUser.Droit_id == 99 || req.session.loginedUser.Droit_id == 1) {//only for admin or staff
+            Utilisateurs.find({}, function (err, utilisateurs) {
+                if (err) throw err
+                Livres.find({}, function (err, livres) {
+                    if (err) throw err
+                    if (req.body.tel) {
+                        Utilisateurs.findOne({ Telephone: req.body.tel }, function (err, client) {
+                            if (err) throw err
+                            if (client) {
+                                Reservations.find({ Utilisateur_id: client._id }, function (err, reservations) {
+                                    if (err) throw err
+                                    res.render('GestionListReservations', { loginedUser: req.session.loginedUser, utilisateurs: utilisateurs, livres: livres, reservations: reservations });
+                                })
+                            } else {
+                                res.render('GestionListReservations', { loginedUser: req.session.loginedUser, utilisateurs: utilisateurs, livres: livres, reservations: null });
+                            }
+                        })
+                    } else {
+                        Utilisateurs.find({}, function (err, utilisateurs) {
+                            if (err) throw err
+                            Reservations.find({}, function (err, reservations) {
+                                if (err) throw err
+                                return res.render('GestionListReservations', { loginedUser: req.session.loginedUser, utilisateurs: utilisateurs, livres: livres, reservations: reservations });
+                            })
+                        })
+                    }
+                })
+            })
         } else {
             res.status(403).end("vous n'avez pas le droit")
         }

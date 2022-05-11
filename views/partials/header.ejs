@@ -16,8 +16,6 @@
 
     <div class="collapse navbar-collapse" id="navmenu">
         <ul class="navbar-nav ms-start">
-
-
             <li class="nav-item">
                 <div class="nav-link"><a href="/">Home</a></div>
             </li>
@@ -33,21 +31,21 @@
                         <div class="nav-link">
                             <a href="/gestion">Gestion</a>
                             <ul class="dropdown-menu">
+                                <li><a href="/gestion/listReservation">Liste des réservations</a></li>
                                 <li><a href="/gestion/Reservation">Gestion des réservations</a></li>
+                                <li><a href="/gestion/retard">Liste des livres en retard</a></li>
                                 <li><a href="/gestion/empruntretour">Gestion des emprunts et des retours</a></li>
-                                <li><a href="/gestion/livres">Gestion des livres</a></li>
-                                <li><a href="/gestion/caisse">Caisse</a></li>
+                                <li><a href="/gestion/caisse">La caisse</a></li>
+                                <li><a href="/gestion/transaction">Liste des transactions</a></li>
+                                <li><a href="/gestion/livres">Gestion des livres</a></li>                         
                                 <% if (loginedUser.Droit_id==99 ){ %>
                                     <li><a href="/gestion/listUtilisateur">Gestion des utilisateurs</a></li>
-                                    <% } %>
+                                <% } %>
                             </ul>
                         </div>
                     </li>
-                    <%} %>
-
-
-                        <% } %>
-
+                <% } %>
+            <% } %>
         </ul>
     </div>
     <!-- Début du menu déroulant -->
