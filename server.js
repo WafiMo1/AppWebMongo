@@ -390,7 +390,7 @@ app.post('/livres/:isbn', (req, res) => {
         Livres.findOne({ ISBN: req.body.isbn }, function (err, livre) {
             if (err) throw err;
             if (livre == null) {
-                return res.send(JSON.stringify({ 'message': "Livre not existe" }))
+                return res.send(JSON.stringify({ 'message': "Livre n'existe pas" }))
             } else {
                 var userID = req.body.client_id;
                 if (!req.body.client_id) {
@@ -409,7 +409,7 @@ app.post('/livres/:isbn', (req, res) => {
                         );
                         livreReservee.save(function (err) {
                             if (err) console.log(err)
-                            return res.send(JSON.stringify({ 'message': "Le livre: " + livre.Titre + " a ete reserve par l'user " + req.session.loginedUser.Nom }));
+                            return res.send(JSON.stringify({ 'message': "Le livre: " + livre.Titre + " a été reservé par " + req.session.loginedUser.Nom }));
                         });
                         Livres.findByIdAndUpdate(livre._id, { NbDisponible: nbDisponible - 1 },
                             function (err, livre) {
@@ -417,7 +417,7 @@ app.post('/livres/:isbn', (req, res) => {
                                     throw err
                                 }
                             })
-                    } else return res.send(JSON.stringify({ 'message': "Le livre: " + livre.Titre + " ne peut pas etre reserve" }));
+                    } else return res.send(JSON.stringify({ 'message': "Le livre: " + livre.Titre + " ne peut pas être réservé" }));
                 })
             }
         })
@@ -543,8 +543,6 @@ app.post('/gestion/empruntretour', async (req, res) => {
                                     } else {
                                         //mis a jour le nombre de livre
                                         var livreNbDisponible = livre.NbDisponible;
-                                        console.log(livreNbDisponible + " avant reservatiion")
-
                                         //verfie si le livre est deja reservé
                                         Reservations.findOne({
                                             Livre_id: livre._id,
@@ -554,6 +552,25 @@ app.post('/gestion/empruntretour', async (req, res) => {
                                             if (reservation){
                                                 Reservations.deleteOne({_id: reservation._id}, function (err){
                                                     if (err) throw err; 
+                                                    utilisateur.updateOne({ //met a jour le nombre de pret de l'utilisateur
+                                                        NbPret: utilisateur.NbPret + 1
+                                                    }, function (err) {
+                                                        if (err) throw err;
+                                                    })
+                    
+                                                    // insert les informations dans la bd             
+                                                    Emprunts.create({
+                                                        DatePret: new Date(Date.now()),
+                                                        DateRetourPrevu: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
+                                                        DateRetour: null,
+                                                        Livre_id: livre._id,
+                                                        Utilisateur_id: req.body.clientEmprunt
+                                                    }, function (err) {
+                                                        if (err) throw err;
+                                                    })
+                                                    return res.send(JSON.stringify({ 'message': 'Emprunt reussi' }));
+
+
                                                 })
                                             } else {
                                                 if (livre.NbDisponible <= 0) {
