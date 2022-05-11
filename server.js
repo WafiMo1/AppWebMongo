@@ -543,54 +543,47 @@ app.post('/gestion/empruntretour', async (req, res) => {
                                     } else {
                                         //mis a jour le nombre de livre
                                         var livreNbDisponible = livre.NbDisponible;
+                                        console.log(livreNbDisponible + " avant reservatiion")
 
                                         //verfie si le livre est deja reservé
-                                        console.log(livreNbDisponible + " avant reservatiion")
-                                        var temp = livre.NbDisponible + 1;
-                                        Reservations.findOneAndDelete({
+                                        Reservations.findOne({
                                             Livre_id: livre._id,
                                             Utilisateur_id: req.body.clientEmprunt
-                                        }, function (err) {
+                                        }, function (err, reservation) {
                                             if (err) throw err;
-                                            livre.updateOne({ //met a jour le nombre disponible d'un livre apres l'annulation d'un reservation, mais seulement si elle existe
-                                                NbDisponible: temp
-                                            }, function (err) {
-                                                if (err) throw err;
-                                            })
-                                        })
-                                        console.log(livreNbDisponible + " apres reservatiion")
-
-                                        if (livre.NbDisponible <= 0) {
-                                            return res.send(JSON.stringify({ 'message': 'livre non disponible' }));
-                                        } else {
-
-                                            console.log(livreNbDisponible + " avant emprunt")
-                                            var temp = livre.NbDisponible - 1;
-                                            utilisateur.updateOne({ //met a jour le nombre de pret de l'utilisateur
-                                                NbPret: utilisateur.NbPret + 1
-                                            }, function (err) {
-                                                if (err) throw err;
-                                                livre.updateOne({ //met a jour le nombre disponible du livre
-                                                    NbDisponible: temp
-                                                }, function (err, apple) {
-                                                    if (err) throw err;
+                                            if (reservation){
+                                                Reservations.deleteOne({_id: reservation._id}, function (err){
+                                                    if (err) throw err; 
                                                 })
-    
-                                            })
-            
-                                            // insert les informations dans la bd             
-                                            Emprunts.create({
-                                                DatePret: new Date(Date.now()),
-                                                DateRetourPrevu: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
-                                                DateRetour: null,
-                                                Livre_id: livre._id,
-                                                Utilisateur_id: req.body.clientEmprunt
-                                            }, function (err) {
-                                                if (err) throw err;
-                                            })
-                                            return res.send(JSON.stringify({ 'message': 'Emprunt reussi' }));
-                                        }
-                                        
+                                            } else {
+                                                if (livre.NbDisponible <= 0) {
+                                                    return res.send(JSON.stringify({ 'message': 'livre non disponible' }));
+                                                } else{
+                                                    livre.updateOne({ //met a jour le nombre disponible d'un livre apres l'annulation d'un reservation, mais seulement si elle existe
+                                                        NbDisponible: livreNbDisponible - 1
+                                                    }, function (err) {
+                                                        if (err) throw err;
+                                                    })
+                                                    utilisateur.updateOne({ //met a jour le nombre de pret de l'utilisateur
+                                                        NbPret: utilisateur.NbPret + 1
+                                                    }, function (err) {
+                                                        if (err) throw err;
+                                                    })
+                    
+                                                    // insert les informations dans la bd             
+                                                    Emprunts.create({
+                                                        DatePret: new Date(Date.now()),
+                                                        DateRetourPrevu: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
+                                                        DateRetour: null,
+                                                        Livre_id: livre._id,
+                                                        Utilisateur_id: req.body.clientEmprunt
+                                                    }, function (err) {
+                                                        if (err) throw err;
+                                                    })
+                                                    return res.send(JSON.stringify({ 'message': 'Emprunt reussi' }));
+                                                }
+                                            } 
+                                        })
                                     }
                                 })
                             }
