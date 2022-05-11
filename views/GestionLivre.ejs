@@ -213,12 +213,16 @@
                 if (res.data.code == 10) {
                     window.location = '/login';
                 } else{
+                    var NbDisponible = document.getElementById('NbDisponible').value
+                    if (obj.value == 'ajoutLivre'){
+                        NbDisponible = document.getElementById('nbrCopies').value
+                    }
                     axios.post('/gestion/' + obj.value, {
                         Auteur: document.getElementById('auteurLivre').value.trim(),
                         Titre: document.getElementById('titreLivre').value.trim(),
                         DateParution: document.getElementById('dateParution').value,
                         NbCopies: document.getElementById('nbrCopies').value,
-                        NbDisponible: document.getElementById('NbDisponible').value,
+                        NbDisponible: NbDisponible,
                         MaisonEdition: document.getElementById('maisonEdition').value.trim(),
                         ISBN: document.getElementById('isbnLivre').value,
                         Cout: document.getElementById('coutLivre').value,

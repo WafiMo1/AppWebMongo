@@ -46,7 +46,7 @@
                                                              </td>
                                                              <td>
                                                                  <form action="/annulerReservation" method="post">
-                                                                     <input type="submit" class="btn btn-danger text-white" value="Annuler la réservation" id="btnAnnuler">
+                                                                     <input type="submit" class="btn btn-danger text-white" value="Annuler la réservation" id="btnAnnuler" onclick="location.reload()">
                                                                      <input type="hidden" value="<%= leLivre._id %>" name="livre_id" id="livre_id">
                                                                      <input type="hidden" value="<%= leLivre.Titre %>" name="livre_titre" id="livre_titre">
                                                                      <input type="hidden" value="<%= leLivre.NbDisponible %>" name="livre_NbDisponible" id="livre_NbDisponible">

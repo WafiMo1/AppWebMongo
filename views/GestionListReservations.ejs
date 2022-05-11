@@ -67,8 +67,10 @@
                                                 <td><strong>utilisateur supprimé</strong></td>
                                             <% } %>
                                             <td hidden><%=reservation.Livre_id%></td>
+                                            <%var compteur =  0 %>  
                                             <% livres.forEach(livre =>{ %>
                                                 <% if (livre._id.toString() == reservation.Livre_id.toString()){ %>
+                                                    <% compteur++ %>
                                                     <td>
                                                         <span style="font-weight:bold;"><%=livre.Titre%></span><br/>
                                                         <span style="font-size:15px;"><%=livre.Auteur%></span>
@@ -78,6 +80,11 @@
         
                                                 <% } %>
                                             <% }) %>
+                                            <% if (compteur == 0){ %>
+                                                <td><strong>Livre supprimé</strong></td>
+                                                <td><strong>Livre supprimé</strong></td>
+                                                <td hidden>Livre supprimé</td>
+                                            <% } %>
                                             <td><button class="btn btn-danger text-white" onclick="supprimer(this)">Supprimer</button></td>
                                         </tr>
                                     <% })   %>
