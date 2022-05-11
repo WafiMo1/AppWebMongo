@@ -66,17 +66,20 @@
                                             </div>
                                         <% } %>
                                     </div>
+
                                 <div id="divRechargerFacturer" hidden="true">
         
                                     <div class="mb-3" id="divMethodePaiement">
                                         <label for="methodePaiement" class="form-label mb-3">Methode de Paiement:</label>
-                                        <select id="methodePaiement" class="form-select" aria-label="Default select example" aria-describedby="methodePaiementHelp">
-                                            <option value="Remboursement au Compte">Remboursement au compte</option>
-                                            <option value="Comptant">Comptant</option>
-                                            <option value="Visa">Visa</option>
-                                            <option value="Mastercard">Mastercard</option>
-                                            <option value="Amex">American Express</option>
-                                            <option value="Debit">Carte de debit</option>
+                                        <select id="methodePaiement" class="form-select" aria-label="Default select example" aria-describedby="methodePaiementHelp">                                            
+                                            <option id="optionComptant" value="Comptant">Comptant</option>
+                                            <option id="optionVisa" value="Visa">Visa</option>
+                                            <option id="optionMastercard" value="Mastercard">Mastercard</option>
+                                            <option id="optionAmex" value="Amex">American Express</option>
+                                            <option id="optionDebit" value="Debit">Carte de debit</option>
+                                            <% if (loginedUser.Droit_id == 99 ){ %>
+                                                <option id="optionRemboursement" value="Remboursement au Compte">Remboursement au compte</option>
+                                            <% } %>
                                           </select>
                                         <div id="methodePaiementHelp" class="form-text">L'ISBN se trouve près du code barre de tous les livres</div>
                                     </div>
@@ -112,16 +115,10 @@
         </div>
     </body>
     <script>
-
+        var choix;
         axios.defaults.baseURL = 'http://localhost:4000'
         function telChange(){
            document.getElementById('btnRechargerFacturer').disabled = true;
-        }
-
-        document.getElementById('telClient').onkeypress = function (event){
-            if(event.which === 13){
-                rechercheClient();
-            }
         }
 
         function rechercheClient(){
@@ -158,9 +155,11 @@
             if(document.getElementById('radioRecharger').checked){
                 document.getElementById('divRechargerFacturer').hidden = false;
                 document.getElementById('divMethodePaiement').hidden = false;
+                document.getElementById('optionRemboursement').hidden = true;
                 document.getElementById('titre').value = "Recharger";
                 document.getElementById('commentaire').innerHTML = "Recharger le compte";
                 document.getElementById('btnRechargerFacturer').innerHTML = "Recharger le compte";
+                choix = "Recharger"
             }          
         }
 
@@ -173,6 +172,7 @@
                 document.getElementById('titre').placeholder = "Entrer le sujet";
                 document.getElementById('commentaire').innerHTML = "Facturer le client";
                 document.getElementById('btnRechargerFacturer').innerHTML = "Facturer le client";
+                choix = "Facturer"
             }
         }
 
@@ -180,11 +180,13 @@
             if(document.getElementById('radioRemboursement').checked){
                 document.getElementById('divRechargerFacturer').hidden = false;
                 document.getElementById('divMethodePaiement').hidden = false;
+                document.getElementById('optionRemboursement').hidden = false;
                 document.getElementById('titre').value = "Remboursement";
                 document.getElementById('titre').placeholder = "Entrer le sujet";
                 document.getElementById('btnRechargerFacturer').innerHTML = "";
                 document.getElementById('commentaire').placeholder = "Entrer la raison du remboursement";
                 document.getElementById('btnRechargerFacturer').innerHTML = "Remboursement";
+                choix = "Remboursement"
             }
         }
 
@@ -200,7 +202,8 @@
                     montant = -montant;
                     methodePaiement = null;
                 }
-                axios.post('/gestion/caisse', {     
+                axios.post('/gestion/caisse', {
+                    Option: choix,
                     MethodePaiement: methodePaiement, 
                     Cout: montant,
                     Utilisateur_id: document.getElementById('idClient').value,         

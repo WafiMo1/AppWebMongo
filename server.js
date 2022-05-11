@@ -781,7 +781,9 @@ app.post('/gestion/caisse', (req, res) => {
                 Titre: req.body.Titre,
                 Commentaire: req.body.Commentaire
             }, function (err) { if (err) throw err })
-            if (req.body.MethodePaiement == 'Remboursement au Compte') {
+            //modifier le solde du compte
+            console.log(req.body.Option)
+            if (req.body.Option == 'Recharger' || req.body.Option == 'Facturer' || req.body.MethodePaiement == 'Remboursement au Compte') {
                 Utilisateurs.findOne({ _id: req.body.Utilisateur_id }, function (err, client) {
                     if (err) throw err
                     var newSolde = client.Solde + req.body.Cout;
